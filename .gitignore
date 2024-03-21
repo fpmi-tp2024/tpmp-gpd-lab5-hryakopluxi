@@ -1,3 +1,5 @@
 .idea
 cmake*
 CMakeLists.txt
+obj
+bin
