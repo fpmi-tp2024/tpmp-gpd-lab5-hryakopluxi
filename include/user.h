@@ -8,9 +8,10 @@
 #include <string>
 
 enum Role {
-    DRIVER = 0,
-    DISPATCHER = 1,
-    ADMIN = 2,
+    GUEST = 0,
+    DRIVER = 1,
+    DISPATCHER = 2,
+    ADMIN = 3,
 };
 
 class User {
@@ -53,6 +54,12 @@ public:
         role = newRole;
     }
 
+    void clear() {
+        id = 0;
+        login = "";
+        pass_hash = "";
+        role = GUEST;
+    }
 };
 
 #endif //LAB_5_PROJECT_USER_H
