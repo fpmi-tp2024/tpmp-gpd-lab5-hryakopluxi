@@ -10,13 +10,10 @@
 #include "driver.h"
 
 class Validator {
-    const Config* config;
-
 public:
-    bool validOrder(const Order& order) const;
-    bool validDriver(const Driver& driver) const;
-    bool validLicense(std::string license) const;
-    bool validPassword(std::string password, std::string salt) const;
+    static bool validOrder(const Order& order);
+    static bool validDriver(const Driver& driver);
+    static bool validLicense(std::string license);
 };
 
 #endif //LAB_5_PROJECT_VALIDATOR_H
