@@ -9,24 +9,15 @@
 
 class Config {
 private:
-    double driverPercent;
-    std::string hashSalt;
+    double driverPercent = 20.;
 
 public:
     double getDriverPercent() const {
         return driverPercent;
     }
 
-    std::string getHashSalt() const {
-        return hashSalt;
-    }
-
     void setDriverPercent(double newDriverPercent) {
         driverPercent = newDriverPercent;
-    }
-
-    void setHashSalt(const std::string& newHashSalt) {
-        hashSalt = newHashSalt;
     }
 };
 
