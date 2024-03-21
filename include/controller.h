@@ -21,6 +21,8 @@ private:
     Validator validator;
 public:
 
+    Controller(std::string db_filename);
+
     bool login(std::string login, std::string password);
     void logout();
 
