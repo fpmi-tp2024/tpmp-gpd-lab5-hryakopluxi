@@ -18,7 +18,6 @@ private:
     sqlite3* db;
     User user;
     Config config;
-    Validator validator;
 public:
 
     Controller(std::string db_filename);
