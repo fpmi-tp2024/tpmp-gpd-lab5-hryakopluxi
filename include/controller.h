@@ -16,7 +16,7 @@
 class Controller {
 private:
     sqlite3* db;
-    User user;
+    User *user;
     Config config;
 public:
 

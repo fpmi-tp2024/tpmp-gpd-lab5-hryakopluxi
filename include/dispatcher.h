@@ -18,15 +18,12 @@ public:
     std::string getName() const {
         return name;
     }
-
     std::string getSurname() const {
         return surname;
     }
-
     std::string getAddress() const {
         return address;
     }
-
     std::string getCity() const {
         return city;
     }
@@ -34,19 +31,17 @@ public:
     void setName(const std::string& newName) {
         name = newName;
     }
-
     void setSurname(const std::string& newSurname) {
         surname = newSurname;
     }
-
     void setAddress(const std::string& newAddress) {
         address = newAddress;
     }
-
     void setCity(const std::string& newCity) {
         city = newCity;
     }
 
+    void getDataFromSQL(sqlite3* db, int user_id);
 };
 
 #endif //LAB_5_PROJECT_DISPATCHER_H
