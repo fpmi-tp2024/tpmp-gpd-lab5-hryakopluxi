@@ -5,7 +5,7 @@
 #include "../include/car.h"
 
 void Car::insertCarToDb(sqlite3 *db) {
-    char *sql = "INSERT INTO car "
+    char *sql = "INSERT INTO autopark_car "
                 "(driver_id, license, brand, mileage, load_capacity) VALUES "
                 "(?, ?, ?, ?, ?);";
 

@@ -57,7 +57,7 @@ void Driver::setCategoryFromStr(const std::string& str) {
 }
 
 void Driver::getDataFromDb(sqlite3* db, int user_id) {
-    char* sql = "SELECT * FROM driver WHERE user_id = ?";
+    char* sql = "SELECT (name, surname, category, address, city, birthday) FROM autopark_driver WHERE user_id = ?";
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
     if (rc != SQLITE_OK) {
@@ -84,7 +84,7 @@ void Driver::insertUserToDb(sqlite3 *db) {
     sqlite3_stmt *stmt;
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
-    char* sql = "INSERT INTO user (login, pass_hash, role) VALUES (?, ?, ?);";
+    char* sql = "INSERT INTO autopark_user (login, pass_hash, role) VALUES (?, ?, ?);";
 
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
@@ -112,7 +112,7 @@ void Driver::insertUserToDb(sqlite3 *db) {
     setId(static_cast<int>(sqlite3_last_insert_rowid(db)));
 
 
-    sql = "INSERT INTO driver (user_id, name, surname, category, address, city, birthday) "
+    sql = "INSERT INTO autopark_driver (user_id, name, surname, category, address, city, birthday) "
           "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
     rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);

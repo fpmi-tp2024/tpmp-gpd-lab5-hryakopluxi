@@ -3,8 +3,6 @@
 //
 
 #include "../include/controller.h"
-#include "../include/exceptions.h"
-#include <iostream>
 
 Controller::Controller(const std::string& db_filename) {
     int rc = sqlite3_open(db_filename.c_str(), &db);
@@ -16,12 +14,10 @@ Controller::Controller(const std::string& db_filename) {
 }
 
 bool Controller::login(const std::string& login, const std::string& password) {
-    char *sql = "SELECT * FROM user WHERE login = ? ;";
+    char *sql = "SELECT * FROM autopark_user WHERE login = ? ;";
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Failed to prepare select statement: %s\n", sqlite3_errmsg(db));
-        //std::cout << "Failed to prepare\n";
         throw InternalErrorException("Failed to prepare select user statement\n");
     }
 
