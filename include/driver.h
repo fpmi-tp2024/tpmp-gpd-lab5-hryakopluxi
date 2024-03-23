@@ -7,6 +7,8 @@
 
 #include "user.h"
 #include <vector>
+#include <unordered_map>
+#include <sstream>
 
 class Driver : public User {
 
@@ -64,6 +66,8 @@ public:
     void setCategory(const std::vector<Category> &newCategories) {
         category = newCategories;
     }
+
+    void setCategoryFromStr(const std::string& str);
 
     void setExperience(int newExperience) {
         experience = newExperience;

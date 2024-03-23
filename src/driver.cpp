@@ -1,19 +1,11 @@
 //
 // Created by hakeyn on 21.3.24.
 //
-#include <sqlite3.h>
-#include <iostream>
 #include "../include/driver.h"
 #include "../include/exceptions.h"
 
 std::string Driver::getCategoryString() const {
-//    std::sort(category.begin(), category.end(),
-//              [](Category a, Category b) {
-//                  return static_cast<int>(a) < static_cast<int>(b);
-//    });
-
     std::string str = "";
-
     for (auto cat : category) {
         switch (cat) {
             case Category::A:
@@ -43,6 +35,27 @@ std::string Driver::getCategoryString() const {
     return str;
 }
 
+void Driver::setCategoryFromStr(const std::string& str) {
+    category.clear();
+    std::istringstream iss(str);
+    std::string categoryToken;
+    static const std::unordered_map<std::string, Category> categoryMap = {
+            {"A", Category::A},
+            {"B", Category::B},
+            {"C", Category::C},
+            {"D", Category::D},
+            {"BE", Category::BE},
+            {"CE", Category::CE}
+    };
+
+    while (iss >> categoryToken) {
+        auto it = categoryMap.find(categoryToken);
+        if (it != categoryMap.end()) {
+            category.push_back(it->second);
+        }
+    }
+}
+
 void Driver::getDataFromDb(sqlite3* db, int user_id) {
     char* sql = "SELECT * FROM driver WHERE user_id = ?";
     sqlite3_stmt *stmt;
@@ -61,7 +74,7 @@ void Driver::getDataFromDb(sqlite3* db, int user_id) {
 
     name = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1))));
     surname = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2))));
-    std::string categoryStr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+    setCategoryFromStr(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
     address = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4))));
     city = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5))));
     birthday =(( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6))));
