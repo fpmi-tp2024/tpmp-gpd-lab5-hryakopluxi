@@ -138,3 +138,31 @@ void Controller::addDispatcher(Dispatcher &dispatcher) {
 
     dispatcher.insertUserToDb(db);
 }
+
+void Controller::deleteCar(int car_id) {
+    if (user->getRole() != ADMIN) {
+        throw PermissionDeniedException();
+    }
+
+    char* sql = "DELETE FROM autopark_car WHERE id = ?";
+    sqlite3_stmt* stmt;
+
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        std::string errMsg =  "Failed to prepare delete car statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
+    }
+
+    sqlite3_bind_int(stmt, 1, car_id);
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        std::string errMsg =  "Failed to execute delete car statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
+    }
+
+    sqlite3_finalize(stmt);
+}
