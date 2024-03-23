@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <sqlite3.h>
 
 enum Role {
     DRIVER = 1,
@@ -57,24 +58,26 @@ public:
         role = newRole;
     }
 
-    virtual std::string getName() const {};
-
-    std::string getSurname() const{};
-    virtual std::vector<Category> getCategories() const{};
-    virtual int getExperience() const{};
-    virtual std::string getAddress() const{};
-    std::string getCity() const{};
-    virtual std::string getBirthday() const{};
+    virtual std::string getName() const {return "";}
+    virtual std::string getSurname() const{return "";}
+    virtual std::vector<Category> getCategories() const {return std::vector<Category>(0);}
+    virtual std::string getCategoryString() const {return "";}
+    virtual int getExperience() const{return -1;}
+    virtual std::string getAddress() const{return "";}
+    std::string getCity() const{return "";}
+    virtual std::string getBirthday() const{return "";}
 
     virtual void setName(const std::string& newName){};
     virtual void setSurname(const std::string& newSurname){};
-    virtual void setCategories(const std::vector<Category>& newCategories){};
+    virtual void setCategory(const std::vector<Category>& newCategories){};
     virtual void setExperience(int newExperience){};
     virtual void setAddress(const std::string& newAddress){};
     virtual void setCity(const std::string& newCity){};
     virtual void setBirthday(const std::string& newBirthday){};
 
-    virtual void getDataFromSQL(sqlite3* db, int user_id){};
+    static std::string toLower(std::string str);
+    virtual void getDataFromDb(sqlite3* db, int user_id){}
+    virtual void insertUserToDb(sqlite3 *db) {}
 };
 
 #endif //LAB_5_PROJECT_USER_H

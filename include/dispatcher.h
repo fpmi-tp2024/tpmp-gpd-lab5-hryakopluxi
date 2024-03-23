@@ -41,7 +41,7 @@ public:
         city = newCity;
     }
 
-    void getDataFromSQL(sqlite3* db, int user_id);
+    void getDataFromDb(sqlite3* db, int user_id);
 };
 
 #endif //LAB_5_PROJECT_DISPATCHER_H

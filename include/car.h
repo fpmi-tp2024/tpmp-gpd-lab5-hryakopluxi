@@ -6,6 +6,8 @@
 #define LAB_5_PROJECT_CAR_H
 
 #include <string>
+#include <sqlite3.h>
+#include "exceptions.h"
 
 class Car {
 
@@ -50,11 +52,11 @@ public:
         driver_id = newDriverId;
     }
 
-    void setLicense(const std::string& newLicense) {
+    void setLicense(const std::string &newLicense) {
         license = newLicense;
     }
 
-    void setBrand(const std::string& newBrand) {
+    void setBrand(const std::string &newBrand) {
         brand = newBrand;
     }
 
@@ -66,6 +68,7 @@ public:
         load_capacity = newLoadCapacity;
     }
 
+    void insertCarToDb(sqlite3 *db);
 };
 
 #endif //LAB_5_PROJECT_CAR_H

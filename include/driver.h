@@ -26,48 +26,66 @@ public:
     std::string getName() const {
         return name;
     }
+
     std::string getSurname() const {
         return surname;
     }
+
     std::vector<Category> getCategories() const {
         return category;
     }
+
+    std::string getCategoryString() const;
+
     int getExperience() const {
         return experience;
     }
+
     std::string getAddress() const {
         return address;
     }
+
     std::string getCity() const {
         return city;
     }
+
     std::string getBirthday() const {
         return birthday;
     }
 
-    void setName(const std::string& newName) {
+    void setName(const std::string &newName) {
         name = newName;
     }
-    void setSurname(const std::string& newSurname) {
+
+    void setSurname(const std::string &newSurname) {
         surname = newSurname;
     }
-    void setCategories(const std::vector<Category>& newCategories) {
+
+    void setCategory(const std::vector<Category> &newCategories) {
         category = newCategories;
     }
+
     void setExperience(int newExperience) {
         experience = newExperience;
     }
-    void setAddress(const std::string& newAddress) {
+
+    void setAddress(const std::string &newAddress) {
         address = newAddress;
     }
-    void setCity(const std::string& newCity) {
+
+    void setCity(const std::string &newCity) {
         city = newCity;
     }
-    void setBirthday(const std::string& newBirthday) {
+
+    void setBirthday(const std::string &newBirthday) {
         birthday = newBirthday;
     }
 
-    void getDataFromSQL(sqlite3* db, int user_id);
+    void getDataFromDb(sqlite3 *db, int user_id);
+
+    void insertUserToDb(sqlite3 *db);
+
+
 };
 
 

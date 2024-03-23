@@ -6,6 +6,7 @@
 #define LAB_5_PROJECT_EXCEPTIONS_H
 
 #include <exception>
+#include <utility>
 
 class PermissionDeniedException : public std::exception {
 public:
@@ -14,17 +15,13 @@ public:
     }
 };
 
-class InvalidCarLicenseException : public std::exception {
-public:
-    char* what() {
-        return "Invalid car license\n";
-    }
-};
-
 class InternalErrorException : public std::exception {
+private:
+    std::string msg;
 public:
+    explicit InternalErrorException(std::string msg) {this->msg = std::move(msg);};
     char* what() {
-        return "Something went wrong\n";
+        return const_cast<char *>(msg.c_str());
     }
 
 };
