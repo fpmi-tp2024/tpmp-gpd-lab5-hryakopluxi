@@ -6,6 +6,7 @@
 #define LAB_5_PROJECT_CAR_H
 
 #include <string>
+#include <utility>
 #include <sqlite3.h>
 #include "exceptions.h"
 
@@ -20,6 +21,13 @@ private:
     double load_capacity;
 
 public:
+    Car() : id(0), driver_id(0), license(""), brand(""), mileage_buy(0.0), load_capacity(0.0) {}
+
+    Car(int newId, int newDriverId, std::string newLicense, std::string newBrand, double newMileageBuy,
+        double newLoadCapacity)
+            : id(newId), driver_id(newDriverId), license(std::move(newLicense)), brand(std::move(newBrand)),
+              mileage_buy(newMileageBuy), load_capacity(newLoadCapacity) {}
+
     int getId() const {
         return id;
     }
