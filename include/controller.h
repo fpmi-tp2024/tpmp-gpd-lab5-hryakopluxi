@@ -3,8 +3,6 @@
 //
 
 #include <sqlite3.h>
-#include "car.h"
-#include "user.h"
 #include "dispatcher.h"
 #include "config.h"
 #include "validator.h"
@@ -15,11 +13,10 @@
 
 class Controller {
 private:
-
+    sqlite3* db;
     User *user;
     Config config;
 public:
-    sqlite3* db;
 
     Controller(const std::string& db_filename);
 

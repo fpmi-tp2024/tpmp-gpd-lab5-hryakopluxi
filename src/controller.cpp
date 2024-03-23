@@ -92,3 +92,33 @@ void Controller::addDriver(Driver &driver) {
 
     driver.insertUserToDb(db);
 }
+
+void Controller::addOrder(Order &order) {
+    if (user->getRole() != ADMIN && user->getRole() != DISPATCHER && order.getDriverId() != user->getId()) {
+        throw PermissionDeniedException();
+    }
+
+    if (user->getRole() == DISPATCHER) {
+        Driver driver;
+        driver.getDataFromDb(db, order.getDriverId());
+        if (driver.getCity() != user->getCity()) {
+            throw PermissionDeniedException();
+        }
+    }
+
+    if (user->getRole() == ADMIN || user->getRole() == DISPATCHER) {
+        order.setIsApproved(true);
+    } else {
+        order.setIsApproved(false);
+    }
+
+    try {
+        Validator::validOrder(order, db);
+    } catch (const std::exception& e) {
+        std::string msg = "Invalid order: ";
+        msg += e.what();
+        throw std::invalid_argument(msg);
+    }
+
+    order.insertOrderToDb(db);
+}
