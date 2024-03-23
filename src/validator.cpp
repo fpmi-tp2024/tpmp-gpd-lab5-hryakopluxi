@@ -32,6 +32,23 @@ bool Validator::validAge(std::string date_str) {
     return std::mktime(&date) <= std::mktime(&current);
 }
 
+bool Validator::validDate(std::string date_str) {
+    std::tm date = {};
+    std::istringstream ss(date_str);
+    ss >> date.tm_year;  // Year
+    ss.ignore();  // Ignore the dash '-'
+    ss >> date.tm_mon;   // Month
+    ss.ignore();  // Ignore the dash '-'
+    ss >> date.tm_mday; // Day
+
+    auto now = std::chrono::system_clock::now();
+    auto currentTime = std::chrono::system_clock::to_time_t(now);
+    std::tm current = *std::localtime(&currentTime);
+
+    current.tm_year += 1902;
+    return std::mktime(&date) <= std::mktime(&current);
+}
+
 bool Validator::validDriver(const Driver &driver) {
     if (driver.getLogin().empty()) {
         throw std::invalid_argument("Login must not be empty\n");
@@ -63,6 +80,52 @@ bool Validator::validDriver(const Driver &driver) {
 
     if (!validAge(driver.getBirthday())) {
         throw std::invalid_argument("Age must be >= 18 years\n");
+    }
+
+    return true;
+}
+
+bool Validator::validOrder(const Order &order, sqlite3* db) {
+    Driver d;
+    Car c;
+    try {
+        d.getDataFromDb(db, order.getDriverId());
+    } catch (const std::exception& e) {
+        throw std::invalid_argument("Driver doesn't exists");
+    }
+
+    try {
+        c.getDataFromDb(db, order.getCarId());
+    } catch (const std::exception& e) {
+        throw std::invalid_argument("Car doesn't exists");
+    }
+
+    if (c.getDriverId() != d.getId()) {
+        throw std::invalid_argument("Driver doesn't obtain the car\n");
+    }
+
+    if (c.getLoadCapacity() < order.getLoad()) {
+        throw std::invalid_argument("Load of cargo > load capacity of the car\n");
+    }
+
+    if (!std::regex_match(order.getDate(), date_pattern)) {
+        throw std::invalid_argument("Date does not satisfy pattern YYYY-MM-DD\n");
+    }
+
+    if (!validDate(order.getDate())) {
+        throw std::invalid_argument("Invalid date was provided\n");
+    }
+
+    if (order.getMileage() < 0) {
+        throw std::invalid_argument("Mileage cannot be negative\n");
+    }
+
+    if (order.getCost() < 0) {
+        throw std::invalid_argument("Cost cannot be negative\n");
+    }
+
+    if (order.getLoad() < 0) {
+        throw std::invalid_argument("Load cannot be negative\n");
     }
 
     return true;
