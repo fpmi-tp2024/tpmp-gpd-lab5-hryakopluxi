@@ -2,6 +2,7 @@
 // Created by hakeyn on 21.3.24.
 //
 
+#include <iostream>
 #include "../include/controller.h"
 
 Controller::Controller(const std::string& db_filename) {
@@ -83,8 +84,12 @@ void Controller::addDriver(Driver &driver) {
         throw PermissionDeniedException();
     }
 
-    if (user->getRole() == DISPATCHER && user->getCity() != driver.getCity()) {
-        throw PermissionDeniedException();
+    if (user->getRole() == DISPATCHER) {
+        Dispatcher dispatcher;
+        dispatcher.getDataFromDb(db, user->getId());
+        if (User::toLower(dispatcher.getCity()) != User::toLower(driver.getCity())) {
+            throw PermissionDeniedException();
+        }
     }
 
     Validator::validDriver(driver);
@@ -121,4 +126,15 @@ void Controller::addOrder(Order &order) {
     }
 
     order.insertOrderToDb(db);
+}
+
+void Controller::addDispatcher(Dispatcher &dispatcher) {
+    if (user->getRole() != ADMIN) {
+        throw PermissionDeniedException();
+    }
+
+    Validator::validDispatcher(dispatcher);
+    dispatcher.setPassHash(BCrypt::generateHash(dispatcher.getPassHash()));
+
+    dispatcher.insertUserToDb(db);
 }

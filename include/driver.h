@@ -25,6 +25,13 @@ public:
 
     Driver() {};
 
+    Driver(const std::string &newName, const std::string &newSurname,
+           const std::vector<Category> &newCategories, int newExperience,
+           const std::string &newAddress, const std::string &newCity,
+           const std::string &newBirthday)
+            : name(newName), surname(newSurname), category(newCategories),
+              experience(newExperience), address(newAddress), city(newCity), birthday(newBirthday) {}
+
     std::string getName() const {
         return name;
     }
@@ -67,7 +74,7 @@ public:
         category = newCategories;
     }
 
-    void setCategoryFromStr(const std::string& str);
+    void setCategoryFromStr(const std::string &str);
 
     void setExperience(int newExperience) {
         experience = newExperience;
@@ -88,8 +95,6 @@ public:
     void getDataFromDb(sqlite3 *db, int user_id);
 
     void insertUserToDb(sqlite3 *db);
-
-
 };
 
 

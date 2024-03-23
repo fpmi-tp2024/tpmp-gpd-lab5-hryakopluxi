@@ -5,13 +5,13 @@
 #include "../include/validator.h"
 #include <iostream>
 
-const std::regex Validator::name_pattern(R"(^[A-Za-zА-Яа-я]+$)");
-const std::regex Validator::address_pattern(R"(^[a-zA-Zа-яА-Я0-9\s.,/]+$)");
+const std::regex Validator::name_pattern(R"(^[A-Za-z]+$)");
+const std::regex Validator::address_pattern(R"(^[a-zA-Z0-9\s.,/]+$)");
 const std::regex Validator::city_pattern(R"(^[A-Za-z]+$)");
 const std::regex Validator::date_pattern(R"(^\d{4}-\d{2}-\d{2}$)");
+const std::regex Validator::license_pattern("^[0-9]{4}[ABEIKMHOPCTX]{2}-[1-7]$");
 
-bool Validator::validLicense(std::string license) {
-    std::regex license_pattern("^[0-9]{4}[ABEIKMHOPCTX]{2}-[1-7]$");
+bool Validator::validLicense(const std::string &license) {
     return std::regex_match(license, license_pattern);
 }
 
@@ -57,21 +57,21 @@ bool Validator::validDriver(const Driver &driver) {
         throw std::invalid_argument("Password must not be empty\n");
     }
     if (!std::regex_match(driver.getName(), name_pattern)) {
-        throw std::invalid_argument("Name must consist only of russian or latin letters\n");
+        throw std::invalid_argument("Name must consist only of latin characters\n");
     }
-    if (!std::regex_match(driver.getName(), name_pattern)) {
-        throw std::invalid_argument("Surname must consist only of russian or latin letters\n");
+    if (!std::regex_match(driver.getSurname(), name_pattern)) {
+        throw std::invalid_argument("Surname must consist only of latin characters\n");
     }
     if (driver.getExperience() < 0) {
         throw std::invalid_argument("Experience cannot be negative\n");
     }
 
     if (!std::regex_match(driver.getAddress(), address_pattern)) {
-        throw std::invalid_argument("Address must consist only of russian or latin letters\n");
+        throw std::invalid_argument("Address must consist only of latin characters\n");
     }
 
     if (!std::regex_match(driver.getCity(), city_pattern)) {
-        throw std::invalid_argument("City must consist only of latin letters\n");
+        throw std::invalid_argument("City must consist only of latin characters\n");
     }
 
     if (!std::regex_match(driver.getBirthday(), date_pattern)) {
@@ -85,18 +85,18 @@ bool Validator::validDriver(const Driver &driver) {
     return true;
 }
 
-bool Validator::validOrder(const Order &order, sqlite3* db) {
+bool Validator::validOrder(const Order &order, sqlite3 *db) {
     Driver d;
     Car c;
     try {
         d.getDataFromDb(db, order.getDriverId());
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         throw std::invalid_argument("Driver doesn't exists");
     }
 
     try {
         c.getDataFromDb(db, order.getCarId());
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         throw std::invalid_argument("Car doesn't exists");
     }
 
@@ -126,6 +126,35 @@ bool Validator::validOrder(const Order &order, sqlite3* db) {
 
     if (order.getLoad() < 0) {
         throw std::invalid_argument("Load cannot be negative\n");
+    }
+
+    return true;
+}
+
+bool Validator::validDispatcher(const Dispatcher &dispatcher) {
+
+    if (dispatcher.getLogin().empty()) {
+        throw std::invalid_argument("Login must not be empty\n");
+    }
+
+    if (dispatcher.getPassHash().empty()) {
+        throw std::invalid_argument("Password must not be empty\n");
+    }
+
+    if (!std::regex_match(dispatcher.getName(), name_pattern)) {
+        throw std::invalid_argument("Name must consist only of latin characters\n");
+    }
+
+    if (!std::regex_match(dispatcher.getSurname(), name_pattern)) {
+        throw std::invalid_argument("Surname must consist only of latin characters\n");
+    }
+
+    if (!std::regex_match(dispatcher.getAddress(), address_pattern)) {
+        throw std::invalid_argument("Address must consist only of latin characters\n");
+    }
+
+    if (!std::regex_match(dispatcher.getCity(), city_pattern)) {
+        throw std::invalid_argument("City must consist only of latin characters\n");
     }
 
     return true;
