@@ -25,6 +25,7 @@ void Car::getDataFromDb(sqlite3 *db, int car_id) {
         throw InternalErrorException(errMsg);
     }
 
+    id = sqlite3_column_int(stmt, 0);
     driver_id = sqlite3_column_int(stmt, 1);
     license = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
     brand = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));

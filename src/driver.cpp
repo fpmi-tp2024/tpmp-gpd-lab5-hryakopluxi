@@ -77,6 +77,7 @@ void Driver::getDataFromDb(sqlite3 *db, int user_id) {
         throw InternalErrorException(errMsg);
     }
 
+    setId( user_id);
     name = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
     surname = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
     setCategoryFromStr(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)));

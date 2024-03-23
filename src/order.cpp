@@ -27,6 +27,7 @@ void Order::getDataFromDb(sqlite3 *db, int order_id) {
         throw InternalErrorException(errMsg);
     }
 
+    id = sqlite3_column_int(stmt, 0);
     driver_id = sqlite3_column_int(stmt, 1);
     car_id = sqlite3_column_int(stmt, 2);
     date = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
