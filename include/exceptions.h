@@ -9,9 +9,14 @@
 #include <utility>
 
 class PermissionDeniedException : public std::exception {
+private:
+    std::string msg = "Permission denied\n";
 public:
-    char* what() {
-        return "Permission denied\n";
+    PermissionDeniedException() = default;
+    explicit PermissionDeniedException(std::string msg) : msg(std::move(msg)) {}
+    PermissionDeniedException(const PermissionDeniedException& e) {}
+    [[nodiscard]] const char* what() const noexcept override {
+        return msg.c_str();
     }
 };
 
@@ -19,11 +24,14 @@ class InternalErrorException : public std::exception {
 private:
     std::string msg;
 public:
-    explicit InternalErrorException(std::string msg) {this->msg = std::move(msg);};
-    char* what() {
-        return const_cast<char *>(msg.c_str());
+    explicit InternalErrorException(std::string msg) : msg(std::move(msg)) {}
+    InternalErrorException(const InternalErrorException& e) {
+        msg = e.msg;
     }
 
+    [[nodiscard]] const char* what() const noexcept override {
+        return msg.c_str();
+    }
 };
 
 #endif //LAB_5_PROJECT_EXCEPTIONS_H
