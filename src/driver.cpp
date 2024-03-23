@@ -61,15 +61,20 @@ void Driver::getDataFromDb(sqlite3* db, int user_id) {
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Failed to prepare select statement: %s\n", sqlite3_errmsg(db));
-        throw InternalErrorException("Failed to prepare select driver statement\n");
+        std::string errMsg =  "Failed to prepare select driver statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
     }
 
     sqlite3_bind_int(stmt, 1, user_id);
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_ROW) {
-        throw InternalErrorException("Failed to execute select driver statement\n");
+        std::string errMsg =  "Failed to execute select driver statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
     }
 
     name = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1))));
@@ -88,8 +93,11 @@ void Driver::insertUserToDb(sqlite3 *db) {
 
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
+        std::string errMsg =  "Failed to prepare insert user statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
         sqlite3_exec(db, "ROLLBACK;", nullptr, nullptr, nullptr);
-        throw InternalErrorException("Failed to prepare insert user statement\n");
+        throw InternalErrorException(errMsg);
     }
 
     std::vector <std::string> insert_data{
@@ -104,8 +112,11 @@ void Driver::insertUserToDb(sqlite3 *db) {
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
+        std::string errMsg =  "Failed to execute insert user statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
         sqlite3_exec(db, "ROLLBACK;", nullptr, nullptr, nullptr);
-        throw InternalErrorException("Failed to execute insert user statement\n");
+        throw InternalErrorException(errMsg);
     }
     sqlite3_finalize(stmt);
 
@@ -117,8 +128,11 @@ void Driver::insertUserToDb(sqlite3 *db) {
 
     rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
+        std::string errMsg =  "Failed to prepare insert driver statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
         sqlite3_exec(db, "ROLLBACK;", nullptr, nullptr, nullptr);
-        throw InternalErrorException("Failed to prepare insert driver statement\n");
+        throw InternalErrorException(errMsg);
     }
 
     insert_data = {
@@ -142,8 +156,11 @@ void Driver::insertUserToDb(sqlite3 *db) {
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
+        std::string errMsg =  "Failed to execute insert driver statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
         sqlite3_exec(db, "ROLLBACK;", nullptr, nullptr, nullptr);
-        throw InternalErrorException("Failed to execute insert driver statement\n");
+        throw InternalErrorException(errMsg);
     }
 
     sqlite3_finalize(stmt);

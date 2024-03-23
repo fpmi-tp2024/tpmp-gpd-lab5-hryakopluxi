@@ -18,7 +18,10 @@ bool Controller::login(const std::string& login, const std::string& password) {
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
     if (rc != SQLITE_OK) {
-        throw InternalErrorException("Failed to prepare select user statement\n");
+        std::string errMsg =  "Failed to prepare select user statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
     }
 
     sqlite3_bind_text(stmt, 1, login.c_str(), -1, SQLITE_STATIC);

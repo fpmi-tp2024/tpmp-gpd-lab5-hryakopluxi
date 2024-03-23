@@ -4,21 +4,27 @@
 
 #include "../include/order.h"
 #include "../include/exceptions.h"
-#include <iostream>
+
 
 void Order::getDataFromDb(sqlite3 *db, int order_id) {
     char* sql = "SELECT (driver_id, car_id, date, mileage, load, cost, is_approved) FROM autopark_order WHERE id = ?;";
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        throw InternalErrorException("Failed to prepare select order statement\n");
+        std::string errMsg =  "Failed to prepare select order statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
     }
 
     sqlite3_bind_int(stmt, 1, order_id);
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_ROW) {
-        throw InternalErrorException("Failed to execute select order statement\n");
+        std::string errMsg =  "Failed to execute select order statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
     }
 
     driver_id = sqlite3_column_int(stmt, 1);
@@ -37,7 +43,10 @@ void Order::insertOrderToDb(sqlite3 *db) {
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        throw InternalErrorException("Failed to prepare insert order statement\n");
+        std::string errMsg =  "Failed to prepare insert order statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
     }
 
     sqlite3_bind_int(stmt, 1, driver_id);
@@ -50,7 +59,10 @@ void Order::insertOrderToDb(sqlite3 *db) {
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        throw InternalErrorException("Failed to execute insert user statement\n");
+        std::string errMsg =  "Failed to execute insert order statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
     }
     sqlite3_finalize(stmt);
 }
