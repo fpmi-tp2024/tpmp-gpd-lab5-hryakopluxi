@@ -3,8 +3,6 @@
 //
 
 #include <sqlite3.h>
-#include "car.h"
-#include "user.h"
 #include "dispatcher.h"
 #include "config.h"
 #include "validator.h"
@@ -16,12 +14,13 @@
 class Controller {
 private:
     sqlite3* db;
-    User user;
+    User *user;
     Config config;
-    Validator validator;
 public:
 
-    bool login(std::string login, std::string password);
+    Controller(const std::string& db_filename);
+
+    bool login(const std::string& login, const std::string& password);
     void logout();
 
     Driver getDriverInfo(int driver_id) const;

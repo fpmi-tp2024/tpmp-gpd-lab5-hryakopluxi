@@ -6,6 +6,7 @@
 #define LAB_5_PROJECT_ORDER_H
 
 #include <string>
+#include <sqlite3.h>
 
 class Order {
 private:
@@ -19,6 +20,13 @@ private:
     bool is_approved;
 
 public:
+    Order() : id(0), driver_id(0), car_id(0), date(""), mileage(0.0), load(0.0), cost(0.0), is_approved(false) {}
+
+    Order(int newId, int newDriverId, int newCarId, const std::string &newDate, double newMileage, double newLoad,
+          double newCost, bool newIsApproved)
+            : id(newId), driver_id(newDriverId), car_id(newCarId), date(newDate), mileage(newMileage), load(newLoad),
+              cost(newCost), is_approved(newIsApproved) {}
+
     int getId() const {
         return id;
     }
@@ -63,7 +71,7 @@ public:
         car_id = newCarId;
     }
 
-    void setDate(const std::string& newDate) {
+    void setDate(const std::string &newDate) {
         date = newDate;
     }
 
@@ -82,6 +90,10 @@ public:
     void setIsApproved(bool newIsApproved) {
         is_approved = newIsApproved;
     }
+
+    void getDataFromDb(sqlite3 *db, int order_id);
+
+    void insertOrderToDb(sqlite3 *db);
 };
 
 #endif //LAB_5_PROJECT_ORDER_H
