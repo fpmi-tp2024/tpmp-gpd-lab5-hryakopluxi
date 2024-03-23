@@ -7,7 +7,7 @@
 
 
 void Order::getDataFromDb(sqlite3 *db, int order_id) {
-    char* sql = "SELECT (driver_id, car_id, date, mileage, load, cost, is_approved) FROM autopark_order WHERE id = ?;";
+    char* sql = "SELECT * FROM autopark_order WHERE id = ?;";
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {

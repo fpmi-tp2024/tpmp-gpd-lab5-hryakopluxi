@@ -6,7 +6,7 @@
 
 std::string Driver::getCategoryString() const {
     std::string str = "";
-    for (auto cat : category) {
+    for (auto cat: category) {
         switch (cat) {
             case Category::A:
                 str += "A ";
@@ -35,15 +35,15 @@ std::string Driver::getCategoryString() const {
     return str;
 }
 
-void Driver::setCategoryFromStr(const std::string& str) {
+void Driver::setCategoryFromStr(const std::string &str) {
     category.clear();
     std::istringstream iss(str);
     std::string categoryToken;
     static const std::unordered_map<std::string, Category> categoryMap = {
-            {"A", Category::A},
-            {"B", Category::B},
-            {"C", Category::C},
-            {"D", Category::D},
+            {"A",  Category::A},
+            {"B",  Category::B},
+            {"C",  Category::C},
+            {"D",  Category::D},
             {"BE", Category::BE},
             {"CE", Category::CE}
     };
@@ -56,12 +56,12 @@ void Driver::setCategoryFromStr(const std::string& str) {
     }
 }
 
-void Driver::getDataFromDb(sqlite3* db, int user_id) {
-    char* sql = "SELECT (name, surname, category, address, city, birthday) FROM autopark_driver WHERE user_id = ?";
+void Driver::getDataFromDb(sqlite3 *db, int user_id) {
+    char *sql = "SELECT * FROM autopark_driver WHERE user_id = ?";
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
     if (rc != SQLITE_OK) {
-        std::string errMsg =  "Failed to prepare select driver statement: ";
+        std::string errMsg = "Failed to prepare select driver statement: ";
         errMsg += sqlite3_errmsg(db);
         errMsg += "\n";
         throw InternalErrorException(errMsg);
@@ -71,36 +71,36 @@ void Driver::getDataFromDb(sqlite3* db, int user_id) {
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_ROW) {
-        std::string errMsg =  "Failed to execute select driver statement: ";
+        std::string errMsg = "Failed to execute select driver statement: ";
         errMsg += sqlite3_errmsg(db);
         errMsg += "\n";
         throw InternalErrorException(errMsg);
     }
 
-    name = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1))));
-    surname = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2))));
-    setCategoryFromStr(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
-    address = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4))));
-    city = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 5))));
-    birthday =(( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 6))));
+    name = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+    surname = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+    setCategoryFromStr(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)));
+    address = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4));
+    city = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 5));
+    birthday = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 6));
 }
 
 void Driver::insertUserToDb(sqlite3 *db) {
     sqlite3_stmt *stmt;
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
-    char* sql = "INSERT INTO autopark_user (login, pass_hash, role) VALUES (?, ?, ?);";
+    char *sql = "INSERT INTO autopark_user (login, pass_hash, role) VALUES (?, ?, ?);";
 
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        std::string errMsg =  "Failed to prepare insert user statement: ";
+        std::string errMsg = "Failed to prepare insert user statement: ";
         errMsg += sqlite3_errmsg(db);
         errMsg += "\n";
         sqlite3_exec(db, "ROLLBACK;", nullptr, nullptr, nullptr);
         throw InternalErrorException(errMsg);
     }
 
-    std::vector <std::string> insert_data{
+    std::vector<std::string> insert_data{
             getLogin(),
             getPassHash(),
     };
@@ -112,7 +112,7 @@ void Driver::insertUserToDb(sqlite3 *db) {
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        std::string errMsg =  "Failed to execute insert user statement: ";
+        std::string errMsg = "Failed to execute insert user statement: ";
         errMsg += sqlite3_errmsg(db);
         errMsg += "\n";
         sqlite3_exec(db, "ROLLBACK;", nullptr, nullptr, nullptr);
@@ -128,7 +128,7 @@ void Driver::insertUserToDb(sqlite3 *db) {
 
     rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
-        std::string errMsg =  "Failed to prepare insert driver statement: ";
+        std::string errMsg = "Failed to prepare insert driver statement: ";
         errMsg += sqlite3_errmsg(db);
         errMsg += "\n";
         sqlite3_exec(db, "ROLLBACK;", nullptr, nullptr, nullptr);
@@ -136,12 +136,12 @@ void Driver::insertUserToDb(sqlite3 *db) {
     }
 
     insert_data = {
-        User::toLower(name),
-        User::toLower(surname),
-        getCategoryString(),
-        User::toLower(address),
-        User::toLower(city),
-        birthday,
+            User::toLower(name),
+            User::toLower(surname),
+            getCategoryString(),
+            User::toLower(address),
+            User::toLower(city),
+            birthday,
     };
 
     int id = getId();
@@ -156,7 +156,7 @@ void Driver::insertUserToDb(sqlite3 *db) {
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        std::string errMsg =  "Failed to execute insert driver statement: ";
+        std::string errMsg = "Failed to execute insert driver statement: ";
         errMsg += sqlite3_errmsg(db);
         errMsg += "\n";
         sqlite3_exec(db, "ROLLBACK;", nullptr, nullptr, nullptr);
