@@ -19,7 +19,6 @@ private:
     std::string brand;
     double mileage_buy;
     double load_capacity;
-
 public:
     Car() : id(0), driver_id(0), license(""), brand(""), mileage_buy(0.0), load_capacity(0.0) {}
 
@@ -76,6 +75,7 @@ public:
         load_capacity = newLoadCapacity;
     }
 
+    void getDataFromDb(sqlite3 *db, int car_id);
     void insertCarToDb(sqlite3 *db);
 };
 
