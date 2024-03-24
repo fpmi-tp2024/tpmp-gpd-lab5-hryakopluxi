@@ -214,3 +214,45 @@ void Validator::validateUpdateCar(Car& update, int car_id, sqlite3* db) {
 
     Validator::validCar(update, db);
 }
+
+void Validator::validateUpdateDriver(Driver &update, int driver_id, sqlite3 *db) {
+    Driver old;
+    try {
+        old.getDataFromDb(db, driver_id);
+    } catch (const std::exception& e) {
+        throw std::invalid_argument("No driver found by provided id");
+    }
+
+    update.setLogin("TEMP");
+    update.setPassHash("TEMP");
+
+    if (update.getName().empty()) {
+        update.setName(old.getName());
+    }
+
+    if (update.getSurname().empty()) {
+        update.setSurname(old.getSurname());
+    }
+
+    if (update.getCategoryString().empty()) {
+        update.setCategory(old.getCategories());
+    }
+
+    if (update.getExperience() == 0) {
+        update.setExperience(old.getExperience());
+    }
+
+    if (update.getAddress().empty()) {
+        update.setAddress(old.getAddress());
+    }
+
+    if (update.getCity().empty()) {
+        update.setCity(old.getCity());
+    }
+
+    if (update.getBirthday().empty()) {
+        update.setBirthday(old.getBirthday());
+    }
+
+    Validator::validDriver(update);
+}
