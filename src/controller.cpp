@@ -487,3 +487,38 @@ std::vector <Order> Controller::getDriverOrders(int driver_id, const std::string
 
     return orders;
 }
+
+std::string Controller::getCarSummaryMileageAndLoad(int car_id) const {
+    Car car;
+    try {
+        car.getDataFromDb(db, car_id);
+    } catch (const std::exception& e) {
+        if (user.getRole() == DRIVER) {
+            throw PermissionDeniedException();
+        }
+        throw std::invalid_argument("No car was found with provided id");
+    }
+
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER && user.getId() != car.getDriverId()) {
+        throw PermissionDeniedException();
+    }
+
+    std::string sql = "SELECT SUM(load), SUM(mileage) "
+                      "FROM autopark_order "
+                      "WHERE car_id = ?;";
+    sqlite3_stmt *stmt = nullptr;
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare car info statement: ");
+    sqlite3_bind_int(stmt, 1, car_id);
+
+    stmt = SQL::executeSQLStatement(db, stmt, SQLITE_ROW,
+                                    "Failed tp execute car info statement: ",
+                                    false, false);
+    double load = sqlite3_column_double(stmt, 0);
+    double mileage = sqlite3_column_double(stmt, 1);
+    sqlite3_finalize(stmt);
+
+    char buf[45];
+    sprintf(buf, "Summary load: %.3f\nSummary mileage: %.1f\n", load, mileage+car.getMileageBuy());
+    return buf;
+}
