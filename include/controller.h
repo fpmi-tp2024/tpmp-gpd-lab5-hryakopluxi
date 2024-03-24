@@ -38,6 +38,7 @@ public:
     void updateCar(int car_id, Car& update);
     void updateDriver(int user_id, Driver& update);
     void updateDispatcher(int user_id, Dispatcher& update);
+    void updateOrder(int order_id, Order& update);
     void approveOrder(int order_id);
 
     void deleteCar(int car_id);

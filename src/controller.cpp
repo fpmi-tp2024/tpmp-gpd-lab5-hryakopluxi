@@ -379,3 +379,42 @@ void Controller::updateDispatcher(int user_id, Dispatcher &update) {
     executeSQLStatement(db, stmt, SQLITE_DONE,
                         "Failed to execute update dispatcher statement: ", false);
 }
+
+void Controller::updateOrder(int order_id, Order &update) {
+    if (user->getRole() != ADMIN && user->getRole() != DISPATCHER) {
+        throw PermissionDeniedException();
+    }
+
+    Validator::validateUpdateOrder(update, order_id, db);
+
+    char *sql = "UPDATE autopark_order SET "
+                "driver_id = ?, car_id = ?, "
+                "date = ?, mileage = ?, "
+                "load = ?, cost = ?,"
+                "is_approved = ? "
+                "WHERE id = ?;";
+
+    sqlite3_stmt *stmt;
+    stmt = prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                               "Failed to prepare update dispatcher statement: ", false);
+
+    int driver_id = update.getDriverId();
+    int car_id = update.getCarId();
+    std::string date = update.getDate();
+    double mileage = update.getMileage();
+    double load = update.getCost();
+    double cost = update.getLoad();
+    int is_approved = update.getIsApproved();
+
+    sqlite3_bind_int(stmt, 1, driver_id);
+    sqlite3_bind_int(stmt, 2, car_id);
+    sqlite3_bind_text(stmt, 3, date.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 4, mileage);
+    sqlite3_bind_double(stmt, 5, load);
+    sqlite3_bind_double(stmt, 6, cost);
+    sqlite3_bind_int(stmt, 7, is_approved);
+    sqlite3_bind_int(stmt, 8, order_id);
+
+    executeSQLStatement(db, stmt, SQLITE_DONE,
+                        "Failed to execute update dispatcher statement: ", false);
+}
