@@ -7,6 +7,7 @@
 
 #include <string>
 #include <sqlite3.h>
+#include "sql.h"
 
 class Order {
 private:

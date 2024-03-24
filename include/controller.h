@@ -6,6 +6,7 @@
 #include "dispatcher.h"
 #include "config.h"
 #include "validator.h"
+#include "sql.h"
 #include "bcrypt/BCrypt.hpp"
 
 #ifndef LAB_5_PROJECT_CONTROLLER_H

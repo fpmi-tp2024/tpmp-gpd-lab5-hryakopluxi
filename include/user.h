@@ -9,6 +9,7 @@
 #include <vector>
 #include <sqlite3.h>
 #include "exceptions.h"
+#include "sql.h"
 
 enum Role {
     DRIVER = 1,

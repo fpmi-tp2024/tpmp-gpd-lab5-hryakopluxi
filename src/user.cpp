@@ -15,23 +15,13 @@ void User::getDataFromDb(sqlite3 *db, int user_id) {
     char* sql = "SELECT * FROM autopark_user WHERE id = ?;";
     sqlite3_stmt *stmt;
 
-    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
-    if (rc != SQLITE_OK) {
-        std::string errMsg = "Failed to prepare select user statement: ";
-        errMsg += sqlite3_errmsg(db);
-        errMsg += "\n";
-        throw InternalErrorException(errMsg);
-    }
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare select user statement: ");
 
     sqlite3_bind_int(stmt, 1, user_id);
-
-    rc = sqlite3_step(stmt);
-    if (rc != SQLITE_ROW) {
-        std::string errMsg = "Failed to execute select user statement: ";
-        errMsg += sqlite3_errmsg(db);
-        errMsg += "\n";
-        throw InternalErrorException(errMsg);
-    }
+    stmt = SQL::executeSQLStatement(db, stmt, SQLITE_ROW,
+                                    "Failed to execute select order statement: ",
+                                    false, false);
 
     id = user_id;
     login = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));

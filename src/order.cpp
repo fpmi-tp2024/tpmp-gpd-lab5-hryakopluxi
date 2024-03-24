@@ -9,23 +9,14 @@
 void Order::getDataFromDb(sqlite3 *db, int order_id) {
     char* sql = "SELECT * FROM autopark_order WHERE id = ?;";
     sqlite3_stmt *stmt;
-    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
-    if (rc != SQLITE_OK) {
-        std::string errMsg =  "Failed to prepare select order statement: ";
-        errMsg += sqlite3_errmsg(db);
-        errMsg += "\n";
-        throw InternalErrorException(errMsg);
-    }
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare select order statement: ");
 
     sqlite3_bind_int(stmt, 1, order_id);
 
-    rc = sqlite3_step(stmt);
-    if (rc != SQLITE_ROW) {
-        std::string errMsg =  "Failed to execute select order statement: ";
-        errMsg += sqlite3_errmsg(db);
-        errMsg += "\n";
-        throw InternalErrorException(errMsg);
-    }
+    stmt = SQL::executeSQLStatement(db, stmt, SQLITE_ROW,
+                                    "Failed to execute select order statement: ",
+                                    false, false);
 
     id = sqlite3_column_int(stmt, 0);
     driver_id = sqlite3_column_int(stmt, 1);
@@ -42,13 +33,8 @@ void Order::insertOrderToDb(sqlite3 *db) {
                 "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
     sqlite3_stmt *stmt;
-    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
-    if (rc != SQLITE_OK) {
-        std::string errMsg =  "Failed to prepare insert order statement: ";
-        errMsg += sqlite3_errmsg(db);
-        errMsg += "\n";
-        throw InternalErrorException(errMsg);
-    }
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare insert order statement: ");
 
     sqlite3_bind_int(stmt, 1, driver_id);
     sqlite3_bind_int(stmt, 2, car_id);
@@ -58,12 +44,6 @@ void Order::insertOrderToDb(sqlite3 *db) {
     sqlite3_bind_double(stmt, 6, cost);
     sqlite3_bind_int(stmt, 7, is_approved);
 
-    rc = sqlite3_step(stmt);
-    if (rc != SQLITE_DONE) {
-        std::string errMsg =  "Failed to execute insert order statement: ";
-        errMsg += sqlite3_errmsg(db);
-        errMsg += "\n";
-        throw InternalErrorException(errMsg);
-    }
-    sqlite3_finalize(stmt);
+    SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
+                             "Failed to execute insert order statement: ");
 }
