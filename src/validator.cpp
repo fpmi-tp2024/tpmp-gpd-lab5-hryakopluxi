@@ -159,3 +159,26 @@ bool Validator::validDispatcher(const Dispatcher &dispatcher) {
 
     return true;
 }
+
+bool Validator::validCar(const Car &car, sqlite3 *db) {
+    try {
+        Driver d;
+        d.getDataFromDb(db, car.getDriverId());
+    } catch (const std::exception& e) {
+        throw std::invalid_argument("There is no driver to own this car\n");
+    }
+
+    if (!Validator::validLicense(car.getLicense())) {
+        throw std::invalid_argument("Invalid car license");
+    }
+
+    if (car.getMileageBuy() < 0) {
+        throw std::invalid_argument("Invalid car mileage");
+    }
+
+    if (car.getLoadCapacity() < 0) {
+        throw std::invalid_argument("Invalid car mileage");
+    }
+
+    return true;
+}
