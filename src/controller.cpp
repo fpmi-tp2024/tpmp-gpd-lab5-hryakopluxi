@@ -426,3 +426,64 @@ void Controller::updateOrderApproveStatus(int order_id, bool status) {
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
                              "Failed to execute update approve status order statement");
 }
+
+std::vector <Order> Controller::getDriverOrders(int driver_id, const std::string& date_start,
+                                                 const std::string& date_end) const {
+    Driver driver;
+    try {
+        driver.getDataFromDb(db, driver_id);
+    } catch (const std::exception& e) {
+        throw std::invalid_argument("No driver was found");
+    }
+
+    if (user.getRole() == DISPATCHER) {
+        Dispatcher dispatcher;
+        dispatcher.getDataFromDb(db, user.getId());
+        if (User::toLower(dispatcher.getCity()) != User::toLower(driver.getCity())) {
+            throw PermissionDeniedException();
+        }
+    }
+
+    if (user.getRole() == DRIVER && user.getId() != driver_id) {
+        throw PermissionDeniedException();
+    }
+
+    Validator::validDate(date_start);
+    Validator::validDate(date_end);
+
+    sqlite3_stmt *stmt = nullptr;
+    std::string sql = "SELECT *\n"
+                      "FROM autopark_order\n"
+                      "WHERE driver_id = ? \n"
+                      "AND date >= DATE(?) AND date <= DATE(?);";
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare retrieve orders statement: ");
+    sqlite3_bind_int(stmt, 1, driver_id);
+    sqlite3_bind_text(stmt, 2, date_start.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, date_end.c_str(), -1, SQLITE_STATIC);
+
+    int rc;
+    std::vector<Order> orders;
+    while (true) {
+        rc = sqlite3_step(stmt);
+        if (rc != SQLITE_ROW) {
+            break;
+        }
+        Order ord;
+        ord.setId(sqlite3_column_int(stmt, 0));
+        ord.setDriverId(sqlite3_column_int(stmt, 1));
+        ord.setCarId(sqlite3_column_int(stmt, 2));
+        ord.setDate(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
+        ord.setMileage(sqlite3_column_double(stmt, 4));
+        ord.setLoad(sqlite3_column_double(stmt, 5));
+        ord.setCost(sqlite3_column_double(stmt, 6));
+        ord.setIsApproved(sqlite3_column_int(stmt, 7));
+        orders.push_back(ord);
+    }
+
+    if (rc != SQLITE_DONE) {
+        throw std::invalid_argument("No orders were found with such conditions.\n");
+    }
+
+    return orders;
+}

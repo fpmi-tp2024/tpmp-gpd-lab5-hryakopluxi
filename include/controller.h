@@ -24,10 +24,10 @@ public:
     bool login(const std::string& login, const std::string& password);
     void logout();
 
-    [[nodiscard]] std::vector <Order>& getDriverOrders(int driver_id, std::string period) const;
+    [[nodiscard]] std::vector <Order> getDriverOrders(int driver_id, const std::string& date_start, const std::string& date_end) const;
     [[nodiscard]] std::string getCarSummaryMileageAndLoad(int car_id) const;
     [[nodiscard]] std::string getDriverStatistics(int driver_id) const;
-    [[nodiscard]] std::vector<std::string> getAllDriversStatistics() const;
+    [[nodiscard]] const std::vector<std::string> getAllDriversStatistics() const;
     [[nodiscard]] std::string getWorstDriverSummary() const;
     [[nodiscard]] std::string getBestCarInfo() const;
 
