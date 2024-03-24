@@ -287,3 +287,38 @@ void Validator::validateUpdateDispatcher(Dispatcher &update, int dispatcher_id, 
 
     Validator::validDispatcher(update);
 }
+
+void Validator::validateUpdateOrder(Order& update, int order_id, sqlite3*db) {
+    Order old;
+    try {
+        old.getDataFromDb(db, order_id);
+    } catch (const std::exception& e) {
+        throw std::invalid_argument("No order found by provided id");
+    }
+
+    if (update.getDriverId() == 0) {
+        update.setDriverId(old.getDriverId());
+    }
+
+    if (update.getCarId() == 0) {
+        update.setCarId(old.getCarId());
+    }
+
+    if (update.getDate().empty()) {
+        update.setDate(old.getDate());
+    }
+
+    if (update.getMileage() == 0.) {
+        update.setMileage(old.getMileage());
+    }
+
+    if (update.getLoad() == 0.) {
+        update.setLoad(old.getLoad());
+    }
+
+    if (update.getCost() == 0.) {
+        update.setCost(old.getCost());
+    }
+
+    Validator::validOrder(update, db);
+}
