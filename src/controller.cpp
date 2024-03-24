@@ -53,33 +53,15 @@ bool Controller::login(const std::string &login, const std::string &password) {
     if (rc != SQLITE_ROW) {
         return false;
     }
+
     std::string table_pass_hash = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
     if (!BCrypt::validatePassword(password, table_pass_hash)) {
         return false;
     }
 
-    int roleInt = sqlite3_column_int(stmt, 3);
-
-    switch (roleInt) {
-        case 1:
-            user = new Driver();
-            user->setRole(Role::DRIVER);
-            break;
-        case 2:
-            user = new Dispatcher();
-            user->setRole(Role::DISPATCHER);
-            break;
-        case 3:
-            user = new User();
-            user->setRole(Role::ADMIN);
-            break;
-        default:
-            throw InternalErrorException("Failed to get valid data about user\n");
-    }
+    user = new User();
     user->setId(sqlite3_column_int(stmt, 0));
     user->setLogin(login);
-    user->getDataFromDb(db, user->getId());
-
     return true;
 }
 
@@ -123,8 +105,10 @@ void Controller::addOrder(Order &order) {
 
     if (user->getRole() == DISPATCHER) {
         Driver driver;
+        Dispatcher disp;
+        disp.getDataFromDb(db, user->getId());
         driver.getDataFromDb(db, order.getDriverId());
-        if (driver.getCity() != user->getCity()) {
+        if (driver.getCity() != disp.getCity()) {
             throw PermissionDeniedException();
         }
     }
@@ -417,4 +401,29 @@ void Controller::updateOrder(int order_id, Order &update) {
 
     executeSQLStatement(db, stmt, SQLITE_DONE,
                         "Failed to execute update dispatcher statement: ", false);
+}
+
+void Controller::updateUser(int user_id, User &update) {
+    if (user->getRole() != ADMIN && user_id != user->getId()) {
+        throw PermissionDeniedException();
+    }
+
+    Validator::validateUpdateUser(update, user_id, db);
+
+    char* sql = "UPDATE autopark_user SET "
+                "login = ?, pass_hash = ? "
+                "WHERE id = ?;";
+    sqlite3_stmt *stmt;
+    stmt = prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                        "Failed to prepare update user statement", false);
+
+    std::string login = update.getLogin();
+    std::string pass_hash = update.getPassHash();
+
+    sqlite3_bind_text(stmt, 1, login.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, pass_hash.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 3, user_id);
+
+    executeSQLStatement(db, stmt, SQLITE_DONE,
+                        "Failed to execute update user statement", false);
 }
