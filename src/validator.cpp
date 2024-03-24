@@ -180,5 +180,5 @@ bool Validator::validCar(const Car &car, sqlite3 *db) {
         throw std::invalid_argument("Invalid car mileage");
     }
 
-    return true
+    return true;
 }

@@ -72,9 +72,7 @@ void Controller::addCar(Car &car) {
         throw PermissionDeniedException();
     }
 
-    if (!Validator::validLicense(car.getLicense())) {
-        throw std::invalid_argument("Invalid car license");
-    }
+    Validator::validCar(car, db);
 
     car.insertCarToDb(db);
 }
@@ -291,4 +289,39 @@ void Controller::deleteDispatcher(int user_id) {
 
     sqlite3_finalize(stmt);
     sqlite3_exec(db, "COMMIT;", nullptr, nullptr, nullptr);
+}
+
+void Controller::deleteOrder(int order_id) {
+    if (user->getRole() != ADMIN) {
+        throw PermissionDeniedException();
+    }
+
+    try {
+        Order ord;
+        ord.getDataFromDb(db, order_id);
+    } catch (const std::exception& e) {
+        throw std::invalid_argument("No order with provided id\n");
+    }
+
+    char* sql = "DELETE FROM autopark_order WHERE id = ?";
+    sqlite3_stmt* stmt;
+
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        std::string errMsg =  "Failed to prepare delete order statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
+    }
+
+    sqlite3_bind_int(stmt, 1, order_id);
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        std::string errMsg =  "Failed to execute delete order statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
+    }
+
+    sqlite3_finalize(stmt);
 }
