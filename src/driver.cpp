@@ -81,9 +81,10 @@ void Driver::getDataFromDb(sqlite3 *db, int user_id) {
     name = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
     surname = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
     setCategoryFromStr(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)));
-    address = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4));
-    city = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 5));
-    birthday = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 6));
+    experience = sqlite3_column_int(stmt, 4);
+    address = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 5));
+    city = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 6));
+    birthday = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 7));
 }
 
 void Driver::insertUserToDb(sqlite3 *db) {
@@ -124,8 +125,8 @@ void Driver::insertUserToDb(sqlite3 *db) {
     setId(static_cast<int>(sqlite3_last_insert_rowid(db)));
 
 
-    sql = "INSERT INTO autopark_driver (user_id, name, surname, category, address, city, birthday) "
-          "VALUES (?, ?, ?, ?, ?, ?, ?);";
+    sql = "INSERT INTO autopark_driver (user_id, name, surname, category, experience, address, city, birthday) "
+          "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
     rc = sqlite3_prepare_v2(db, sql, -1, &stmt, nullptr);
     if (rc != SQLITE_OK) {
@@ -146,14 +147,16 @@ void Driver::insertUserToDb(sqlite3 *db) {
     };
 
     int id = getId();
+    int exp = getExperience();
 
     sqlite3_bind_int(stmt, 1, id);
     sqlite3_bind_text(stmt, 2, insert_data[0].c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 3, insert_data[1].c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 4, insert_data[2].c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 5, insert_data[3].c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 6, insert_data[4].c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 7, insert_data[5].c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 5, exp);
+    sqlite3_bind_text(stmt, 6, insert_data[3].c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 7, insert_data[4].c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 8, insert_data[5].c_str(), -1, SQLITE_STATIC);
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
