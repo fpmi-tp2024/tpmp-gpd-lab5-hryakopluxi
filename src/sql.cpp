@@ -1,12 +1,12 @@
 //
-// Created by hakeyn on 24.3.24.
+// Created by Stanislau Senkevich on 24.3.24.
 //
 
 #include "../include/sql.h"
 
-sqlite3_stmt *SQL::prepareSQLStatement(sqlite3 *db, char *sql, sqlite3_stmt *stmt,
-                                  int required_status, std::string errMsg, bool rollback) {
-    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+sqlite3_stmt *SQL::prepareSQLStatement(sqlite3 *db, const std::string &sql, sqlite3_stmt *stmt,
+                                       int required_status, std::string errMsg, bool rollback) {
+    int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
     if (rc != required_status) {
         errMsg += sqlite3_errmsg(db);
         errMsg += "\n";
@@ -20,7 +20,7 @@ sqlite3_stmt *SQL::prepareSQLStatement(sqlite3 *db, char *sql, sqlite3_stmt *stm
 }
 
 sqlite3_stmt *SQL::executeSQLStatement(sqlite3 *db, sqlite3_stmt *stmt, int required_status,
-                              std::string errMsg, bool rollback, bool finalize) {
+                                       std::string errMsg, bool rollback, bool finalize) {
     int rc = sqlite3_step(stmt);
     if (rc != required_status) {
         errMsg += sqlite3_errmsg(db);

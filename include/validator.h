@@ -1,5 +1,5 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 
 #ifndef LAB_5_PROJECT_VALIDATOR_H
@@ -30,8 +30,8 @@ public:
     static bool validCar(const Car& car, sqlite3* db);
     static bool validDriver(const Driver& driver);
     static bool validLicense(const std::string& license);
-    static bool validDate(std::string date);
-    static bool validAge(std::string date);
+    static bool validDate(const std::string& date);
+    static bool validAge(const std::string& date);
 
     static void validateUpdateCar(Car& update, int car_id, sqlite3* db);
     static void validateUpdateDriver(Driver& update, int driver_id, sqlite3* db);

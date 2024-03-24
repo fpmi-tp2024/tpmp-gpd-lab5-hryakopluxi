@@ -1,11 +1,12 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 
 #ifndef LAB_5_PROJECT_USER_H
 #define LAB_5_PROJECT_USER_H
 
 #include <string>
+#include <utility>
 #include <vector>
 #include <sqlite3.h>
 #include "exceptions.h"
@@ -35,24 +36,24 @@ private:
 
 public:
 
-    User() : id(0), login(""), pass_hash(""), role(DRIVER) {}
+    User() : id(0), role(DRIVER) {}
 
-    User(int newId, const std::string &newLogin, const std::string &newPassHash, Role newRole)
-            : id(newId), login(newLogin), pass_hash(newPassHash), role(newRole) {}
+    User(int newId, std::string newLogin, std::string newPassHash, Role newRole)
+            : id(newId), login(std::move(newLogin)), pass_hash(std::move(newPassHash)), role(newRole) {}
 
-    int getId() const {
+    [[nodiscard]] int getId() const {
         return id;
     }
 
-    std::string getLogin() const {
+    [[nodiscard]] std::string getLogin() const {
         return login;
     }
 
-    std::string getPassHash() const {
+    [[nodiscard]] std::string getPassHash() const {
         return pass_hash;
     }
 
-    Role getRole() const {
+    [[nodiscard]] Role getRole() const {
         return role;
     }
 

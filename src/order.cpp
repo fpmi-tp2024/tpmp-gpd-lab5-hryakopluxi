@@ -1,13 +1,12 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 
 #include "../include/order.h"
-#include "../include/exceptions.h"
 
 
 void Order::getDataFromDb(sqlite3 *db, int order_id) {
-    char* sql = "SELECT * FROM autopark_order WHERE id = ?;";
+    std::string sql = "SELECT * FROM autopark_order WHERE id = ?;";
     sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare select order statement: ");
@@ -21,7 +20,7 @@ void Order::getDataFromDb(sqlite3 *db, int order_id) {
     id = sqlite3_column_int(stmt, 0);
     driver_id = sqlite3_column_int(stmt, 1);
     car_id = sqlite3_column_int(stmt, 2);
-    date = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
+    date = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
     mileage = sqlite3_column_double(stmt, 4);
     load = sqlite3_column_double(stmt, 5);
     cost = sqlite3_column_double(stmt, 6);
@@ -29,7 +28,7 @@ void Order::getDataFromDb(sqlite3 *db, int order_id) {
 }
 
 void Order::insertOrderToDb(sqlite3 *db) {
-    char* sql = "INSERT INTO autopark_order (driver_id, car_id, date, mileage, load, cost, is_approved) "
+    std::string sql = "INSERT INTO autopark_order (driver_id, car_id, date, mileage, load, cost, is_approved) "
                 "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
     sqlite3_stmt *stmt = nullptr;

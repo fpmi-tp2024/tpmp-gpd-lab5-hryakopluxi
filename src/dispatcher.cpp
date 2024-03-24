@@ -1,13 +1,11 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 
-#include <sqlite3.h>
 #include "../include/dispatcher.h"
-#include "../include/exceptions.h"
 
-void Dispatcher::getDataFromDb(sqlite3* db, int user_id) {
-    char* sql = "SELECT * FROM autopark_dispatcher WHERE user_id = ?";
+void Dispatcher::getDataFromDb(sqlite3 *db, int user_id) {
+    std::string sql = "SELECT * FROM autopark_dispatcher WHERE user_id = ?";
     sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare select dispatcher statement: ");
@@ -19,17 +17,17 @@ void Dispatcher::getDataFromDb(sqlite3* db, int user_id) {
                                     false, false);
 
     setId(user_id);
-    name = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1))));
-    surname = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2))));
-    address = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3))));
-    city = (( reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4))));
+    name = ((reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1))));
+    surname = ((reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2))));
+    address = ((reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3))));
+    city = ((reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4))));
 }
 
-void Dispatcher::insertUserToDb(sqlite3* db) {
+void Dispatcher::insertUserToDb(sqlite3 *db) {
     sqlite3_stmt *stmt = nullptr;
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
-    char *sql = "INSERT INTO autopark_user (login, pass_hash, role) VALUES (?, ?, ?);";
+    std::string sql = "INSERT INTO autopark_user (login, pass_hash, role) VALUES (?, ?, ?);";
 
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare insert user statement: ", true);
@@ -45,7 +43,7 @@ void Dispatcher::insertUserToDb(sqlite3* db) {
     sqlite3_bind_int(stmt, 3, role);
 
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                                    "Failed to execute insert user statement: ",true);
+                             "Failed to execute insert user statement: ", true);
 
     setId(static_cast<int>(sqlite3_last_insert_rowid(db)));
 
@@ -71,7 +69,7 @@ void Dispatcher::insertUserToDb(sqlite3* db) {
     sqlite3_bind_text(stmt, 5, insert_data[3].c_str(), -1, SQLITE_STATIC);
 
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                                    "Failed to execute insert dispatcher statement: ",true);
+                             "Failed to execute insert dispatcher statement: ", true);
 
     sqlite3_exec(db, "COMMIT;", nullptr, nullptr, nullptr);
 }

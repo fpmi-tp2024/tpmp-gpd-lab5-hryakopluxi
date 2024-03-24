@@ -1,9 +1,11 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 
 #ifndef LAB_5_PROJECT_DISPATCHER_H
 #define LAB_5_PROJECT_DISPATCHER_H
+
+#include <utility>
 
 #include "user.h"
 
@@ -17,23 +19,23 @@ private:
 public:
     Dispatcher() = default;
 
-    Dispatcher(const std::string &newName, const std::string &newSurname,
-               const std::string &newAddress, const std::string &newCity)
-            : name(newName), surname(newSurname), address(newAddress), city(newCity) {}
+    Dispatcher(std::string newName, std::string newSurname,
+               std::string newAddress, std::string newCity)
+            : name(std::move(newName)), surname(std::move(newSurname)), address(std::move(newAddress)), city(std::move(newCity)) {}
 
-    std::string getName() const {
+    [[nodiscard]] std::string getName() const {
         return name;
     }
 
-    std::string getSurname() const {
+    [[nodiscard]] std::string getSurname() const {
         return surname;
     }
 
-    std::string getAddress() const {
+    [[nodiscard]] std::string getAddress() const {
         return address;
     }
 
-    std::string getCity() const {
+    [[nodiscard]] std::string getCity() const {
         return city;
     }
 

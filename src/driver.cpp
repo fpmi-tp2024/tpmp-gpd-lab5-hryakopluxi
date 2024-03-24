@@ -1,11 +1,10 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 #include "../include/driver.h"
-#include "../include/exceptions.h"
 
 std::string Driver::getCategoryString() const {
-    std::string str = "";
+    std::string str;
     for (auto cat: category) {
         switch (cat) {
             case Category::A:
@@ -28,7 +27,7 @@ std::string Driver::getCategoryString() const {
                 break;
         }
     }
-    if (str.size() > 0) {
+    if (!str.empty()) {
         str.pop_back();
     }
 
@@ -57,10 +56,10 @@ void Driver::setCategoryFromStr(const std::string &str) {
 }
 
 void Driver::getDataFromDb(sqlite3 *db, int user_id) {
-    char *sql = "SELECT * FROM autopark_driver WHERE user_id = ?";
+    std::string sql = "SELECT * FROM autopark_driver WHERE user_id = ?";
     sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                             "Failed to prepare select driver statement: ");
+                                    "Failed to prepare select driver statement: ");
 
     sqlite3_bind_int(stmt, 1, user_id);
 
@@ -68,7 +67,7 @@ void Driver::getDataFromDb(sqlite3 *db, int user_id) {
                                     "Failed to execute select driver statement: ",
                                     false, false);
 
-    setId( user_id);
+    setId(user_id);
     name = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
     surname = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
     setCategoryFromStr(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)));
@@ -82,7 +81,7 @@ void Driver::insertUserToDb(sqlite3 *db) {
     sqlite3_stmt *stmt = nullptr;
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
-    char *sql = "INSERT INTO autopark_user (login, pass_hash, role) VALUES (?, ?, ?);";
+    std::string sql = "INSERT INTO autopark_user (login, pass_hash, role) VALUES (?, ?, ?);";
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare insert user statement: ", true);
 

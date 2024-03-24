@@ -1,18 +1,18 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 
 #include "../include/user.h"
 
 std::string User::toLower(std::string str) {
-    for (char & i : str) {
+    for (char &i: str) {
         i = std::tolower(i);
     }
     return str;
 }
 
 void User::getDataFromDb(sqlite3 *db, int user_id) {
-    char* sql = "SELECT * FROM autopark_user WHERE id = ?;";
+    std::string sql = "SELECT * FROM autopark_user WHERE id = ?;";
     sqlite3_stmt *stmt = nullptr;
 
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
@@ -24,7 +24,7 @@ void User::getDataFromDb(sqlite3 *db, int user_id) {
                                     false, false);
 
     id = user_id;
-    login = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-    pass_hash = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+    login = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1));
+    pass_hash = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
     role = static_cast<Role>(sqlite3_column_int(stmt, 3));
 }

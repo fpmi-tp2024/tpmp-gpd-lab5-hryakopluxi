@@ -1,5 +1,5 @@
 //
-// Created by hakeyn on 24.3.24.
+// Created by Stanislau Senkevich on 24.3.24.
 //
 
 #ifndef LAB_5_PROJECT_SQL_H
@@ -11,7 +11,7 @@
 
 class SQL {
 public:
-    static sqlite3_stmt *prepareSQLStatement(sqlite3 *db, char *sql, sqlite3_stmt *stmt,
+    static sqlite3_stmt *prepareSQLStatement(sqlite3 *db, const std::string& sql, sqlite3_stmt *stmt,
                                              int required_status, std::string errMsg, bool rollback = false);
     static sqlite3_stmt *executeSQLStatement(sqlite3 *db, sqlite3_stmt *stmt, int required_status,
                                     std::string errMsg, bool rollback = false, bool finalize = true);

@@ -1,11 +1,12 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 
 #ifndef LAB_5_PROJECT_DRIVER_H
 #define LAB_5_PROJECT_DRIVER_H
 
 #include "user.h"
+#include <utility>
 #include <vector>
 #include <unordered_map>
 #include <sstream>
@@ -16,49 +17,49 @@ private:
     std::string name;
     std::string surname;
     std::vector<Category> category;
-    int experience;
+    int experience = 0;
     std::string address;
     std::string city;
     std::string birthday; // yyyy-mm-dd
 
 public:
 
-    Driver() {};
+    Driver() = default;
 
-    Driver(const std::string &newName, const std::string &newSurname,
+    Driver(std::string newName, std::string newSurname,
            const std::vector<Category> &newCategories, int newExperience,
-           const std::string &newAddress, const std::string &newCity,
-           const std::string &newBirthday)
-            : name(newName), surname(newSurname), category(newCategories),
-              experience(newExperience), address(newAddress), city(newCity), birthday(newBirthday) {}
+           std::string newAddress, std::string newCity,
+           std::string newBirthday)
+            : name(std::move(newName)), surname(std::move(newSurname)), category(newCategories),
+              experience(newExperience), address(std::move(newAddress)), city(std::move(newCity)), birthday(std::move(newBirthday)) {}
 
-    std::string getName() const {
+    [[nodiscard]] std::string getName() const {
         return name;
     }
 
-    std::string getSurname() const {
+    [[nodiscard]] std::string getSurname() const {
         return surname;
     }
 
-    std::vector<Category> getCategories() const {
+    [[nodiscard]] std::vector<Category> getCategories() const {
         return category;
     }
 
-    std::string getCategoryString() const;
+    [[nodiscard]] std::string getCategoryString() const;
 
-    int getExperience() const {
+    [[nodiscard]] int getExperience() const {
         return experience;
     }
 
-    std::string getAddress() const {
+    [[nodiscard]] std::string getAddress() const {
         return address;
     }
 
-    std::string getCity() const {
+    [[nodiscard]] std::string getCity() const {
         return city;
     }
 
-    std::string getBirthday() const {
+    [[nodiscard]] std::string getBirthday() const {
         return birthday;
     }
 

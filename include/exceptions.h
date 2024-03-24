@@ -1,5 +1,5 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 
 #ifndef LAB_5_PROJECT_EXCEPTIONS_H
@@ -14,7 +14,9 @@ private:
 public:
     PermissionDeniedException() = default;
     explicit PermissionDeniedException(std::string msg) : msg(std::move(msg)) {}
-    PermissionDeniedException(const PermissionDeniedException& e) {}
+    PermissionDeniedException(const PermissionDeniedException& e) {
+        msg = e.msg;
+    }
     [[nodiscard]] const char* what() const noexcept override {
         return msg.c_str();
     }
