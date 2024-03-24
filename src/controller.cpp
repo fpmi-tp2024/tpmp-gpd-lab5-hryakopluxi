@@ -59,18 +59,17 @@ bool Controller::login(const std::string &login, const std::string &password) {
         return false;
     }
 
-    user = new User();
-    user->setId(sqlite3_column_int(stmt, 0));
-    user->setLogin(login);
+    user.setId(sqlite3_column_int(stmt, 0));
+    user.setLogin(login);
     return true;
 }
 
 void Controller::logout() {
-    user = nullptr;
+    user = User();
 }
 
 void Controller::addCar(Car &car) {
-    if (user->getRole() != ADMIN && user->getRole() != DISPATCHER) {
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
         throw PermissionDeniedException();
     }
 
@@ -80,13 +79,13 @@ void Controller::addCar(Car &car) {
 }
 
 void Controller::addDriver(Driver &driver) {
-    if (user->getRole() != ADMIN && user->getRole() != DISPATCHER) {
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
         throw PermissionDeniedException();
     }
 
-    if (user->getRole() == DISPATCHER) {
+    if (user.getRole() == DISPATCHER) {
         Dispatcher dispatcher;
-        dispatcher.getDataFromDb(db, user->getId());
+        dispatcher.getDataFromDb(db, user.getId());
         if (User::toLower(dispatcher.getCity()) != User::toLower(driver.getCity())) {
             throw PermissionDeniedException();
         }
@@ -99,21 +98,21 @@ void Controller::addDriver(Driver &driver) {
 }
 
 void Controller::addOrder(Order &order) {
-    if (user->getRole() != ADMIN && user->getRole() != DISPATCHER && order.getDriverId() != user->getId()) {
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER && order.getDriverId() != user.getId()) {
         throw PermissionDeniedException();
     }
 
-    if (user->getRole() == DISPATCHER) {
+    if (user.getRole() == DISPATCHER) {
         Driver driver;
         Dispatcher disp;
-        disp.getDataFromDb(db, user->getId());
+        disp.getDataFromDb(db, user.getId());
         driver.getDataFromDb(db, order.getDriverId());
         if (driver.getCity() != disp.getCity()) {
             throw PermissionDeniedException();
         }
     }
 
-    if (user->getRole() == ADMIN || user->getRole() == DISPATCHER) {
+    if (user.getRole() == ADMIN || user.getRole() == DISPATCHER) {
         order.setIsApproved(true);
     } else {
         order.setIsApproved(false);
@@ -131,7 +130,7 @@ void Controller::addOrder(Order &order) {
 }
 
 void Controller::addDispatcher(Dispatcher &dispatcher) {
-    if (user->getRole() != ADMIN) {
+    if (user.getRole() != ADMIN) {
         throw PermissionDeniedException();
     }
 
@@ -142,7 +141,7 @@ void Controller::addDispatcher(Dispatcher &dispatcher) {
 }
 
 void Controller::deleteCar(int car_id) {
-    if (user->getRole() != ADMIN) {
+    if (user.getRole() != ADMIN) {
         throw PermissionDeniedException();
     }
 
@@ -158,7 +157,7 @@ void Controller::deleteCar(int car_id) {
 }
 
 void Controller::deleteDriver(int user_id) {
-    if (user->getRole() != ADMIN) {
+    if (user.getRole() != ADMIN) {
         throw PermissionDeniedException();
     }
 
@@ -194,7 +193,7 @@ void Controller::deleteDriver(int user_id) {
 }
 
 void Controller::deleteDispatcher(int user_id) {
-    if (user->getRole() != ADMIN) {
+    if (user.getRole() != ADMIN) {
         throw PermissionDeniedException();
     }
 
@@ -227,7 +226,7 @@ void Controller::deleteDispatcher(int user_id) {
 }
 
 void Controller::deleteOrder(int order_id) {
-    if (user->getRole() != ADMIN) {
+    if (user.getRole() != ADMIN) {
         throw PermissionDeniedException();
     }
 
@@ -249,7 +248,7 @@ void Controller::deleteOrder(int order_id) {
 }
 
 void Controller::updateCar(int car_id, Car &update) {
-    if (user->getRole() != ADMIN && user->getRole() != DISPATCHER) {
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
         throw PermissionDeniedException();
     }
 
@@ -282,13 +281,13 @@ void Controller::updateCar(int car_id, Car &update) {
 }
 
 void Controller::updateDriver(int user_id, Driver &update) {
-    if (user->getRole() != ADMIN && user->getRole() != DISPATCHER) {
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
         throw PermissionDeniedException();
     }
 
-    if (user->getRole() == DISPATCHER) {
+    if (user.getRole() == DISPATCHER) {
         Dispatcher disp;
-        disp.getDataFromDb(db, user->getId());
+        disp.getDataFromDb(db, user.getId());
         Driver old;
         try {
             old.getDataFromDb(db, user_id);
@@ -334,7 +333,7 @@ void Controller::updateDriver(int user_id, Driver &update) {
 }
 
 void Controller::updateDispatcher(int user_id, Dispatcher &update) {
-    if (user->getRole() != ADMIN) {
+    if (user.getRole() != ADMIN) {
         throw PermissionDeniedException();
     }
 
@@ -365,7 +364,7 @@ void Controller::updateDispatcher(int user_id, Dispatcher &update) {
 }
 
 void Controller::updateOrder(int order_id, Order &update) {
-    if (user->getRole() != ADMIN && user->getRole() != DISPATCHER) {
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
         throw PermissionDeniedException();
     }
 
@@ -404,7 +403,7 @@ void Controller::updateOrder(int order_id, Order &update) {
 }
 
 void Controller::updateUser(int user_id, User &update) {
-    if (user->getRole() != ADMIN && user_id != user->getId()) {
+    if (user.getRole() != ADMIN && user_id != user.getId()) {
         throw PermissionDeniedException();
     }
 
