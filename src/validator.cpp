@@ -322,3 +322,22 @@ void Validator::validateUpdateOrder(Order& update, int order_id, sqlite3*db) {
 
     Validator::validOrder(update, db);
 }
+
+void Validator::validateUpdateUser(User &update, int user_id, sqlite3 *db) {
+    User old;
+    try {
+        old.getDataFromDb(db, user_id);
+    } catch (const std::exception& c) {
+        throw std::invalid_argument("No user found by provided id");
+    }
+
+    if (update.getLogin().empty()) {
+        update.setLogin(old.getLogin());
+    }
+
+    if (update.getPassHash().empty()) {
+        update.setPassHash(old.getPassHash());
+    } else {
+        update.setPassHash(BCrypt::generateHash(update.getPassHash()));
+    }
+}
