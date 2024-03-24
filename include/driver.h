@@ -92,9 +92,9 @@ public:
         birthday = newBirthday;
     }
 
-    void getDataFromDb(sqlite3 *db, int user_id);
+    void getDataFromDb(sqlite3 *db, int user_id) override;
 
-    void insertUserToDb(sqlite3 *db);
+    void insertUserToDb(sqlite3 *db) override;
 };
 
 

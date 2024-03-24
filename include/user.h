@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <sqlite3.h>
+#include "exceptions.h"
 
 enum Role {
     DRIVER = 1,
@@ -70,39 +71,9 @@ public:
         role = newRole;
     }
 
-    virtual std::string getName() const { return ""; }
-
-    virtual std::string getSurname() const { return ""; }
-
-    virtual std::vector<Category> getCategories() const { return std::vector<Category>(0); }
-
-    virtual std::string getCategoryString() const { return ""; }
-
-    virtual int getExperience() const { return -1; }
-
-    virtual std::string getAddress() const { return ""; }
-
-    virtual std::string getCity() const {return "";};
-
-    virtual std::string getBirthday() const { return ""; }
-
-    virtual void setName(const std::string &newName) {};
-
-    virtual void setSurname(const std::string &newSurname) {};
-
-    virtual void setCategory(const std::vector<Category> &newCategories) {};
-
-    virtual void setExperience(int newExperience) {};
-
-    virtual void setAddress(const std::string &newAddress) {};
-
-    virtual void setCity(const std::string &newCity) {};
-
-    virtual void setBirthday(const std::string &newBirthday) {};
-
     static std::string toLower(std::string str);
 
-    virtual void getDataFromDb(sqlite3 *db, int user_id) {}
+    virtual void getDataFromDb(sqlite3 *db, int user_id);
 
     virtual void insertUserToDb(sqlite3 *db) {}
 };

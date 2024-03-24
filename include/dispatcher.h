@@ -53,9 +53,9 @@ public:
         city = newCity;
     }
 
-    void getDataFromDb(sqlite3 *db, int user_id);
+    void getDataFromDb(sqlite3 *db, int user_id) override;
 
-    void insertUserToDb(sqlite3 *db);
+    void insertUserToDb(sqlite3 *db) override;
 };
 
 #endif //LAB_5_PROJECT_DISPATCHER_H
