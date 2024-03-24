@@ -1,5 +1,5 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 
 #ifndef LAB_5_PROJECT_CONFIG_H
@@ -12,7 +12,7 @@ private:
     double driverPercent = 20.;
 
 public:
-    double getDriverPercent() const {
+    [[nodiscard]] double getDriverPercent() const {
         return driverPercent;
     }
 

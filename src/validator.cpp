@@ -1,5 +1,5 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 
 #include "../include/validator.h"
@@ -15,7 +15,7 @@ bool Validator::validLicense(const std::string &license) {
     return std::regex_match(license, license_pattern);
 }
 
-bool Validator::validAge(std::string date_str) {
+bool Validator::validAge(const std::string& date_str) {
     std::tm date = {};
     std::istringstream ss(date_str);
     ss >> date.tm_year;  // Year
@@ -32,7 +32,7 @@ bool Validator::validAge(std::string date_str) {
     return std::mktime(&date) <= std::mktime(&current);
 }
 
-bool Validator::validDate(std::string date_str) {
+bool Validator::validDate(const std::string& date_str) {
     std::tm date = {};
     std::istringstream ss(date_str);
     ss >> date.tm_year;  // Year
@@ -164,7 +164,7 @@ bool Validator::validCar(const Car &car, sqlite3 *db) {
     try {
         Driver d;
         d.getDataFromDb(db, car.getDriverId());
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         throw std::invalid_argument("There is no driver to own this car\n");
     }
 
@@ -181,4 +181,163 @@ bool Validator::validCar(const Car &car, sqlite3 *db) {
     }
 
     return true;
+}
+
+void Validator::validateUpdateCar(Car &update, int car_id, sqlite3 *db) {
+    Car old;
+
+    try {
+        old.getDataFromDb(db, car_id);
+    } catch (const std::exception &e) {
+        throw std::invalid_argument("No car found by provided id");
+    }
+
+    if (update.getLicense().empty()) {
+        update.setLicense(old.getLicense());
+    }
+
+    if (update.getBrand().empty()) {
+        update.setBrand(old.getBrand());
+    }
+
+    if (update.getDriverId() == 0) {
+        update.setDriverId(old.getDriverId());
+    }
+
+    if (update.getLoadCapacity() == 0) {
+        update.setLoadCapacity(old.getLoadCapacity());
+    }
+
+    if (update.getMileageBuy() == 0) {
+        update.setMileageBuy(old.getMileageBuy());
+    }
+
+    Validator::validCar(update, db);
+}
+
+void Validator::validateUpdateDriver(Driver &update, int driver_id, sqlite3 *db) {
+    Driver old;
+    try {
+        old.getDataFromDb(db, driver_id);
+    } catch (const std::exception &e) {
+        throw std::invalid_argument("No driver found by provided id");
+    }
+
+    update.setLogin("TEMP");
+    update.setPassHash("TEMP");
+
+    if (update.getName().empty()) {
+        update.setName(old.getName());
+    }
+
+    if (update.getSurname().empty()) {
+        update.setSurname(old.getSurname());
+    }
+
+    if (update.getCategoryString().empty()) {
+        update.setCategory(old.getCategories());
+    }
+
+    if (update.getExperience() == 0) {
+        update.setExperience(old.getExperience());
+    }
+
+    if (update.getAddress().empty()) {
+        update.setAddress(old.getAddress());
+    }
+
+    if (update.getCity().empty()) {
+        update.setCity(old.getCity());
+    }
+
+    if (update.getBirthday().empty()) {
+        update.setBirthday(old.getBirthday());
+    }
+
+    Validator::validDriver(update);
+}
+
+void Validator::validateUpdateDispatcher(Dispatcher &update, int dispatcher_id, sqlite3 *db) {
+    Dispatcher old;
+    try {
+        old.getDataFromDb(db, dispatcher_id);
+    } catch (const std::exception &e) {
+        throw std::invalid_argument("No dispatcher found by provided id");
+    }
+
+    update.setLogin("TEMP");
+    update.setPassHash("TEMP");
+
+    if (update.getName().empty()) {
+        update.setName(old.getName());
+    }
+
+    if (update.getSurname().empty()) {
+        update.setSurname(old.getSurname());
+    }
+
+    if (update.getAddress().empty()) {
+        update.setAddress(old.getAddress());
+    }
+
+    if (update.getCity().empty()) {
+        update.setCity(old.getCity());
+    }
+
+
+    Validator::validDispatcher(update);
+}
+
+void Validator::validateUpdateOrder(Order &update, int order_id, sqlite3 *db) {
+    Order old;
+    try {
+        old.getDataFromDb(db, order_id);
+    } catch (const std::exception &e) {
+        throw std::invalid_argument("No order found by provided id");
+    }
+
+    if (update.getDriverId() == 0) {
+        update.setDriverId(old.getDriverId());
+    }
+
+    if (update.getCarId() == 0) {
+        update.setCarId(old.getCarId());
+    }
+
+    if (update.getDate().empty()) {
+        update.setDate(old.getDate());
+    }
+
+    if (update.getMileage() == 0.) {
+        update.setMileage(old.getMileage());
+    }
+
+    if (update.getLoad() == 0.) {
+        update.setLoad(old.getLoad());
+    }
+
+    if (update.getCost() == 0.) {
+        update.setCost(old.getCost());
+    }
+
+    Validator::validOrder(update, db);
+}
+
+void Validator::validateUpdateUser(User &update, int user_id, sqlite3 *db) {
+    User old;
+    try {
+        old.getDataFromDb(db, user_id);
+    } catch (const std::exception &c) {
+        throw std::invalid_argument("No user found by provided id");
+    }
+
+    if (update.getLogin().empty()) {
+        update.setLogin(old.getLogin());
+    }
+
+    if (update.getPassHash().empty()) {
+        update.setPassHash(old.getPassHash());
+    } else {
+        update.setPassHash(BCrypt::generateHash(update.getPassHash()));
+    }
 }

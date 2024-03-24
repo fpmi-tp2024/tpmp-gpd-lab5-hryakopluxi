@@ -1,5 +1,5 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 
 #ifndef LAB_5_PROJECT_CAR_H
@@ -9,6 +9,7 @@
 #include <utility>
 #include <sqlite3.h>
 #include "exceptions.h"
+#include "sql.h"
 
 class Car {
 
@@ -20,34 +21,34 @@ private:
     double mileage_buy;
     double load_capacity;
 public:
-    Car() : id(0), driver_id(0), license(""), brand(""), mileage_buy(0.0), load_capacity(0.0) {}
+    Car() : id(0), driver_id(0), mileage_buy(0.0), load_capacity(0.0) {}
 
     Car(int newId, int newDriverId, std::string newLicense, std::string newBrand, double newMileageBuy,
         double newLoadCapacity)
             : id(newId), driver_id(newDriverId), license(std::move(newLicense)), brand(std::move(newBrand)),
               mileage_buy(newMileageBuy), load_capacity(newLoadCapacity) {}
 
-    int getId() const {
+    [[nodiscard]] int getId() const {
         return id;
     }
 
-    int getDriverId() const {
+    [[nodiscard]] int getDriverId() const {
         return driver_id;
     }
 
-    std::string getLicense() const {
+    [[nodiscard]] std::string getLicense() const {
         return license;
     }
 
-    std::string getBrand() const {
+    [[nodiscard]] std::string getBrand() const {
         return brand;
     }
 
-    double getMileageBuy() const {
+    [[nodiscard]] double getMileageBuy() const {
         return mileage_buy;
     }
 
-    double getLoadCapacity() const {
+    [[nodiscard]] double getLoadCapacity() const {
         return load_capacity;
     }
 

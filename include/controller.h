@@ -1,11 +1,12 @@
 //
-// Created by hakeyn on 21.3.24.
+// Created by Stanislau Senkevich on 21.3.24.
 //
 
 #include <sqlite3.h>
 #include "dispatcher.h"
 #include "config.h"
 #include "validator.h"
+#include "sql.h"
 #include "bcrypt/BCrypt.hpp"
 
 #ifndef LAB_5_PROJECT_CONTROLLER_H
@@ -13,22 +14,22 @@
 
 class Controller {
 private:
-    sqlite3* db;
-    User *user;
+    sqlite3* db = nullptr;
+    User user;
     Config config;
 public:
-
-    Controller(const std::string& db_filename);
+    Controller() = default;
+    explicit Controller(const std::string& db_filename);
 
     bool login(const std::string& login, const std::string& password);
     void logout();
 
-    Driver getDriverInfo(int driver_id) const;
-    Order getOrderInfo(int order_id) const;
-    Car getCarInfo(int car_id) const;
-    std::vector <Order>& getDriverOrders(int driver_id, std::string period) const;
-    int getWorstDriverId (std::string period) const;
-    int getHighestMileageCarId() const;
+    [[nodiscard]] Driver getDriverInfo(int driver_id) const;
+    [[nodiscard]] Order getOrderInfo(int order_id) const;
+    [[nodiscard]] Car getCarInfo(int car_id) const;
+    [[nodiscard]] std::vector <Order>& getDriverOrders(int driver_id, std::string period) const;
+    [[nodiscard]] int getWorstDriverId (std::string period) const;
+    [[nodiscard]] int getHighestMileageCarId() const;
 
     void addCar(Car& car);
     void addDriver(Driver& driver);
@@ -38,7 +39,9 @@ public:
     void updateCar(int car_id, Car& update);
     void updateDriver(int user_id, Driver& update);
     void updateDispatcher(int user_id, Dispatcher& update);
-    void approveOrder(int order_id);
+    void updateOrder(int order_id, Order& update);
+    void updateUser(int user_id, User& update);
+    void updateOrderApproveStatus(int order_id, bool status);
 
     void deleteCar(int car_id);
     void deleteDriver(int user_id);
