@@ -182,3 +182,35 @@ bool Validator::validCar(const Car &car, sqlite3 *db) {
 
     return true;
 }
+
+void Validator::validateUpdateCar(Car& update, int car_id, sqlite3* db) {
+    Car old;
+
+    try {
+        old.getDataFromDb(db, car_id);
+    } catch (const std::exception& e) {
+        throw std::invalid_argument("No car found by provided id");
+    }
+
+    if (update.getLicense().empty()) {
+        update.setLicense(old.getLicense());
+    }
+
+    if (update.getBrand().empty()) {
+        update.setBrand(old.getBrand());
+    }
+
+    if (update.getDriverId() == 0) {
+        update.setDriverId(old.getDriverId());
+    }
+
+    if (update.getLoadCapacity() == 0) {
+        update.setLoadCapacity(old.getLoadCapacity());
+    }
+
+    if (update.getMileageBuy() == 0) {
+        update.setMileageBuy(old.getMileageBuy());
+    }
+
+    Validator::validCar(update, db);
+}

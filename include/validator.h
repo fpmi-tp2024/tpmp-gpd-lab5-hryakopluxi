@@ -31,6 +31,8 @@ public:
     static bool validLicense(const std::string& license);
     static bool validDate(std::string date);
     static bool validAge(std::string date);
+
+    static void validateUpdateCar(Car& update, int car_id, sqlite3* db);
 };
 
 #endif //LAB_5_PROJECT_VALIDATOR_H
