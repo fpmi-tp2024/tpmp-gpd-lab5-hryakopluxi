@@ -26,6 +26,7 @@ private:;
 public:
     static bool validDispatcher(const Dispatcher& dispatcher);
     static bool validOrder(const Order& order, sqlite3* db);
+    static bool validCar(const Car& car, sqlite3* db);
     static bool validDriver(const Driver& driver);
     static bool validLicense(const std::string& license);
     static bool validDate(std::string date);
