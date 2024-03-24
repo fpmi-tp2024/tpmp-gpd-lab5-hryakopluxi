@@ -13,7 +13,7 @@ std::string User::toLower(std::string str) {
 
 void User::getDataFromDb(sqlite3 *db, int user_id) {
     char* sql = "SELECT * FROM autopark_user WHERE id = ?;";
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
 
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare select user statement: ");

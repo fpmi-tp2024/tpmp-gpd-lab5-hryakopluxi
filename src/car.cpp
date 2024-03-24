@@ -6,7 +6,7 @@
 
 void Car::getDataFromDb(sqlite3 *db, int car_id) {
     char* sql = "SELECT * FROM autopark_car WHERE id = ?;";
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare select car statement: ");
 
@@ -29,7 +29,7 @@ void Car::insertCarToDb(sqlite3 *db) {
                 "(driver_id, license, brand, mileage, load_capacity) VALUES "
                 "(?, ?, ?, ?, ?);";
 
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare insert car statement: ");
 

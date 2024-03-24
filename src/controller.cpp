@@ -16,7 +16,7 @@ Controller::Controller(const std::string &db_filename) {
 
 bool Controller::login(const std::string &login, const std::string &password) {
     char *sql = "SELECT * FROM autopark_user WHERE login = ? ;";
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK, "Failed to prepare login statement: ");
 
     sqlite3_bind_text(stmt, 1, login.c_str(), -1, SQLITE_STATIC);
@@ -119,7 +119,7 @@ void Controller::deleteCar(int car_id) {
     }
 
     char *sql = "DELETE FROM autopark_car WHERE id = ?";
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare delete car statement: ");
 
@@ -144,7 +144,7 @@ void Controller::deleteDriver(int user_id) {
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
     char *sql = "DELETE FROM autopark_driver WHERE user_id = ?";
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare delete driver statement: ", true);
 
@@ -180,7 +180,7 @@ void Controller::deleteDispatcher(int user_id) {
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
     char *sql = "DELETE FROM autopark_dispatcher WHERE user_id = ?";
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare delete dispatcher statement: ", true);
 
@@ -211,7 +211,7 @@ void Controller::deleteOrder(int order_id) {
     }
 
     char *sql = "DELETE FROM autopark_order WHERE id = ?";
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare delete order statement: ");
 
@@ -232,7 +232,7 @@ void Controller::updateCar(int car_id, Car &update) {
                 "mileage = ?, load_capacity = ? "
                 "WHERE id = ?;";
 
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare update car statement: ");
 
@@ -280,7 +280,7 @@ void Controller::updateDriver(int user_id, Driver &update) {
                 "address = ?, city = ?, birthday = ? "
                 "WHERE user_id = ?;";
 
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare update driver statement: ");
 
@@ -350,7 +350,7 @@ void Controller::updateOrder(int order_id, Order &update) {
                 "is_approved = ? "
                 "WHERE id = ?;";
 
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare update dispatcher statement: ");
 
@@ -385,7 +385,7 @@ void Controller::updateUser(int user_id, User &update) {
     char *sql = "UPDATE autopark_user SET "
                 "login = ?, pass_hash = ? "
                 "WHERE id = ?;";
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare update user statement: ");
 
@@ -415,7 +415,8 @@ void Controller::updateOrderApproveStatus(int order_id, bool status) {
         }
         throw std::invalid_argument("Order already not approved\n");
     }
-    sqlite3_stmt *stmt;
+
+    sqlite3_stmt *stmt = nullptr;
     char *sql = "UPDATE autopark_order SET is_approved = ? WHERE id = ?;";
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare update approve status order statement: ");

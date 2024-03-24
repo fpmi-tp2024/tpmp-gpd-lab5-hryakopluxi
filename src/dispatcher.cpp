@@ -8,7 +8,7 @@
 
 void Dispatcher::getDataFromDb(sqlite3* db, int user_id) {
     char* sql = "SELECT * FROM autopark_dispatcher WHERE user_id = ?";
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare select dispatcher statement: ");
 
@@ -26,7 +26,7 @@ void Dispatcher::getDataFromDb(sqlite3* db, int user_id) {
 }
 
 void Dispatcher::insertUserToDb(sqlite3* db) {
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
     char *sql = "INSERT INTO autopark_user (login, pass_hash, role) VALUES (?, ?, ?);";

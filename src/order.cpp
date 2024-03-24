@@ -8,7 +8,7 @@
 
 void Order::getDataFromDb(sqlite3 *db, int order_id) {
     char* sql = "SELECT * FROM autopark_order WHERE id = ?;";
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare select order statement: ");
 
@@ -32,7 +32,7 @@ void Order::insertOrderToDb(sqlite3 *db) {
     char* sql = "INSERT INTO autopark_order (driver_id, car_id, date, mileage, load, cost, is_approved) "
                 "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
-    sqlite3_stmt *stmt;
+    sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare insert order statement: ");
 
