@@ -41,7 +41,7 @@ public:
     void updateDispatcher(int user_id, Dispatcher& update);
     void updateOrder(int order_id, Order& update);
     void updateUser(int user_id, User& update);
-    void approveOrder(int order_id);
+    void updateOrderApproveStatus(int order_id, bool status);
 
     void deleteCar(int car_id);
     void deleteDriver(int user_id);

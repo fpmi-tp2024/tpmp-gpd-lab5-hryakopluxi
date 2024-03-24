@@ -121,12 +121,12 @@ void Controller::deleteCar(int car_id) {
     char *sql = "DELETE FROM autopark_car WHERE id = ?";
     sqlite3_stmt *stmt;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                               "Failed to prepare delete car statement: ");
+                                    "Failed to prepare delete car statement: ");
 
 
     sqlite3_bind_int(stmt, 1, car_id);
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                        "Failed to execute delete car statement: ");
+                             "Failed to execute delete car statement: ");
 }
 
 void Controller::deleteDriver(int user_id) {
@@ -146,21 +146,21 @@ void Controller::deleteDriver(int user_id) {
     char *sql = "DELETE FROM autopark_driver WHERE user_id = ?";
     sqlite3_stmt *stmt;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                               "Failed to prepare delete driver statement: ", true);
+                                    "Failed to prepare delete driver statement: ", true);
 
 
     sqlite3_bind_int(stmt, 1, user_id);
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                        "Failed to execute delete driver statement: ", true);
+                             "Failed to execute delete driver statement: ", true);
 
     sql = "DELETE FROM autopark_user WHERE id = ?";
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                               "Failed to prepare delete user statement: ", true);
+                                    "Failed to prepare delete user statement: ", true);
 
 
     sqlite3_bind_int(stmt, 1, user_id);
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                        "Failed to execute delete user statement: ", true);
+                             "Failed to execute delete user statement: ", true);
 
     sqlite3_exec(db, "COMMIT;", nullptr, nullptr, nullptr);
 }
@@ -182,19 +182,19 @@ void Controller::deleteDispatcher(int user_id) {
     char *sql = "DELETE FROM autopark_dispatcher WHERE user_id = ?";
     sqlite3_stmt *stmt;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                               "Failed to prepare delete dispatcher statement: ", true);
+                                    "Failed to prepare delete dispatcher statement: ", true);
 
     sqlite3_bind_int(stmt, 1, user_id);
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                        "Failed to execute delete dispatcher statement: ", true);
+                             "Failed to execute delete dispatcher statement: ", true);
 
     sql = "DELETE FROM autopark_user WHERE id = ?";
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                               "Failed to prepare delete user statement: ", true);
+                                    "Failed to prepare delete user statement: ", true);
 
     sqlite3_bind_int(stmt, 1, user_id);
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                        "Failed to execute delete user statement: ", true);
+                             "Failed to execute delete user statement: ", true);
     sqlite3_exec(db, "COMMIT;", nullptr, nullptr, nullptr);
 }
 
@@ -213,11 +213,11 @@ void Controller::deleteOrder(int order_id) {
     char *sql = "DELETE FROM autopark_order WHERE id = ?";
     sqlite3_stmt *stmt;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                               "Failed to prepare delete order statement: ");
+                                    "Failed to prepare delete order statement: ");
 
     sqlite3_bind_int(stmt, 1, order_id);
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                        "Failed to execute delete order statement: ");
+                             "Failed to execute delete order statement: ");
 }
 
 void Controller::updateCar(int car_id, Car &update) {
@@ -234,7 +234,7 @@ void Controller::updateCar(int car_id, Car &update) {
 
     sqlite3_stmt *stmt;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                               "Failed to prepare update car statement: ");
+                                    "Failed to prepare update car statement: ");
 
     int driver_id = update.getDriverId();
     std::string license = update.getLicense();
@@ -250,7 +250,7 @@ void Controller::updateCar(int car_id, Car &update) {
     sqlite3_bind_int(stmt, 6, car_id);
 
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                        "Failed to execute update car statement: ");
+                             "Failed to execute update car statement: ");
 }
 
 void Controller::updateDriver(int user_id, Driver &update) {
@@ -265,7 +265,7 @@ void Controller::updateDriver(int user_id, Driver &update) {
         try {
             old.getDataFromDb(db, user_id);
         } catch (const std::exception &e) {
-            throw std::invalid_argument("No driver found by provided id");
+            throw std::invalid_argument("No driver found by provided id\n");
         }
         if (User::toLower(old.getCity()) != User::toLower(disp.getCity())) {
             throw PermissionDeniedException();
@@ -282,7 +282,7 @@ void Controller::updateDriver(int user_id, Driver &update) {
 
     sqlite3_stmt *stmt;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                               "Failed to prepare update driver statement: ");
+                                    "Failed to prepare update driver statement: ");
 
     std::string name = update.getName();
     std::string surname = update.getSurname();
@@ -302,7 +302,7 @@ void Controller::updateDriver(int user_id, Driver &update) {
     sqlite3_bind_int(stmt, 8, user_id);
 
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                        "Failed to execute update driver statement: ");
+                             "Failed to execute update driver statement: ");
 }
 
 void Controller::updateDispatcher(int user_id, Dispatcher &update) {
@@ -319,7 +319,7 @@ void Controller::updateDispatcher(int user_id, Dispatcher &update) {
 
     sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                               "Failed to prepare update dispatcher statement: ");
+                                    "Failed to prepare update dispatcher statement: ");
 
     std::string name = update.getName();
     std::string surname = update.getSurname();
@@ -333,7 +333,7 @@ void Controller::updateDispatcher(int user_id, Dispatcher &update) {
     sqlite3_bind_int(stmt, 5, user_id);
 
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                        "Failed to execute update dispatcher statement: ");
+                             "Failed to execute update dispatcher statement: ");
 }
 
 void Controller::updateOrder(int order_id, Order &update) {
@@ -352,7 +352,7 @@ void Controller::updateOrder(int order_id, Order &update) {
 
     sqlite3_stmt *stmt;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                               "Failed to prepare update dispatcher statement: ");
+                                    "Failed to prepare update dispatcher statement: ");
 
     int driver_id = update.getDriverId();
     int car_id = update.getCarId();
@@ -372,7 +372,7 @@ void Controller::updateOrder(int order_id, Order &update) {
     sqlite3_bind_int(stmt, 8, order_id);
 
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                        "Failed to execute update dispatcher statement: ");
+                             "Failed to execute update dispatcher statement: ");
 }
 
 void Controller::updateUser(int user_id, User &update) {
@@ -387,7 +387,7 @@ void Controller::updateUser(int user_id, User &update) {
                 "WHERE id = ?;";
     sqlite3_stmt *stmt;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                               "Failed to prepare update user statement");
+                                    "Failed to prepare update user statement: ");
 
     std::string login = update.getLogin();
     std::string pass_hash = update.getPassHash();
@@ -397,5 +397,31 @@ void Controller::updateUser(int user_id, User &update) {
     sqlite3_bind_int(stmt, 3, user_id);
 
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
-                        "Failed to execute update user statement");
+                             "Failed to execute update user statement: ");
+}
+
+void Controller::updateOrderApproveStatus(int order_id, bool status) {
+    Order ord;
+
+    try {
+        ord.getDataFromDb(db, order_id);
+    } catch (const std::exception &e) {
+        throw std::invalid_argument("No order found with provided id: ");
+    }
+
+    if (ord.getIsApproved() == status) {
+        if (status) {
+            throw std::invalid_argument("Order already approved\n");
+        }
+        throw std::invalid_argument("Order already not approved\n");
+    }
+    sqlite3_stmt *stmt;
+    char *sql = "UPDATE autopark_order SET is_approved = ? WHERE id = ?;";
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare update approve status order statement: ");
+
+    sqlite3_bind_int(stmt, 1, status);
+    sqlite3_bind_int(stmt, 2, order_id);
+    SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
+                             "Failed to execute update approve status order statement");
 }
