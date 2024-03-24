@@ -31,12 +31,6 @@ public:
     [[nodiscard]] std::string getWorstDriverSummary() const;
     [[nodiscard]] std::string getBestCarInfo() const;
 
-//    [[nodiscard]] Driver getDriverInfo(int driver_id) const;
-//    [[nodiscard]] Order getOrderInfo(int order_id) const;
-//    [[nodiscard]] Car getCarInfo(int car_id) const;
-//    [[nodiscard]] int getWorstDriverId (std::string period) const;
-//    [[nodiscard]] int getHighestMileageCarId() const;
-
     void addCar(Car& car);
     void addDriver(Driver& driver);
     void addOrder(Order& order);
