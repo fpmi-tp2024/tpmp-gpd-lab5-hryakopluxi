@@ -34,6 +34,7 @@ public:
 
     static void validateUpdateCar(Car& update, int car_id, sqlite3* db);
     static void validateUpdateDriver(Driver& update, int driver_id, sqlite3* db);
+    static void validateUpdateDispatcher(Dispatcher& update, int dispatcher_id, sqlite3* db);
 };
 
 #endif //LAB_5_PROJECT_VALIDATOR_H

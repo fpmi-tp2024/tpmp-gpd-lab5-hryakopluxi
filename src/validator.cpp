@@ -256,3 +256,34 @@ void Validator::validateUpdateDriver(Driver &update, int driver_id, sqlite3 *db)
 
     Validator::validDriver(update);
 }
+
+void Validator::validateUpdateDispatcher(Dispatcher &update, int dispatcher_id, sqlite3 *db) {
+    Dispatcher old;
+    try {
+        old.getDataFromDb(db, dispatcher_id);
+    } catch (const std::exception& e) {
+        throw std::invalid_argument("No dispatcher found by provided id");
+    }
+
+    update.setLogin("TEMP");
+    update.setPassHash("TEMP");
+
+    if (update.getName().empty()) {
+        update.setName(old.getName());
+    }
+
+    if (update.getSurname().empty()) {
+        update.setSurname(old.getSurname());
+    }
+
+    if (update.getAddress().empty()) {
+        update.setAddress(old.getAddress());
+    }
+
+    if (update.getCity().empty()) {
+        update.setCity(old.getCity());
+    }
+
+
+    Validator::validDispatcher(update);
+}
