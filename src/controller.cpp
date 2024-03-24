@@ -369,3 +369,67 @@ void Controller::updateCar(int car_id, Car& update) {
 
     sqlite3_finalize(stmt);
 }
+
+void Controller::updateDriver(int user_id, Driver& update) {
+    if (user->getRole() != ADMIN && user->getRole() != DISPATCHER) {
+        throw PermissionDeniedException();
+    }
+
+    if (user->getRole() == DISPATCHER) {
+        Dispatcher disp;
+        disp.getDataFromDb(db, user->getId());
+        Driver old;
+        try {
+            old.getDataFromDb(db, user_id);
+        } catch (const std::exception& e) {
+            throw std::invalid_argument("No driver found by provided id");
+        }
+        if (User::toLower(old.getCity()) != User::toLower(disp.getCity())) {
+            throw PermissionDeniedException();
+        }
+    }
+
+    Validator::validateUpdateDriver(update, user_id, db);
+
+    char* sql = "UPDATE autopark_driver SET name = ?, surname = ?, "
+                "category = ?, experience = ?, "
+                "address = ?, city = ?, birthday = ? "
+                "WHERE user_id = ?;";
+
+    sqlite3_stmt *stmt;
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        std::string errMsg =  "Failed to prepare update car statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
+    }
+
+    int id = user_id;
+    std::string name = update.getName();
+    std::string surname = update.getSurname();
+    std::string category = update.getCategoryString();
+    int experience = update.getExperience();
+    std::string address = update.getAddress();
+    std::string city = update.getCity();
+    std::string birthday = update.getBirthday();
+
+    sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, surname.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, category.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 4, experience);
+    sqlite3_bind_text(stmt, 5, address.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 6, city.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 7, birthday.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 8, id);
+
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        std::string errMsg =  "Failed to execute update car statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
+    }
+
+    sqlite3_finalize(stmt);
+}
