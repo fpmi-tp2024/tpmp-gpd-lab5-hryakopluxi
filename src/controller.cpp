@@ -325,3 +325,47 @@ void Controller::deleteOrder(int order_id) {
 
     sqlite3_finalize(stmt);
 }
+
+void Controller::updateCar(int car_id, Car& update) {
+    if (user->getRole() != ADMIN && user->getRole() != DISPATCHER) {
+        throw PermissionDeniedException();
+    }
+
+    Validator::validateUpdateCar(update, car_id, db);
+
+    char* sql = "UPDATE autopark_car SET driver_id = ?, license = ?, brand = ?, "
+                "mileage = ?, load_capacity = ? "
+                "WHERE id = ?;";
+
+    sqlite3_stmt *stmt;
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        std::string errMsg =  "Failed to prepare update car statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
+    }
+
+    int driver_id = update.getDriverId();
+    std::string license = update.getLicense();
+    std::string brand = update.getBrand();
+    double mileage = update.getMileageBuy();
+    double load_capacity = update.getLoadCapacity();
+
+    sqlite3_bind_int(stmt, 1, driver_id);
+    sqlite3_bind_text(stmt, 2, license.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, brand.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 4, mileage);
+    sqlite3_bind_double(stmt, 5, load_capacity);
+    sqlite3_bind_int(stmt, 6, car_id);
+
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        std::string errMsg =  "Failed to execute update car statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
+    }
+
+    sqlite3_finalize(stmt);
+}
