@@ -399,7 +399,7 @@ void Controller::updateDriver(int user_id, Driver& update) {
     sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
     if (rc != SQLITE_OK) {
-        std::string errMsg =  "Failed to prepare update car statement: ";
+        std::string errMsg =  "Failed to prepare update driver statement: ";
         errMsg += sqlite3_errmsg(db);
         errMsg += "\n";
         throw InternalErrorException(errMsg);
@@ -425,7 +425,50 @@ void Controller::updateDriver(int user_id, Driver& update) {
 
     rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
-        std::string errMsg =  "Failed to execute update car statement: ";
+        std::string errMsg =  "Failed to execute update driver statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
+    }
+
+    sqlite3_finalize(stmt);
+}
+
+void Controller::updateDispatcher(int user_id, Dispatcher& update) {
+    if (user->getRole() != ADMIN) {
+        throw PermissionDeniedException();
+    }
+
+    Validator::validateUpdateDispatcher(update, user_id, db);
+
+    char* sql = "UPDATE autopark_dispatcher SET name = ?, surname = ?, "
+                "address = ?, city = ? "
+                "WHERE user_id = ?;";
+
+    sqlite3_stmt *stmt;
+    int rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        std::string errMsg =  "Failed to prepare update dispatcher statement: ";
+        errMsg += sqlite3_errmsg(db);
+        errMsg += "\n";
+        throw InternalErrorException(errMsg);
+    }
+
+    int id = user_id;
+    std::string name = update.getName();
+    std::string surname = update.getSurname();
+    std::string address = update.getAddress();
+    std::string city = update.getCity();
+
+    sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, surname.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, address.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, city.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_int(stmt, 5, id);
+
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        std::string errMsg =  "Failed to execute update dispatcher statement: ";
         errMsg += sqlite3_errmsg(db);
         errMsg += "\n";
         throw InternalErrorException(errMsg);
