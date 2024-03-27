@@ -676,3 +676,68 @@ std::string Controller::getWorstDriverSummary() const {
 
     return getDriverStat(id);
 }
+
+std::string Controller::getInfoAboutCarWithMaxMileage() const {
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
+        throw PermissionDeniedException();
+    }
+
+    std::string sql = "SELECT id "
+                      "FROM ( "
+                      "SELECT id, "
+                      "SUM(mileage) AS total_mileage "
+                      "FROM ( "
+                      "SELECT id, mileage "
+                      "FROM autopark_car "
+                      "UNION ALL "
+                      "SELECT car_id, "
+                      "SUM(mileage) AS mileage "
+                      "FROM autopark_order "
+                      "GROUP BY car_id "
+                      ") AS combined_mileage "
+                      "GROUP BY id "
+                      "ORDER BY total_mileage DESC "
+                      "LIMIT 1 "
+                      ") AS car_with_max_mileage;";
+
+
+    sqlite3_stmt *stmt = nullptr;
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare retrieving car id with max mileage: ");
+    SQL::executeSQLStatement(db, stmt, SQLITE_ROW,
+                             "Failed to execute retrieving car id with max mileage: ",
+                             false, false);
+
+    int id = sqlite3_column_int(stmt, 0);
+
+    sql = "SELECT c.id, d.name, d.surname, c.driver_id, c.license, "
+          "c.brand, c.mileage, c.load_capacity, "
+          "SUM(o.cost), SUM(o.load), SUM(o.mileage) "
+          "FROM autopark_car AS c "
+          "LEFT JOIN autopark_order AS o "
+          "LEFT JOIN autopark_driver AS d "
+          "WHERE c.id = ? AND o.is_approved = true;";
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare retrieving info about car with max mileage: ");
+    sqlite3_bind_int(stmt, 1, id);
+    SQL::executeSQLStatement(db, stmt, SQLITE_ROW,
+                             "Failed to execute retrieving car id with max mileage: ",
+                             false, false);
+    char response[250];
+
+    sprintf(response, "ID: %d\n"
+                      "Driver info: %s %s, id: %d\n"
+                      "License: %s\n"
+                      "Brand: %s\n"
+                      "Mileage on purchase: %.2f\n"
+                      "Load capacity: %.2f\n"
+                      "Summary cost of completed orders: %.2f\n"
+                      "Summary load: %.2f\n"
+                      "Summary mileage: %.2f\n",
+            sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2),
+            sqlite3_column_int(stmt, 3), sqlite3_column_text(stmt, 4), sqlite3_column_text(stmt, 5),
+            sqlite3_column_double(stmt, 6), sqlite3_column_double(stmt, 7), sqlite3_column_double(stmt, 8),
+            sqlite3_column_double(stmt, 9), sqlite3_column_double(stmt, 10) + sqlite3_column_double(stmt, 6));
+
+    return response;
+}
