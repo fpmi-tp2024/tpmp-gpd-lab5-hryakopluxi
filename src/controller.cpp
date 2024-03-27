@@ -3,6 +3,7 @@
 //
 
 #include "../include/controller.h"
+#include <iostream>
 
 Controller::Controller(const std::string &db_filename) {
     db = nullptr;
@@ -427,12 +428,12 @@ void Controller::updateOrderApproveStatus(int order_id, bool status) {
                              "Failed to execute update approve status order statement");
 }
 
-std::vector <Order> Controller::getDriverOrders(int driver_id, const std::string& date_start,
-                                                 const std::string& date_end) const {
+std::vector<Order> Controller::getDriverOrders(int driver_id, const std::string &date_start,
+                                               const std::string &date_end) const {
     Driver driver;
     try {
         driver.getDataFromDb(db, driver_id);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         throw std::invalid_argument("No driver was found");
     }
 
@@ -473,7 +474,7 @@ std::vector <Order> Controller::getDriverOrders(int driver_id, const std::string
         ord.setId(sqlite3_column_int(stmt, 0));
         ord.setDriverId(sqlite3_column_int(stmt, 1));
         ord.setCarId(sqlite3_column_int(stmt, 2));
-        ord.setDate(reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3)));
+        ord.setDate(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)));
         ord.setMileage(sqlite3_column_double(stmt, 4));
         ord.setLoad(sqlite3_column_double(stmt, 5));
         ord.setCost(sqlite3_column_double(stmt, 6));
@@ -492,7 +493,7 @@ std::string Controller::getCarSummaryMileageAndLoad(int car_id) const {
     Car car;
     try {
         car.getDataFromDb(db, car_id);
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         if (user.getRole() == DRIVER) {
             throw PermissionDeniedException();
         }
@@ -519,6 +520,60 @@ std::string Controller::getCarSummaryMileageAndLoad(int car_id) const {
     sqlite3_finalize(stmt);
 
     char buf[45];
-    sprintf(buf, "Summary load: %.3f\nSummary mileage: %.1f\n", load, mileage+car.getMileageBuy());
+    sprintf(buf, "Summary load: %.3f\nSummary mileage: %.1f\n", load, mileage + car.getMileageBuy());
     return buf;
+}
+
+std::string Controller::getDriverStatistics(int driver_id) const {
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER && user.getId() != driver_id) {
+        throw PermissionDeniedException();
+    }
+    Driver driver;
+
+    if (user.getRole() == DISPATCHER) {
+        Dispatcher dispatcher;
+        dispatcher.getDataFromDb(db, user.getId());
+        try {
+            driver.getDataFromDb(db, driver_id);
+        } catch (const std::exception &e) {
+            throw std::invalid_argument("No driver found with provided id");
+        }
+        if (driver.getCity() != dispatcher.getCity()) {
+            throw PermissionDeniedException();
+        }
+    }
+    driver.getDataFromDb(db, driver_id);
+
+    std::string sql = "SELECT COUNT(*), SUM(cost), SUM(mileage) FROM autopark_order "
+                      "WHERE driver_id = ? AND is_approved = true;";
+    sqlite3_stmt *stmt = nullptr;
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare driver summary statement");
+    sqlite3_bind_int(stmt, 1, driver_id);
+    SQL::executeSQLStatement(db, stmt, SQLITE_ROW,
+                             "Failed to execute driver summary statement",
+                             false, false);
+    std::string response;
+
+    int orders = sqlite3_column_int(stmt, 0);
+    double money = sqlite3_column_double(stmt, 1) * config.getDriverPercent() / 100.;
+    double mileage = sqlite3_column_double(stmt, 2);
+
+    User driverUser;
+    driverUser.getDataFromDb(db, driver_id);
+
+    response += "ID: " + std::to_string(driverUser.getId()) + "\n";
+    response += "Login: " + driverUser.getLogin() + "\n";
+    response += "Name: " + driver.getName() + "\n";
+    response += "Surname: " + driver.getSurname() + "\n";
+    response += "Category: " + driver.getCategoryString() + "\n";
+    response += "Experience: " + std::to_string(driver.getExperience()) + " years\n";
+    response += "City: " + driver.getCity() + "\n";
+    response += "Address: " + driver.getAddress() + "\n";
+    response += "Birthday: " + driver.getBirthday() + "\n";
+    response += "Orders completed: " + std::to_string(orders) + "\n";
+    response += "Money earned: " + std::to_string(money) + "\n";
+    response += "Summary mileage: " + std::to_string(mileage) + "\n";
+
+    return response;
 }
