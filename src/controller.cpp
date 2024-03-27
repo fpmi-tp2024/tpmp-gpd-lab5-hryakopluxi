@@ -524,32 +524,14 @@ std::string Controller::getCarSummaryMileageAndLoad(int car_id) const {
     return buf;
 }
 
-std::string Controller::getDriverStatistics(int driver_id) const {
-    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER && user.getId() != driver_id) {
-        throw PermissionDeniedException();
-    }
-    Driver driver;
-
-    if (user.getRole() == DISPATCHER) {
-        Dispatcher dispatcher;
-        dispatcher.getDataFromDb(db, user.getId());
-        try {
-            driver.getDataFromDb(db, driver_id);
-        } catch (const std::exception &e) {
-            throw std::invalid_argument("No driver found with provided id");
-        }
-        if (driver.getCity() != dispatcher.getCity()) {
-            throw PermissionDeniedException();
-        }
-    }
-
+std::string Controller::getDriverStat(int driver_id) const {
     std::string sql = "SELECT u.id, u.login, d.name, "
                       "d.surname, d.category, d.experience, "
                       "d.city, d.address, d.birthday, "
                       "COUNT(o.driver_id), SUM(cost), SUM(mileage) "
                       "FROM autopark_driver d "
                       "INNER JOIN autopark_user u ON u.id = d.user_id "
-                      "INNER JOIN autopark_order o ON o.driver_id = d.user_id "
+                      "LEFT JOIN autopark_order o ON o.driver_id = d.user_id "
                       "WHERE u.id = ?;";
 
     sqlite3_stmt *stmt = nullptr;
@@ -577,26 +559,36 @@ std::string Controller::getDriverStatistics(int driver_id) const {
             sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4), sqlite3_column_int(stmt, 5),
             sqlite3_column_text(stmt, 6), sqlite3_column_text(stmt, 7), sqlite3_column_text(stmt, 8),
             sqlite3_column_int(stmt, 9), sqlite3_column_double(stmt, 10), sqlite3_column_double(stmt, 11));
-//    response += "ID: " + std::to_string(sqlite3_column_int(stmt, 0)) + "\n";
-//    response += "Login: " + login + "\n";
-//    response += "Name: " + name + "\n";
-//    response += "Surname: " + surname + "\n";
-//    response += "Category: " + category + "\n";
-//    response += "Experience: " + std::to_string(driver.getExperience()) + " years\n";
-//    response += "City: " + city + "\n";
-//    response += "Address: " + address + "\n";
-//    response += "Birthday: " + birthday+ "\n";
-//    response += "Orders completed: " + std::to_string(orders) + "\n";
-//    response += "Money earned: " + std::to_string(money) + "\n";
-//    response += "Summary mileage: " + std::to_string(mileage) + "\n";
-
     return response;
+}
+
+std::string Controller::getDriverStatistics(int driver_id) const {
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER && user.getId() != driver_id) {
+        throw PermissionDeniedException();
+    }
+    Driver driver;
+    try {
+        driver.getDataFromDb(db, driver_id);
+    } catch (const std::exception &e) {
+        throw std::invalid_argument("No driver found with provided id");
+    }
+
+    if (user.getRole() == DISPATCHER) {
+        Dispatcher dispatcher;
+        dispatcher.getDataFromDb(db, user.getId());
+        if (driver.getCity() != dispatcher.getCity()) {
+            throw PermissionDeniedException();
+        }
+    }
+
+    return getDriverStat(driver_id);
 }
 
 std::vector<std::string> Controller::getAllDriversStatistics() const {
     if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
         throw PermissionDeniedException();
     }
+
     std::string city;
 
     std::string sql = "SELECT u.id, u.login, d.name, "
@@ -655,4 +647,32 @@ std::vector<std::string> Controller::getAllDriversStatistics() const {
     }
 
     return data;
+}
+
+std::string Controller::getWorstDriverSummary() const {
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
+        throw PermissionDeniedException();
+    }
+
+    std::string sql = "SELECT d.user_id, COALESCE(COUNT(o.driver_id), 0) AS num_approved_orders "
+                      "FROM autopark_driver AS d "
+                      "LEFT JOIN ("
+                      "SELECT driver_id, COUNT(*) AS num_approved_orders "
+                      "FROM autopark_order "
+                      "WHERE is_approved = 1 "
+                      "GROUP BY driver_id "
+                      ") AS o ON d.user_id = o.driver_id "
+                      "GROUP BY d.user_id "
+                      "ORDER BY num_approved_orders ASC "
+                      "LIMIT 1;";
+    sqlite3_stmt *stmt = nullptr;
+
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare search of worst driver's id: ");
+    SQL::executeSQLStatement(db, stmt, SQLITE_ROW,
+                             "Failed to execute search of worst driver's id: ",
+                             false, false);
+    int id = sqlite3_column_int(stmt, 0);
+
+    return getDriverStat(id);
 }

@@ -17,6 +17,8 @@ private:
     sqlite3* db = nullptr;
     User user;
     Config config;
+
+    std::string getDriverStat(int driver_id) const;
 public:
     Controller() = default;
     explicit Controller(const std::string& db_filename);
@@ -30,6 +32,8 @@ public:
     [[nodiscard]] std::vector<std::string> getAllDriversStatistics() const;
     [[nodiscard]] std::string getWorstDriverSummary() const;
     [[nodiscard]] std::string getBestCarInfo() const;
+    void storeDriversEarnedMoney(std::string period);
+    void getDriverEarnedMoney(int driver_id);
 
     void addCar(Car& car);
     void addDriver(Driver& driver);
@@ -48,8 +52,6 @@ public:
     void deleteOrder(int order_id);
     void deleteDispatcher(int user_id);
 
-    void storeDriversEarnedMoney(std::string period);
-    void getDriverEarnedMoney(int driver_id);
 };
 
 #endif //LAB_5_PROJECT_CONTROLLER_H
