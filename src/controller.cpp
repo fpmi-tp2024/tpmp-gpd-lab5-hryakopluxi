@@ -542,38 +542,117 @@ std::string Controller::getDriverStatistics(int driver_id) const {
             throw PermissionDeniedException();
         }
     }
-    driver.getDataFromDb(db, driver_id);
 
-    std::string sql = "SELECT COUNT(*), SUM(cost), SUM(mileage) FROM autopark_order "
-                      "WHERE driver_id = ? AND is_approved = true;";
+    std::string sql = "SELECT u.id, u.login, d.name, "
+                      "d.surname, d.category, d.experience, "
+                      "d.city, d.address, d.birthday, "
+                      "COUNT(o.driver_id), SUM(cost), SUM(mileage) "
+                      "FROM autopark_driver d "
+                      "INNER JOIN autopark_user u ON u.id = d.user_id "
+                      "INNER JOIN autopark_order o ON o.driver_id = d.user_id "
+                      "WHERE u.id = ?;";
+
     sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
-                                    "Failed to prepare driver summary statement");
+                                    "Failed to prepare driver summary statement: ");
     sqlite3_bind_int(stmt, 1, driver_id);
     SQL::executeSQLStatement(db, stmt, SQLITE_ROW,
-                             "Failed to execute driver summary statement",
+                             "Failed to execute driver summary statement: ",
                              false, false);
-    std::string response;
 
-    int orders = sqlite3_column_int(stmt, 0);
-    double money = sqlite3_column_double(stmt, 1) * config.getDriverPercent() / 100.;
-    double mileage = sqlite3_column_double(stmt, 2);
-
-    User driverUser;
-    driverUser.getDataFromDb(db, driver_id);
-
-    response += "ID: " + std::to_string(driverUser.getId()) + "\n";
-    response += "Login: " + driverUser.getLogin() + "\n";
-    response += "Name: " + driver.getName() + "\n";
-    response += "Surname: " + driver.getSurname() + "\n";
-    response += "Category: " + driver.getCategoryString() + "\n";
-    response += "Experience: " + std::to_string(driver.getExperience()) + " years\n";
-    response += "City: " + driver.getCity() + "\n";
-    response += "Address: " + driver.getAddress() + "\n";
-    response += "Birthday: " + driver.getBirthday() + "\n";
-    response += "Orders completed: " + std::to_string(orders) + "\n";
-    response += "Money earned: " + std::to_string(money) + "\n";
-    response += "Summary mileage: " + std::to_string(mileage) + "\n";
+    char response[200];
+    sprintf(response, "ID: %d\n"
+                      "Login: %s\n"
+                      "Name: %s\n"
+                      "Surname: %s\n"
+                      "Category: %s\n"
+                      "Experience: %d years\n"
+                      "City: %s\n"
+                      "Address: %s\n"
+                      "Birthday: %s\n"
+                      "Orders completed: %d\n"
+                      "Money earned: %.2f\n"
+                      "Summary mileage: %.2f\n",
+            sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2),
+            sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4), sqlite3_column_int(stmt, 5),
+            sqlite3_column_text(stmt, 6), sqlite3_column_text(stmt, 7), sqlite3_column_text(stmt, 8),
+            sqlite3_column_int(stmt, 9), sqlite3_column_double(stmt, 10), sqlite3_column_double(stmt, 11));
+//    response += "ID: " + std::to_string(sqlite3_column_int(stmt, 0)) + "\n";
+//    response += "Login: " + login + "\n";
+//    response += "Name: " + name + "\n";
+//    response += "Surname: " + surname + "\n";
+//    response += "Category: " + category + "\n";
+//    response += "Experience: " + std::to_string(driver.getExperience()) + " years\n";
+//    response += "City: " + city + "\n";
+//    response += "Address: " + address + "\n";
+//    response += "Birthday: " + birthday+ "\n";
+//    response += "Orders completed: " + std::to_string(orders) + "\n";
+//    response += "Money earned: " + std::to_string(money) + "\n";
+//    response += "Summary mileage: " + std::to_string(mileage) + "\n";
 
     return response;
+}
+
+std::vector<std::string> Controller::getAllDriversStatistics() const {
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
+        throw PermissionDeniedException();
+    }
+    std::string city;
+
+    std::string sql = "SELECT u.id, u.login, d.name, "
+                      "d.surname, d.category, d.experience, "
+                      "d.city, d.address, d.birthday, "
+                      "COUNT(o.driver_id), SUM(cost), SUM(mileage) "
+                      "FROM autopark_driver d "
+                      "INNER JOIN autopark_user u ON u.id = d.user_id "
+                      "LEFT JOIN autopark_order o ON o.driver_id = d.user_id ";
+
+    if (user.getRole() == DISPATCHER) {
+        Dispatcher dispatcher;
+        dispatcher.getDataFromDb(db, user.getId());
+        sql += "WHERE d.city = ? ";
+        city = User::toLower(dispatcher.getCity());
+    }
+
+    sql += "GROUP BY d.user_id;";
+
+    sqlite3_stmt *stmt = nullptr;
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare all drivers statistics statement: ");
+
+    if (user.getRole() == DISPATCHER) {
+        sqlite3_bind_text(stmt, 1, city.c_str(), -1, SQLITE_STATIC);
+    }
+
+    std::vector<std::string> data;
+    while (true) {
+        int rc = sqlite3_step(stmt);
+        if (rc != SQLITE_ROW) {
+            break;
+        }
+        char response[200];
+        sprintf(response, "ID: %d\n"
+                          "Login: %s\n"
+                          "Name: %s\n"
+                          "Surname: %s\n"
+                          "Category: %s\n"
+                          "Experience: %d years\n"
+                          "City: %s\n"
+                          "Address: %s\n"
+                          "Birthday: %s\n"
+                          "Orders completed: %d\n"
+                          "Money earned: %.2f\n"
+                          "Summary mileage: %.2f\n",
+                sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2),
+                sqlite3_column_text(stmt, 3), sqlite3_column_text(stmt, 4), sqlite3_column_int(stmt, 5),
+                sqlite3_column_text(stmt, 6), sqlite3_column_text(stmt, 7), sqlite3_column_text(stmt, 8),
+                sqlite3_column_int(stmt, 9), sqlite3_column_double(stmt, 10), sqlite3_column_double(stmt, 11));
+        data.push_back(response);
+    }
+
+    if (data.size() == 0) {
+        data.push_back("No statistics were found.\n");
+    }
+
+    return data;
 }
