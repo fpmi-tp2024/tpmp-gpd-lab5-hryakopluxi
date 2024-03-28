@@ -6,10 +6,11 @@
 #include <iostream>
 
 const std::regex Validator::name_pattern(R"(^[A-Za-z]+$)");
-const std::regex Validator::address_pattern(R"(^[a-zA-Z0-9\s.,/]+$)");
+const std::regex Validator::address_pattern(R"(^[a-zA-Z0-9\\s.,/]+$)");
 const std::regex Validator::city_pattern(R"(^[A-Za-z]+$)");
 const std::regex Validator::date_pattern(R"(^\d{4}-\d{2}-\d{2}$)");
 const std::regex Validator::license_pattern("^[0-9]{4}[ABEIKMHOPCTX]{2}-[1-7]$");
+const std::regex Validator::login_pattern("^[A-Za-z0-9_]{1,}$");
 
 bool Validator::validLicense(const std::string &license) {
     return std::regex_match(license, license_pattern);
@@ -75,8 +76,8 @@ bool Validator::validDate(const std::string& date_str) {
 }
 
 bool Validator::validDriver(const Driver &driver) {
-    if (driver.getLogin().empty()) {
-        throw std::invalid_argument("Login must not be empty\n");
+    if (!std::regex_match(driver.getLogin(), login_pattern)) {
+        throw std::invalid_argument("Login must contains only latin symbols, digits or _\n");
     }
     if (driver.getPassHash().empty()) {
         throw std::invalid_argument("Password must not be empty\n");
