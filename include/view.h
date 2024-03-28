@@ -6,17 +6,14 @@
 #define LAB_5_PROJECT_VIEW_H
 
 #include "controller.h"
+#include <iostream>
 
 class View {
 private:
     std::string db_filename = "db/app.db";
     Controller controller;
-
 public:
     View();
-
-    void addDb();
-    void initController();
 
     void login();
     void logout();
