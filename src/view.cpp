@@ -24,6 +24,11 @@ View::View() {
     controller = Controller(db_filename);
 }
 
+View::View(const std::string& login, const std::string& password) {
+    controller = Controller(db_filename);
+    controller.login(login, password);
+}
+
 void View::login() {
     std::string login, password;
     std::cout << "Enter login: ";

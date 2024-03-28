@@ -14,6 +14,7 @@ private:
     Controller controller;
 public:
     View();
+    View(const std::string& login, const std::string& password);
 
     void login();
     void logout();
