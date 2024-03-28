@@ -23,7 +23,7 @@ public:
 
     void getDriverOrders() const;
     void getCarSummaryMileageAndLoads() const;
-    void getDriverSummaryWork() const;
+    void getDriverStatistics() const;
     void getWorstDriverSummary() const;
     void getBestCarSummary() const;
 

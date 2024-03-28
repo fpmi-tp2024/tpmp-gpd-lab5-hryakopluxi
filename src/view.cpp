@@ -97,3 +97,20 @@ void View::getCarSummaryMileageAndLoads() const {
     std::cout << "---------------------------------\n";
 }
 
+void View::getDriverStatistics() const {
+    int id;
+    std::cout << "Enter Driver ID: ";
+    std::cin >> id;
+    std::string res;
+    try {
+        res = controller.getDriverStatistics(id);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "---------------------------------\n";
+    std::cout << res;
+    std::cout << "---------------------------------\n";
+}
+
