@@ -41,7 +41,7 @@ void Controller::logout() {
     user = User();
 }
 
-void Controller::addCar(Car &car) {
+int Controller::addCar(Car &car) {
     if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
         throw PermissionDeniedException();
     }
@@ -51,7 +51,7 @@ void Controller::addCar(Car &car) {
     car.insertCarToDb(db);
 }
 
-void Controller::addDriver(Driver &driver) {
+int Controller::addDriver(Driver &driver) {
     if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
         throw PermissionDeniedException();
     }
@@ -70,7 +70,7 @@ void Controller::addDriver(Driver &driver) {
     driver.insertUserToDb(db);
 }
 
-void Controller::addOrder(Order &order) {
+int Controller::addOrder(Order &order) {
     if (user.getRole() != ADMIN && user.getRole() != DISPATCHER && order.getDriverId() != user.getId()) {
         throw PermissionDeniedException();
     }
@@ -102,7 +102,7 @@ void Controller::addOrder(Order &order) {
     order.insertOrderToDb(db);
 }
 
-void Controller::addDispatcher(Dispatcher &dispatcher) {
+int Controller::addDispatcher(Dispatcher &dispatcher) {
     if (user.getRole() != ADMIN) {
         throw PermissionDeniedException();
     }
