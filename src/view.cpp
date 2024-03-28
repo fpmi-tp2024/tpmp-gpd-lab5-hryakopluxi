@@ -318,3 +318,63 @@ void View::updateDispatcher() {
     std::cout << "Dispatcher successfully updated.\n";
 }
 
+void View::deleteCar() {
+    int id;
+    std::cout << "Enter Car ID to delete: ";
+    std::cin >> id;
+
+    try {
+        controller.deleteCar(id);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "Car successfully deleted.\n";
+}
+
+void View::deleteDriver() {
+    int id;
+    std::cout << "Enter Driver ID to delete: ";
+    std::cin >> id;
+
+    try {
+        controller.deleteDriver(id);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "Driver successfully deleted.\n";
+}
+
+void View::deleteDispatcher() {
+    int id;
+    std::cout << "Enter Dispatcher ID to delete: ";
+    std::cin >> id;
+
+    try {
+        controller.deleteDispatcher(id);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "Dispatcher successfully deleted.\n";
+}
+
+void View::deleteOrder() {
+    int id;
+    std::cout << "Enter Order ID to delete: ";
+    std::cin >> id;
+
+    try {
+        controller.deleteOrder(id);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "Order successfully deleted.\n";
+}
+

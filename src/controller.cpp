@@ -48,7 +48,7 @@ int Controller::addCar(Car &car) {
 
     Validator::validCar(car, db);
 
-    car.insertCarToDb(db);
+    return car.insertCarToDb(db);
 }
 
 int Controller::addDriver(Driver &driver) {
@@ -67,7 +67,7 @@ int Controller::addDriver(Driver &driver) {
     Validator::validDriver(driver);
     driver.setPassHash(BCrypt::generateHash(driver.getPassHash()));
 
-    driver.insertUserToDb(db);
+    return driver.insertUserToDb(db);
 }
 
 int Controller::addOrder(Order &order) {
@@ -99,7 +99,7 @@ int Controller::addOrder(Order &order) {
         throw std::invalid_argument(msg);
     }
 
-    order.insertOrderToDb(db);
+    return order.insertOrderToDb(db);
 }
 
 int Controller::addDispatcher(Dispatcher &dispatcher) {
@@ -110,12 +110,20 @@ int Controller::addDispatcher(Dispatcher &dispatcher) {
     Validator::validDispatcher(dispatcher);
     dispatcher.setPassHash(BCrypt::generateHash(dispatcher.getPassHash()));
 
-    dispatcher.insertUserToDb(db);
+    return dispatcher.insertUserToDb(db);
+
 }
 
 void Controller::deleteCar(int car_id) {
     if (user.getRole() != ADMIN) {
         throw PermissionDeniedException();
+    }
+
+    try {
+        Car c;
+        c.getDataFromDb(db, car_id);
+    } catch (const std::exception &e) {
+        throw std::invalid_argument("No car with provided id\n");
     }
 
     std::string sql = "DELETE FROM autopark_car WHERE id = ?";
