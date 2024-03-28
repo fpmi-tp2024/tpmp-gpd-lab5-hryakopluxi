@@ -50,7 +50,7 @@ void View::login() {
         return;
     }
 
-    std::cout << "Logged in successfully!\n";
+    std::cout << "Logged in successfully!\nYour ID: " << controller.getUserId() << "\n";
 }
 
 void View::logout() {

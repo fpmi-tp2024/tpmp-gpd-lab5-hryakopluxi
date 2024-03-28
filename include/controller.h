@@ -26,6 +26,7 @@ public:
     bool login(const std::string& login, const std::string& password);
     void logout();
 
+    [[nodiscard]] int getUserId() const {return user.getId();}
     [[nodiscard]] std::vector <Order> getDriverOrders(int driver_id, const std::string& date_start, const std::string& date_end) const;
     [[nodiscard]] std::string getCarSummaryMileageAndLoad(int car_id) const;
     [[nodiscard]] std::string getDriverStatistics(int driver_id) const;
