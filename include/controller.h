@@ -18,7 +18,7 @@ private:
     User user;
     Config config;
 
-    std::string getDriverStat(int driver_id) const;
+    [[nodiscard]] std::string getDriverStat(int driver_id) const;
 public:
     Controller() = default;
     explicit Controller(const std::string& db_filename);
@@ -32,8 +32,8 @@ public:
     [[nodiscard]] std::vector<std::string> getAllDriversStatistics() const;
     [[nodiscard]] std::string getWorstDriverSummary() const;
     [[nodiscard]] std::string getInfoAboutCarWithMaxMileage() const;
-    void storeDriversEarnedMoney(std::string period);
-    void getDriverEarnedMoney(int driver_id);
+    void storeDriversEarnedMoney(const std::string& start_date, const std::string& end_date);
+    void getDriverEarnedMoney(int driver_id, const std::string& start_date, const std::string& end_date);
 
     void addCar(Car& car);
     void addDriver(Driver& driver);

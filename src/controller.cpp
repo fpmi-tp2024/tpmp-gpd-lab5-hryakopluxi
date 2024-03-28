@@ -528,7 +528,7 @@ std::string Controller::getDriverStat(int driver_id) const {
     std::string sql = "SELECT u.id, u.login, d.name, "
                       "d.surname, d.category, d.experience, "
                       "d.city, d.address, d.birthday, "
-                      "COUNT(o.driver_id), SUM(cost), SUM(mileage) "
+                      "COUNT(o.driver_id), SUM(cost) * ?, SUM(mileage) "
                       "FROM autopark_driver d "
                       "INNER JOIN autopark_user u ON u.id = d.user_id "
                       "LEFT JOIN autopark_order o ON o.driver_id = d.user_id "
@@ -537,7 +537,8 @@ std::string Controller::getDriverStat(int driver_id) const {
     sqlite3_stmt *stmt = nullptr;
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare driver summary statement: ");
-    sqlite3_bind_int(stmt, 1, driver_id);
+    sqlite3_bind_double(stmt, 1, config.getDriverMul());
+    sqlite3_bind_int(stmt, 2, driver_id);
     SQL::executeSQLStatement(db, stmt, SQLITE_ROW,
                              "Failed to execute driver summary statement: ",
                              false, false);
@@ -714,8 +715,8 @@ std::string Controller::getInfoAboutCarWithMaxMileage() const {
           "c.brand, c.mileage, c.load_capacity, "
           "SUM(o.cost), SUM(o.load), SUM(o.mileage) "
           "FROM autopark_car AS c "
-          "LEFT JOIN autopark_order AS o "
-          "LEFT JOIN autopark_driver AS d "
+          "LEFT JOIN autopark_order AS o o.car_id = c.id "
+          "LEFT JOIN autopark_driver AS d d.user_id = c.driver_id "
           "WHERE c.id = ? AND o.is_approved = true;";
     stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
                                     "Failed to prepare retrieving info about car with max mileage: ");
@@ -740,4 +741,72 @@ std::string Controller::getInfoAboutCarWithMaxMileage() const {
             sqlite3_column_double(stmt, 9), sqlite3_column_double(stmt, 10) + sqlite3_column_double(stmt, 6));
 
     return response;
+}
+
+void Controller::storeDriversEarnedMoney(const std::string& start_date, const std::string& end_date) {
+    if (user.getRole() != ADMIN) {
+        throw PermissionDeniedException();
+    }
+
+    if (!Validator::validPeriod(start_date, end_date)) {
+        throw std::invalid_argument("Invalid period provided\n");
+    }
+
+    sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
+
+    std::string sql = "DELETE FROM autopark_earning_info "
+                      "WHERE start_date = ? AND end_date = ?;";
+
+    sqlite3_stmt *stmt = nullptr;
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                             "Failed to prepare deleting old rows about earnings: ",
+                             true);
+
+
+    sqlite3_bind_text(stmt, 1, start_date.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, end_date.c_str(), -1, SQLITE_STATIC);
+
+
+    SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
+                             "Failed to execute deleting old rows about earnings: ",
+                             true);
+
+    sql = "INSERT INTO autopark_earning_info (driver_id, surname, money, start_date, end_date)"
+          "SELECT driver_id, d.surname, "
+          "COALESCE(SUM(amount) * ?, 0) AS money, "
+          "? AS start_date, "
+          "? AS end_date "
+          "FROM ( "
+          "SELECT user_id AS driver_id, '' AS surname, 0 AS amount "
+          "FROM autopark_driver "
+          "WHERE user_id NOT IN ( "
+          "SELECT DISTINCT driver_id "
+          "FROM autopark_order "
+          "WHERE date BETWEEN ? AND ? "
+          ") "
+          "UNION ALL "
+          "SELECT driver_id, '', SUM(cost) AS amount "
+          "FROM autopark_order "
+          "WHERE date BETWEEN ? AND ? "
+          "GROUP BY driver_id "
+          ") AS earnings "
+          "LEFT JOIN autopark_driver AS d ON earnings.driver_id = d.user_id "
+          "GROUP BY driver_id; ";
+
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare inserting new info: ",
+                                    true);
+    sqlite3_bind_double(stmt, 1, config.getDriverMul());
+    sqlite3_bind_text(stmt, 2, start_date.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, end_date.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, start_date.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 5, end_date.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 6, start_date.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 7, end_date.c_str(), -1, SQLITE_STATIC);
+
+    SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
+                             "Failed to execute inserting new info: ",
+                             true);
+
+    sqlite3_exec(db, "COMMIT;", nullptr, nullptr, nullptr);
 }
