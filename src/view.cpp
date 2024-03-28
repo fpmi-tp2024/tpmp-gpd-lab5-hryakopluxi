@@ -114,3 +114,17 @@ void View::getDriverStatistics() const {
     std::cout << "---------------------------------\n";
 }
 
+void View::getWorstDriverStatistics() const {
+    std::string res;
+    try {
+        res = controller.getWorstDriverStatistics();
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "---------------------------------\n";
+    std::cout << res;
+    std::cout << "---------------------------------\n";
+}
+

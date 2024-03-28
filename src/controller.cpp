@@ -648,7 +648,7 @@ std::vector<std::string> Controller::getAllDriversStatistics() const {
     return data;
 }
 
-std::string Controller::getWorstDriverSummary() const {
+std::string Controller::getWorstDriverStatistics() const {
     if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
         throw PermissionDeniedException();
     }
