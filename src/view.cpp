@@ -128,3 +128,17 @@ void View::getWorstDriverStatistics() const {
     std::cout << "---------------------------------\n";
 }
 
+void View::getInfoAboutCarWithMaxMileage() const {
+    std::string res;
+    try {
+        res = controller.getInfoAboutCarWithMaxMileage();
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "---------------------------------\n";
+    std::cout << res;
+    std::cout << "---------------------------------\n";
+}
+
