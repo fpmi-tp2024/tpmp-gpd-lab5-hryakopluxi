@@ -32,6 +32,7 @@ public:
     static bool validLicense(const std::string& license);
     static bool validDate(const std::string& date);
     static bool validAge(const std::string& date);
+    static bool validPeriod(const std::string& date_start, const std::string& date_end);
 
     static void validateUpdateCar(Car& update, int car_id, sqlite3* db);
     static void validateUpdateDriver(Driver& update, int driver_id, sqlite3* db);

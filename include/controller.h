@@ -17,6 +17,8 @@ private:
     sqlite3* db = nullptr;
     User user;
     Config config;
+
+    [[nodiscard]] std::string getDriverStat(int driver_id) const;
 public:
     Controller() = default;
     explicit Controller(const std::string& db_filename);
@@ -24,12 +26,14 @@ public:
     bool login(const std::string& login, const std::string& password);
     void logout();
 
-    [[nodiscard]] Driver getDriverInfo(int driver_id) const;
-    [[nodiscard]] Order getOrderInfo(int order_id) const;
-    [[nodiscard]] Car getCarInfo(int car_id) const;
-    [[nodiscard]] std::vector <Order>& getDriverOrders(int driver_id, std::string period) const;
-    [[nodiscard]] int getWorstDriverId (std::string period) const;
-    [[nodiscard]] int getHighestMileageCarId() const;
+    [[nodiscard]] std::vector <Order> getDriverOrders(int driver_id, const std::string& date_start, const std::string& date_end) const;
+    [[nodiscard]] std::string getCarSummaryMileageAndLoad(int car_id) const;
+    [[nodiscard]] std::string getDriverStatistics(int driver_id) const;
+    [[nodiscard]] std::vector<std::string> getAllDriversStatistics() const;
+    [[nodiscard]] std::string getWorstDriverSummary() const;
+    [[nodiscard]] std::string getInfoAboutCarWithMaxMileage() const;
+    void storeDriversEarnedMoney(const std::string& start_date, const std::string& end_date);
+    double getDriverEarnedMoney(int driver_id, const std::string& start_date, const std::string& end_date);
 
     void addCar(Car& car);
     void addDriver(Driver& driver);
@@ -48,8 +52,6 @@ public:
     void deleteOrder(int order_id);
     void deleteDispatcher(int user_id);
 
-    void storeDriversEarnedMoney(std::string period);
-    void getDriverEarnedMoney(int driver_id);
 };
 
 #endif //LAB_5_PROJECT_CONTROLLER_H

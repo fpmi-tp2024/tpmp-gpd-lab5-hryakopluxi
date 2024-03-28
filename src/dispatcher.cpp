@@ -6,8 +6,8 @@
 
 void Dispatcher::getDataFromDb(sqlite3 *db, int user_id) {
     std::string sql = "SELECT * FROM autopark_dispatcher WHERE user_id = ?";
-    sqlite3_stmt *stmt = nullptr;
-    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+
+    sqlite3_stmt *stmt = SQL::prepareSQLStatement(db, sql,
                                     "Failed to prepare select dispatcher statement: ");
 
     sqlite3_bind_int(stmt, 1, user_id);
@@ -24,12 +24,12 @@ void Dispatcher::getDataFromDb(sqlite3 *db, int user_id) {
 }
 
 void Dispatcher::insertUserToDb(sqlite3 *db) {
-    sqlite3_stmt *stmt = nullptr;
+
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
     std::string sql = "INSERT INTO autopark_user (login, pass_hash, role) VALUES (?, ?, ?);";
 
-    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+    sqlite3_stmt *stmt = SQL::prepareSQLStatement(db, sql,
                                     "Failed to prepare insert user statement: ", true);
 
     std::vector<std::string> insert_data{
@@ -50,7 +50,7 @@ void Dispatcher::insertUserToDb(sqlite3 *db) {
     sql = "INSERT INTO autopark_dispatcher (user_id, name, surname, address, city) "
           "VALUES (?, ?, ?, ?, ?);";
 
-    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+    stmt = SQL::prepareSQLStatement(db, sql,
                                     "Failed to prepare insert dispatcher statement: ", true);
 
     insert_data = {

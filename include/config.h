@@ -12,8 +12,8 @@ private:
     double driverPercent = 20.;
 
 public:
-    [[nodiscard]] double getDriverPercent() const {
-        return driverPercent;
+    [[nodiscard]] double getDriverMul() const {
+        return driverPercent / 100.;
     }
 
     void setDriverPercent(double newDriverPercent) {

@@ -15,6 +15,31 @@ bool Validator::validLicense(const std::string &license) {
     return std::regex_match(license, license_pattern);
 }
 
+bool Validator::validPeriod(const std::string& date_start, const std::string& date_end) {
+    if (!std::regex_match(date_start, date_pattern) || !std::regex_match(date_end, date_pattern)) {
+        throw std::invalid_argument("Date must be provided in format YYYY-MM-DD\n");
+    }
+
+    struct std::tm start_tm = {}, end_tm = {};
+    std::istringstream start_ss(date_start), end_ss(date_end);
+    start_ss >> start_tm.tm_year;
+    start_ss.ignore();
+    start_ss >> start_tm.tm_mon;
+    start_ss.ignore();
+    start_ss >> start_tm.tm_mday;
+
+    end_ss >> end_tm.tm_year;
+    end_ss.ignore();
+    end_ss >> end_tm.tm_mon;
+    end_ss.ignore();
+    end_ss >> end_tm.tm_mday;
+
+    std::time_t start_time = std::mktime(&start_tm);
+    std::time_t end_time = std::mktime(&end_tm);
+
+    return start_time <= end_time;
+}
+
 bool Validator::validAge(const std::string& date_str) {
     std::tm date = {};
     std::istringstream ss(date_str);
