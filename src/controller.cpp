@@ -80,7 +80,7 @@ void Controller::addOrder(Order &order) {
         Dispatcher dispatcher;
         dispatcher.getDataFromDb(db, user.getId());
         driver.getDataFromDb(db, order.getDriverId());
-        if (driver.getCity() != dispatcher.getCity()) {
+        if (User::toLower(dispatcher.getCity()) != User::toLower(driver.getCity())) {
             throw PermissionDeniedException();
         }
     }
@@ -575,7 +575,7 @@ std::string Controller::getDriverStatistics(int driver_id) const {
     if (user.getRole() == DISPATCHER) {
         Dispatcher dispatcher;
         dispatcher.getDataFromDb(db, user.getId());
-        if (driver.getCity() != dispatcher.getCity()) {
+        if (User::toLower(dispatcher.getCity()) != User::toLower(driver.getCity())) {
             throw PermissionDeniedException();
         }
     }
@@ -825,7 +825,7 @@ double Controller::getDriverEarnedMoney(int driver_id, const std::string& start_
     if (user.getRole() == DISPATCHER) {
         Dispatcher dispatcher;
         dispatcher.getDataFromDb(db, user.getId());
-        if (dispatcher.getCity() != d.getCity()) {
+        if (User::toLower(dispatcher.getCity()) != User::toLower(d.getCity())) {
             throw PermissionDeniedException();
         }
     }
