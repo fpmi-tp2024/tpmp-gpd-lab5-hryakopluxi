@@ -28,7 +28,7 @@ public:
     void getInfoAboutCarWithMaxMileage() const;
 
     void storeDriversEarnedMoney();
-    void getDriverEarnedMoney();
+    void getDriverEarnedMoney() const;
 
     void addCar();
     void addDriver();

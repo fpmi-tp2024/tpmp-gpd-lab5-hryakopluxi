@@ -828,7 +828,8 @@ std::vector<std::string> Controller::storeDriversEarnedMoney(
     return response;
 }
 
-double Controller::getDriverEarnedMoney(int driver_id, const std::string& start_date, const std::string& end_date) {
+double Controller::getDriverEarnedMoney(
+        int driver_id, const std::string& start_date, const std::string& end_date) const {
     if (user.getRole() != ADMIN && user.getRole() != DISPATCHER && driver_id != user.getId()) {
         throw PermissionDeniedException();
     }

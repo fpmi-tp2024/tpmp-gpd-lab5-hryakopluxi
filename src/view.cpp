@@ -163,6 +163,29 @@ void View::storeDriversEarnedMoney() {
         std::cout << s;
     }
     std::cout << "---------------------------------\n";
+}
 
+void View::getDriverEarnedMoney() const {
+    std::string start, end;
+    int id;
+    double res;
+    std:: cout << "Driver ID: ";
+    std::cin >> id;
+    std::cout << "Enter start of the period (YYYY-MM-DD): ";
+    std::cin >> start;
+    std::cout << "Enter end of the period (YYYY-MM-DD): ";
+    std::cin >> end;
+
+    try {
+        res = controller.getDriverEarnedMoney(id, start, end);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    char buf[25];
+    sprintf(buf, "Earned money: %.2f\n", res);
+
+    std::cout << buf;
 }
 
