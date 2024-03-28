@@ -713,8 +713,8 @@ std::string Controller::getInfoAboutCarWithMaxMileage() const {
           "c.brand, c.mileage, c.load_capacity, "
           "SUM(o.cost), SUM(o.load), SUM(o.mileage) "
           "FROM autopark_car AS c "
-          "LEFT JOIN autopark_order AS o o.car_id = c.id "
-          "LEFT JOIN autopark_driver AS d d.user_id = c.driver_id "
+          "LEFT JOIN autopark_order AS o ON o.car_id = c.id "
+          "LEFT JOIN autopark_driver AS d ON d.user_id = c.driver_id "
           "WHERE c.id = ? AND o.is_approved = true;";
     stmt = SQL::prepareSQLStatement(db, sql,
                                     "Failed to prepare retrieving info about car with max mileage: ");
