@@ -4,10 +4,10 @@
 
 #include "../include/sql.h"
 
-sqlite3_stmt *SQL::prepareSQLStatement(sqlite3 *db, const std::string &sql, sqlite3_stmt *stmt,
-                                       int required_status, std::string errMsg, bool rollback) {
+sqlite3_stmt *SQL::prepareSQLStatement(sqlite3 *db, const std::string &sql, std::string errMsg, bool rollback) {
+    sqlite3_stmt *stmt;
     int rc = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
-    if (rc != required_status) {
+    if (rc != SQLITE_OK) {
         errMsg += sqlite3_errmsg(db);
         errMsg += "\n";
         if (rollback) {

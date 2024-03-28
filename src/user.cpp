@@ -13,9 +13,9 @@ std::string User::toLower(std::string str) {
 
 void User::getDataFromDb(sqlite3 *db, int user_id) {
     std::string sql = "SELECT * FROM autopark_user WHERE id = ?;";
-    sqlite3_stmt *stmt = nullptr;
 
-    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+
+    sqlite3_stmt *stmt = SQL::prepareSQLStatement(db, sql,
                                     "Failed to prepare select user statement: ");
 
     sqlite3_bind_int(stmt, 1, user_id);

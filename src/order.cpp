@@ -7,8 +7,8 @@
 
 void Order::getDataFromDb(sqlite3 *db, int order_id) {
     std::string sql = "SELECT * FROM autopark_order WHERE id = ?;";
-    sqlite3_stmt *stmt = nullptr;
-    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+
+    sqlite3_stmt *stmt = SQL::prepareSQLStatement(db, sql,
                                     "Failed to prepare select order statement: ");
 
     sqlite3_bind_int(stmt, 1, order_id);
@@ -31,8 +31,8 @@ void Order::insertOrderToDb(sqlite3 *db) {
     std::string sql = "INSERT INTO autopark_order (driver_id, car_id, date, mileage, load, cost, is_approved) "
                 "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
-    sqlite3_stmt *stmt = nullptr;
-    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+
+    sqlite3_stmt *stmt = SQL::prepareSQLStatement(db, sql,
                                     "Failed to prepare insert order statement: ");
 
     sqlite3_bind_int(stmt, 1, driver_id);
