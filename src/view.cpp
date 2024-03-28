@@ -76,3 +76,19 @@ void View::getDriverOrders() const {
     std::cout << "---------------------------------\n";
 }
 
+void View::getCarSummaryMileageAndLoads() const {
+    int id;
+    std::cout << "Enter Car ID: ";
+    std::cin >> id;
+    std::string res;
+    try {
+        res = controller.getCarSummaryMileageAndLoad(id);
+    } catch (const std::exception& e) {
+        std:: cout << e.what() << "\n";
+        return;
+    }
+    std::cout << "---------------------------------\n";
+    std::cout << res;
+    std::cout << "---------------------------------\n";
+}
+
