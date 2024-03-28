@@ -4,6 +4,22 @@
 
 #include "../include/view.h"
 
+std::ostream& operator<<(std::ostream &os, const Order& o) {
+    os << "Order ID: " << o.getId() << "\n";
+    os << "Driver ID: " << o.getDriverId() << "\n";
+    os << "Car ID: " << o.getCarId() << "\n";
+    os << "Date: " << o.getDate() << "\n";
+    os << "Mileage: " << o.getMileage() << "\n";
+    os << "Load: " << o.getLoad() << "\n";
+    os << "Cost: " << o.getCost() << "\n";
+    if (o.getIsApproved()) {
+        os << "Approved: Yes\n";
+    } else {
+        os << "Approved: No\n";
+    }
+    return os;
+}
+
 View::View() {
     controller = Controller(db_filename);
 }
@@ -35,3 +51,28 @@ void View::login() {
 void View::logout() {
     controller.logout();
 }
+
+void View::getDriverOrders() const {
+    int id;
+    std::string start, end;
+    std::cout << "Enter Driver ID: ";
+    std::cin >> id;
+    std::cout << "Enter start of the period (YYYY-MM-DD): ";
+    std::cin >> start;
+    std::cout << "Enter end of the period (YYYY-MM-DD): ";
+    std::cin >> end;
+
+    std::vector <Order> orders = controller.getDriverOrders(id, start, end);
+
+    if (orders.empty()) {
+        std::cout << "\nNo orders found during this period\n";
+        return;
+    }
+
+    for (auto& o : orders) {
+        std::cout << "---------------------------------\n";
+        std::cout << o;
+    }
+    std::cout << "---------------------------------\n";
+}
+
