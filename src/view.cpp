@@ -142,3 +142,27 @@ void View::getInfoAboutCarWithMaxMileage() const {
     std::cout << "---------------------------------\n";
 }
 
+void View::storeDriversEarnedMoney() {
+    std::string start, end;
+    std::cout << "Enter start of the period (YYYY-MM-DD): ";
+    std::cin >> start;
+    std::cout << "Enter end of the period (YYYY-MM-DD): ";
+    std::cin >> end;
+
+    std::vector<std::string> res;
+
+    try {
+        res = controller.storeDriversEarnedMoney(start, end);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    for (auto& s : res) {
+        std::cout << "---------------------------------\n";
+        std::cout << s;
+    }
+    std::cout << "---------------------------------\n";
+
+}
+
