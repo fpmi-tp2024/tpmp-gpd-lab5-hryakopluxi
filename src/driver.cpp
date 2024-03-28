@@ -143,7 +143,9 @@ void Driver::getDataFromConsole() {
     std::cin >> surname;
 
     std::cout << "Enter categories (separated by space): ";
+    std::cin.ignore();
     std::string categoriesInput;
+    std::getline(std::cin, categoriesInput);
     setCategoryFromStr(categoriesInput);
 
     std::cout << "Enter experience (years): ";

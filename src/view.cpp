@@ -189,3 +189,60 @@ void View::getDriverEarnedMoney() const {
     std::cout << buf;
 }
 
+void View::addCar() {
+    int id;
+    Car c;
+    c.getDataFromConsole();
+
+    try {
+        id = controller.addCar(c);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "Car successfully added. New ID: " << id << "\n";
+}
+
+void View::addDriver() {
+    int id;
+    Driver driver;
+    driver.getDataFromConsole();
+
+    try {
+        id = controller.addDriver(driver);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+    std::cout << "Driver successfully added. New ID: " << id << "\n";
+}
+
+void View::addOrder() {
+    int id;
+    Order order;
+    order.getDataFromConsole();
+
+    try {
+        id = controller.addOrder(order);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+    std::cout << "Order successfully added. New ID: " << id << "\n";
+}
+
+void View::addDispatcher() {
+    int id;
+    Dispatcher dispatcher;
+    dispatcher.getDataFromConsole();
+
+    try {
+        id = controller.addDispatcher(dispatcher);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+    std::cout << "Dispatcher successfully added. New ID: " << id << "\n";
+}
+
