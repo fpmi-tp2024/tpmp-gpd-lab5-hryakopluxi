@@ -28,3 +28,11 @@ void User::getDataFromDb(sqlite3 *db, int user_id) {
     pass_hash = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
     role = static_cast<Role>(sqlite3_column_int(stmt, 3));
 }
+
+void User::getDataFromConsole() {
+    std::cout << "Enter login: ";
+    getline(std::cin, login, '\n');
+
+    std::cout << "Enter password: ";
+    getline(std::cin, pass_hash, '\n');
+}

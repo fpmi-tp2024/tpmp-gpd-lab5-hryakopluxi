@@ -27,7 +27,7 @@ void Order::getDataFromDb(sqlite3 *db, int order_id) {
     is_approved = sqlite3_column_int(stmt, 7);
 }
 
-void Order::insertOrderToDb(sqlite3 *db) {
+int Order::insertOrderToDb(sqlite3 *db) {
     std::string sql = "INSERT INTO autopark_order (driver_id, car_id, date, mileage, load, cost, is_approved) "
                 "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
@@ -45,4 +45,25 @@ void Order::insertOrderToDb(sqlite3 *db) {
 
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
                              "Failed to execute insert order statement: ");
+    return static_cast<int>(sqlite3_last_insert_rowid(db));
+}
+
+void Order::getDataFromConsole() {
+    std::cout << "Enter driver ID: ";
+    std::cin >> driver_id;
+
+    std::cout << "Enter car ID: ";
+    std::cin >> car_id;
+
+    std::cout << "Enter date (yyyy-mm-dd): ";
+    std::cin >> date;
+
+    std::cout << "Enter mileage: ";
+    std::cin >> mileage;
+
+    std::cout << "Enter load: ";
+    std::cin >> load;
+
+    std::cout << "Enter cost: ";
+    std::cin >> cost;
 }

@@ -8,6 +8,7 @@
 #include <string>
 #include <utility>
 #include <sqlite3.h>
+#include <iostream>
 #include "sql.h"
 
 class Order {
@@ -94,8 +95,8 @@ public:
     }
 
     void getDataFromDb(sqlite3 *db, int order_id);
-
-    void insertOrderToDb(sqlite3 *db);
+    void getDataFromConsole();
+    int insertOrderToDb(sqlite3 *db);
 };
 
 #endif //LAB_5_PROJECT_ORDER_H

@@ -94,8 +94,8 @@ public:
     }
 
     void getDataFromDb(sqlite3 *db, int user_id) override;
-
-    void insertUserToDb(sqlite3 *db) override;
+    int insertUserToDb(sqlite3 *db) override;
+    void getDataFromConsole() override;
 };
 
 

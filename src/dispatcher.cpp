@@ -23,7 +23,7 @@ void Dispatcher::getDataFromDb(sqlite3 *db, int user_id) {
     city = ((reinterpret_cast<const char *>(sqlite3_column_text(stmt, 4))));
 }
 
-void Dispatcher::insertUserToDb(sqlite3 *db) {
+int Dispatcher::insertUserToDb(sqlite3 *db) {
 
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
@@ -72,4 +72,23 @@ void Dispatcher::insertUserToDb(sqlite3 *db) {
                              "Failed to execute insert dispatcher statement: ", true);
 
     sqlite3_exec(db, "COMMIT;", nullptr, nullptr, nullptr);
+
+    return getId();
+}
+
+void Dispatcher::getDataFromConsole() {
+    User::getDataFromConsole();
+
+    std::cout << "Enter name: ";
+    std::cin >> name;
+
+    std::cout << "Enter surname: ";
+    std::cin >> surname;
+
+    std::cout << "Enter address: ";
+    std::cin.ignore();
+    std::getline(std::cin, address, '\n');
+
+    std::cout << "Enter city: ";
+    std::getline(std::cin, city, '\n');
 }

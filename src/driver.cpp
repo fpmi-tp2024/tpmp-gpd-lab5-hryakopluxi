@@ -77,7 +77,7 @@ void Driver::getDataFromDb(sqlite3 *db, int user_id) {
     birthday = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 7));
 }
 
-void Driver::insertUserToDb(sqlite3 *db) {
+int Driver::insertUserToDb(sqlite3 *db) {
 
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
@@ -129,4 +129,33 @@ void Driver::insertUserToDb(sqlite3 *db) {
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
                              "Failed to execute insert driver statement: ", true);
     sqlite3_exec(db, "COMMIT;", nullptr, nullptr, nullptr);
+
+    return getId();
+}
+
+void Driver::getDataFromConsole() {
+    User::getDataFromConsole(); // Collect data for the base class User
+
+    std::cout << "Enter name: ";
+    std::cin >> name;
+
+    std::cout << "Enter surname: ";
+    std::cin >> surname;
+
+    std::cout << "Enter categories (separated by space): ";
+    std::string categoriesInput;
+    setCategoryFromStr(categoriesInput);
+
+    std::cout << "Enter experience (years): ";
+    std::cin >> experience;
+
+    std::cout << "Enter address: ";
+    std::cin.ignore();
+    std::getline(std::cin, address);
+
+    std::cout << "Enter city: ";
+    std::getline(std::cin, city);
+
+    std::cout << "Enter birthday (yyyy-mm-dd): ";
+    std::cin >> birthday;
 }
