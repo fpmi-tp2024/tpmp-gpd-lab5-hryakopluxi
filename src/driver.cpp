@@ -137,16 +137,19 @@ void Driver::getDataFromConsole() {
     User::getDataFromConsole(); // Collect data for the base class User
 
     std::cout << "Enter name: ";
-    std::cin >> name;
+    std::getline(std::cin, name, '\n');
 
     std::cout << "Enter surname: ";
-    std::cin >> surname;
+    std::getline(std::cin, surname, '\n');
 
     std::cout << "Enter categories (separated by space): ";
     std::cin.ignore();
     std::string categoriesInput;
-    std::getline(std::cin, categoriesInput);
-    setCategoryFromStr(categoriesInput);
+    std::getline(std::cin, categoriesInput, '\n');
+    if (!categoriesInput.empty()) {
+        setCategoryFromStr(categoriesInput);
+    }
+
 
     std::cout << "Enter experience (years): ";
     std::cin >> experience;
@@ -159,5 +162,5 @@ void Driver::getDataFromConsole() {
     std::getline(std::cin, city);
 
     std::cout << "Enter birthday (yyyy-mm-dd): ";
-    std::cin >> birthday;
+    std::getline(std::cin, birthday, '\n');
 }

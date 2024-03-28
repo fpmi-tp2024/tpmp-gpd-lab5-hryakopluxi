@@ -246,3 +246,75 @@ void View::addDispatcher() {
     std::cout << "Dispatcher successfully added. New ID: " << id << "\n";
 }
 
+void View::updateCar() {
+    int id;
+    Car update;
+    std::cout << "Enter Car ID to update: ";
+    std::cin >> id;
+    std::cin.ignore();
+    update.getDataFromConsole();
+
+    try {
+        controller.updateCar(id, update);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "Car successfully updated.\n";
+}
+
+void View::updateDriver() {
+    int id;
+    Driver update;
+    std::cout << "Enter Driver ID to update: ";
+    std::cin >> id;
+    std::cin.ignore();
+    update.getDataFromConsole();
+
+    try {
+        controller.updateDriver(id, update);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "Driver successfully updated.\n";
+}
+
+void View::updateOrder() {
+    int id;
+    Order update;
+    std::cout << "Enter Order ID to update: ";
+    std::cin >> id;
+    std::cin.ignore();
+    update.getDataFromConsole();
+
+    try {
+        controller.updateOrder(id, update);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "Order successfully updated.\n";
+}
+
+void View::updateDispatcher() {
+    int id;
+    Dispatcher update;
+    std::cout << "Enter Dispatcher ID to update: ";
+    std::cin >> id;
+    std::cin.ignore();
+    update.getDataFromConsole();
+
+    try {
+        controller.updateDispatcher(id, update);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "Dispatcher successfully updated.\n";
+}
+

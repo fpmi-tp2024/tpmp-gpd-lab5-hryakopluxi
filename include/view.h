@@ -44,7 +44,6 @@ public:
     void deleteDriver();
     void deleteOrder();
     void deleteDispatcher();
-
 };
 
 #endif //LAB_5_PROJECT_VIEW_H

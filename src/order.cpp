@@ -56,7 +56,8 @@ void Order::getDataFromConsole() {
     std::cin >> car_id;
 
     std::cout << "Enter date (yyyy-mm-dd): ";
-    std::cin >> date;
+    std::cin.ignore();
+    std::getline(std::cin, date);
 
     std::cout << "Enter mileage: ";
     std::cin >> mileage;

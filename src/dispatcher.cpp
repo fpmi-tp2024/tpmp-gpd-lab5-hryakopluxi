@@ -80,13 +80,12 @@ void Dispatcher::getDataFromConsole() {
     User::getDataFromConsole();
 
     std::cout << "Enter name: ";
-    std::cin >> name;
+    std::getline(std::cin, name, '\n');
 
     std::cout << "Enter surname: ";
-    std::cin >> surname;
+    std::getline(std::cin, surname, '\n');
 
     std::cout << "Enter address: ";
-    std::cin.ignore();
     std::getline(std::cin, address, '\n');
 
     std::cout << "Enter city: ";
