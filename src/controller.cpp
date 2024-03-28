@@ -782,7 +782,7 @@ void Controller::storeDriversEarnedMoney(const std::string& start_date, const st
           "WHERE user_id NOT IN ( "
           "SELECT DISTINCT driver_id "
           "FROM autopark_order "
-          "WHERE date BETWEEN ? AND ? "
+          "WHERE date BETWEEN ? AND ? AND is_approved = 1 "
           ") "
           "UNION ALL "
           "SELECT driver_id, '', SUM(cost) AS amount "
@@ -809,4 +809,49 @@ void Controller::storeDriversEarnedMoney(const std::string& start_date, const st
                              true);
 
     sqlite3_exec(db, "COMMIT;", nullptr, nullptr, nullptr);
+}
+
+double Controller::getDriverEarnedMoney(int driver_id, const std::string& start_date, const std::string& end_date) {
+    if (user.getRole() != ADMIN && user.getRole() != DISPATCHER && driver_id != user.getId()) {
+        throw PermissionDeniedException();
+    }
+
+    if (!Validator::validPeriod(start_date, end_date)) {
+        throw std::invalid_argument("Invalid period provided\n");
+    }
+
+    Driver d;
+    try {
+        d.getDataFromDb(db, driver_id);
+    } catch (const std::exception& e) {
+        throw std::invalid_argument("No driver was found by provided id.\n");
+    }
+
+    if (user.getRole() == DISPATCHER) {
+        Dispatcher dispatcher;
+        dispatcher.getDataFromDb(db, user.getId());
+        if (dispatcher.getCity() != d.getCity()) {
+            throw PermissionDeniedException();
+        }
+    }
+
+    std::string sql = "SELECT SUM(cost) * ? "
+                      "FROM autopark_order "
+                      "WHERE date BETWEEN ? AND ? AND is_approved = 1;";
+
+    sqlite3_stmt *stmt = nullptr;
+    stmt = SQL::prepareSQLStatement(db, sql, stmt, SQLITE_OK,
+                                    "Failed to prepare retrieving driver income statement: ");
+    sqlite3_bind_double(stmt, 1, config.getDriverMul());
+    sqlite3_bind_text(stmt, 2, start_date.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, end_date.c_str(), -1, SQLITE_STATIC);
+
+    SQL::executeSQLStatement(db, stmt, SQLITE_ROW,
+                             "Failed to execute retrieving driver income statement: ",
+                             false, false);
+
+    double money = sqlite3_column_double(stmt, 0);
+    sqlite3_finalize(stmt);
+
+    return money;
 }
