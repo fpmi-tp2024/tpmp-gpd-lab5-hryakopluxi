@@ -33,7 +33,7 @@ public:
     [[nodiscard]] std::vector<std::string> getAllDriversStatistics() const;
     [[nodiscard]] std::string getWorstDriverStatistics() const;
     [[nodiscard]] std::string getInfoAboutCarWithMaxMileage() const;
-    void storeDriversEarnedMoney(const std::string& start_date, const std::string& end_date);
+    std::vector<std::string> storeDriversEarnedMoney(const std::string& start_date, const std::string& end_date);
     double getDriverEarnedMoney(int driver_id, const std::string& start_date, const std::string& end_date);
 
     void addCar(Car& car);

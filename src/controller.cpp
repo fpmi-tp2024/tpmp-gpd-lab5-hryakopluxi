@@ -741,7 +741,8 @@ std::string Controller::getInfoAboutCarWithMaxMileage() const {
     return response;
 }
 
-void Controller::storeDriversEarnedMoney(const std::string& start_date, const std::string& end_date) {
+std::vector<std::string> Controller::storeDriversEarnedMoney(
+        const std::string& start_date, const std::string& end_date) {
     if (user.getRole() != ADMIN) {
         throw PermissionDeniedException();
     }
@@ -803,7 +804,28 @@ void Controller::storeDriversEarnedMoney(const std::string& start_date, const st
                              "Failed to execute inserting new info: ",
                              true);
 
+    sql = "SELECT driver_id, surname, money FROM autopark_earning_info "
+          "WHERE start_date = ? AND end_date = ?;";
+    stmt = SQL::prepareSQLStatement(
+            db, sql, "Failed to prepare selecting result statement", true);
+    sqlite3_bind_text(stmt, 1, start_date.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, end_date.c_str(), -1, SQLITE_STATIC);
+
+    std::vector<std::string> response;
+
+    while (true) {
+        int rc = sqlite3_step(stmt);
+        if (rc != SQLITE_ROW) {
+            break;
+        }
+        char buf[100];
+        sprintf(buf,"Driver ID: %d\nSurname: %s\nMoney earned: %.2f\n",
+                     sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1),
+                     sqlite3_column_double(stmt, 2));
+        response.push_back(buf);
+    }
     sqlite3_exec(db, "COMMIT;", nullptr, nullptr, nullptr);
+    return response;
 }
 
 double Controller::getDriverEarnedMoney(int driver_id, const std::string& start_date, const std::string& end_date) {
