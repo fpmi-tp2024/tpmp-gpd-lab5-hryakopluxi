@@ -31,3 +31,7 @@ void View::login() {
 
     std::cout << "Logged in successfully!\n";
 }
+
+void View::logout() {
+    controller.logout();
+}
