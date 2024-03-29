@@ -14,6 +14,7 @@
 #include "sql.h"
 
 enum Role {
+    GUEST = 0,
     DRIVER = 1,
     DISPATCHER = 2,
     ADMIN = 3,
@@ -37,7 +38,7 @@ private:
 
 public:
 
-    User() : id(0), role(DRIVER) {}
+    User() : id(0), role(GUEST) {}
 
     User(int newId, std::string newLogin, std::string newPassHash, Role newRole)
             : id(newId), login(std::move(newLogin)), pass_hash(std::move(newPassHash)), role(newRole) {}
