@@ -26,19 +26,21 @@ public:
     bool login(const std::string& login, const std::string& password);
     void logout();
 
+    [[nodiscard]] int getUserId() const {return user.getId();}
+    [[nodiscard]] Role getUserRole() const {return user.getRole();}
     [[nodiscard]] std::vector <Order> getDriverOrders(int driver_id, const std::string& date_start, const std::string& date_end) const;
     [[nodiscard]] std::string getCarSummaryMileageAndLoad(int car_id) const;
     [[nodiscard]] std::string getDriverStatistics(int driver_id) const;
     [[nodiscard]] std::vector<std::string> getAllDriversStatistics() const;
-    [[nodiscard]] std::string getWorstDriverSummary() const;
+    [[nodiscard]] std::string getWorstDriverStatistics() const;
     [[nodiscard]] std::string getInfoAboutCarWithMaxMileage() const;
-    void storeDriversEarnedMoney(const std::string& start_date, const std::string& end_date);
-    double getDriverEarnedMoney(int driver_id, const std::string& start_date, const std::string& end_date);
+    std::vector<std::string> storeDriversEarnedMoney(const std::string& start_date, const std::string& end_date);
+    [[nodiscard]] double getDriverEarnedMoney(int driver_id, const std::string& start_date, const std::string& end_date) const;
 
-    void addCar(Car& car);
-    void addDriver(Driver& driver);
-    void addOrder(Order& order);
-    void addDispatcher(Dispatcher& dispatcher);
+    int addCar(Car& car);
+    int addDriver(Driver& driver);
+    int addOrder(Order& order);
+    int addDispatcher(Dispatcher& dispatcher);
 
     void updateCar(int car_id, Car& update);
     void updateDriver(int user_id, Driver& update);

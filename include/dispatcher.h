@@ -26,38 +26,31 @@ public:
     [[nodiscard]] std::string getName() const {
         return name;
     }
-
     [[nodiscard]] std::string getSurname() const {
         return surname;
     }
-
     [[nodiscard]] std::string getAddress() const {
         return address;
     }
-
     [[nodiscard]] std::string getCity() const {
         return city;
     }
-
     void setName(const std::string &newName) {
         name = newName;
     }
-
     void setSurname(const std::string &newSurname) {
         surname = newSurname;
     }
-
     void setAddress(const std::string &newAddress) {
         address = newAddress;
     }
-
     void setCity(const std::string &newCity) {
         city = newCity;
     }
-
     void getDataFromDb(sqlite3 *db, int user_id) override;
 
-    void insertUserToDb(sqlite3 *db) override;
+    int insertUserToDb(sqlite3 *db) override;
+    void getDataFromConsole() override;
 };
 
 #endif //LAB_5_PROJECT_DISPATCHER_H

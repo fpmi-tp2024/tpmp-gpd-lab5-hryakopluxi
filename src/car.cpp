@@ -19,11 +19,11 @@ void Car::getDataFromDb(sqlite3 *db, int car_id) {
     driver_id = sqlite3_column_int(stmt, 1);
     license = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
     brand = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3));
-    mileage_buy = sqlite3_column_int(stmt, 4);
+    mileage_purchase = sqlite3_column_int(stmt, 4);
     load_capacity = sqlite3_column_int(stmt, 5);
 }
 
-void Car::insertCarToDb(sqlite3 *db) {
+int Car::insertCarToDb(sqlite3 *db) {
     std::string sql = "INSERT INTO autopark_car "
                 "(driver_id, license, brand, mileage, load_capacity) VALUES "
                 "(?, ?, ?, ?, ?);";
@@ -33,9 +33,25 @@ void Car::insertCarToDb(sqlite3 *db) {
     sqlite3_bind_int(stmt, 1, driver_id);
     sqlite3_bind_text(stmt, 2, license.c_str(), -1, SQLITE_STATIC);
     sqlite3_bind_text(stmt, 3, brand.c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_double(stmt, 4, mileage_buy);
+    sqlite3_bind_double(stmt, 4, mileage_purchase);
     sqlite3_bind_double(stmt, 5, load_capacity);
 
     SQL::executeSQLStatement(db, stmt, SQLITE_DONE,
                              "Failed to execute insert car statement: ");
+
+    return static_cast<int>(sqlite3_last_insert_rowid(db));
+}
+
+void Car::getDataFromConsole() {
+    std::cout << "Enter Driver ID: ";
+    std::cin >> driver_id;
+    std::cout << "Enter license: ";
+    std::cin.ignore();
+    std::getline(std::cin, license, '\n');
+    std::cout << "Enter brand: ";
+    std::getline(std::cin, brand, '\n');
+    std::cout << "Enter mileage on purchase: ";
+    std::cin >> mileage_purchase;
+    std::cout << "Enter load capacity: ";
+    std::cin >> load_capacity;
 }

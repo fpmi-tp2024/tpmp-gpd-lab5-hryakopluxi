@@ -12,6 +12,8 @@ Controller::Controller(const std::string &db_filename) {
         sqlite3_close(db);
         throw std::runtime_error("Cannot open database");
     }
+    user = User();
+    config = Config(db, "dev");
 }
 
 bool Controller::login(const std::string &login, const std::string &password) {
@@ -41,17 +43,17 @@ void Controller::logout() {
     user = User();
 }
 
-void Controller::addCar(Car &car) {
+int Controller::addCar(Car &car) {
     if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
         throw PermissionDeniedException();
     }
 
     Validator::validCar(car, db);
 
-    car.insertCarToDb(db);
+    return car.insertCarToDb(db);
 }
 
-void Controller::addDriver(Driver &driver) {
+int Controller::addDriver(Driver &driver) {
     if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
         throw PermissionDeniedException();
     }
@@ -67,10 +69,10 @@ void Controller::addDriver(Driver &driver) {
     Validator::validDriver(driver);
     driver.setPassHash(BCrypt::generateHash(driver.getPassHash()));
 
-    driver.insertUserToDb(db);
+    return driver.insertUserToDb(db);
 }
 
-void Controller::addOrder(Order &order) {
+int Controller::addOrder(Order &order) {
     if (user.getRole() != ADMIN && user.getRole() != DISPATCHER && order.getDriverId() != user.getId()) {
         throw PermissionDeniedException();
     }
@@ -80,7 +82,7 @@ void Controller::addOrder(Order &order) {
         Dispatcher dispatcher;
         dispatcher.getDataFromDb(db, user.getId());
         driver.getDataFromDb(db, order.getDriverId());
-        if (driver.getCity() != dispatcher.getCity()) {
+        if (User::toLower(dispatcher.getCity()) != User::toLower(driver.getCity())) {
             throw PermissionDeniedException();
         }
     }
@@ -99,10 +101,10 @@ void Controller::addOrder(Order &order) {
         throw std::invalid_argument(msg);
     }
 
-    order.insertOrderToDb(db);
+    return order.insertOrderToDb(db);
 }
 
-void Controller::addDispatcher(Dispatcher &dispatcher) {
+int Controller::addDispatcher(Dispatcher &dispatcher) {
     if (user.getRole() != ADMIN) {
         throw PermissionDeniedException();
     }
@@ -110,12 +112,20 @@ void Controller::addDispatcher(Dispatcher &dispatcher) {
     Validator::validDispatcher(dispatcher);
     dispatcher.setPassHash(BCrypt::generateHash(dispatcher.getPassHash()));
 
-    dispatcher.insertUserToDb(db);
+    return dispatcher.insertUserToDb(db);
+
 }
 
 void Controller::deleteCar(int car_id) {
     if (user.getRole() != ADMIN) {
         throw PermissionDeniedException();
+    }
+
+    try {
+        Car c;
+        c.getDataFromDb(db, car_id);
+    } catch (const std::exception &e) {
+        throw std::invalid_argument("No car with provided id\n");
     }
 
     std::string sql = "DELETE FROM autopark_car WHERE id = ?";
@@ -447,11 +457,9 @@ std::vector<Order> Controller::getDriverOrders(int driver_id, const std::string 
         throw PermissionDeniedException();
     }
 
-    Validator::validDate(date_start);
-    Validator::validDate(date_end);
+    Validator::validPeriod(date_start, date_end);
 
-
-    std::string sql = "SELECT *\n"
+    std::string sql = "SELECT id\n"
                       "FROM autopark_order\n"
                       "WHERE driver_id = ? \n"
                       "AND date >= DATE(?) AND date <= DATE(?);";
@@ -469,14 +477,7 @@ std::vector<Order> Controller::getDriverOrders(int driver_id, const std::string 
             break;
         }
         Order ord;
-        ord.setId(sqlite3_column_int(stmt, 0));
-        ord.setDriverId(sqlite3_column_int(stmt, 1));
-        ord.setCarId(sqlite3_column_int(stmt, 2));
-        ord.setDate(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)));
-        ord.setMileage(sqlite3_column_double(stmt, 4));
-        ord.setLoad(sqlite3_column_double(stmt, 5));
-        ord.setCost(sqlite3_column_double(stmt, 6));
-        ord.setIsApproved(sqlite3_column_int(stmt, 7));
+        ord.getDataFromDb(db, sqlite3_column_int(stmt, 0));
         orders.push_back(ord);
     }
 
@@ -541,7 +542,7 @@ std::string Controller::getDriverStat(int driver_id) const {
                              "Failed to execute driver summary statement: ",
                              false, false);
 
-    char response[200];
+    char response[300];
     sprintf(response, "ID: %d\n"
                       "Login: %s\n"
                       "Name: %s\n"
@@ -575,7 +576,7 @@ std::string Controller::getDriverStatistics(int driver_id) const {
     if (user.getRole() == DISPATCHER) {
         Dispatcher dispatcher;
         dispatcher.getDataFromDb(db, user.getId());
-        if (driver.getCity() != dispatcher.getCity()) {
+        if (User::toLower(dispatcher.getCity()) != User::toLower(driver.getCity())) {
             throw PermissionDeniedException();
         }
     }
@@ -648,7 +649,7 @@ std::vector<std::string> Controller::getAllDriversStatistics() const {
     return data;
 }
 
-std::string Controller::getWorstDriverSummary() const {
+std::string Controller::getWorstDriverStatistics() const {
     if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
         throw PermissionDeniedException();
     }
@@ -713,8 +714,8 @@ std::string Controller::getInfoAboutCarWithMaxMileage() const {
           "c.brand, c.mileage, c.load_capacity, "
           "SUM(o.cost), SUM(o.load), SUM(o.mileage) "
           "FROM autopark_car AS c "
-          "LEFT JOIN autopark_order AS o o.car_id = c.id "
-          "LEFT JOIN autopark_driver AS d d.user_id = c.driver_id "
+          "LEFT JOIN autopark_order AS o ON o.car_id = c.id "
+          "LEFT JOIN autopark_driver AS d ON d.user_id = c.driver_id "
           "WHERE c.id = ? AND o.is_approved = true;";
     stmt = SQL::prepareSQLStatement(db, sql,
                                     "Failed to prepare retrieving info about car with max mileage: ");
@@ -741,7 +742,8 @@ std::string Controller::getInfoAboutCarWithMaxMileage() const {
     return response;
 }
 
-void Controller::storeDriversEarnedMoney(const std::string& start_date, const std::string& end_date) {
+std::vector<std::string> Controller::storeDriversEarnedMoney(
+        const std::string& start_date, const std::string& end_date) {
     if (user.getRole() != ADMIN) {
         throw PermissionDeniedException();
     }
@@ -803,10 +805,32 @@ void Controller::storeDriversEarnedMoney(const std::string& start_date, const st
                              "Failed to execute inserting new info: ",
                              true);
 
+    sql = "SELECT driver_id, surname, money FROM autopark_earning_info "
+          "WHERE start_date = ? AND end_date = ?;";
+    stmt = SQL::prepareSQLStatement(
+            db, sql, "Failed to prepare selecting result statement", true);
+    sqlite3_bind_text(stmt, 1, start_date.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, end_date.c_str(), -1, SQLITE_STATIC);
+
+    std::vector<std::string> response;
+
+    while (true) {
+        int rc = sqlite3_step(stmt);
+        if (rc != SQLITE_ROW) {
+            break;
+        }
+        char buf[100];
+        sprintf(buf,"Driver ID: %d\nSurname: %s\nMoney earned: %.2f\n",
+                     sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1),
+                     sqlite3_column_double(stmt, 2));
+        response.push_back(buf);
+    }
     sqlite3_exec(db, "COMMIT;", nullptr, nullptr, nullptr);
+    return response;
 }
 
-double Controller::getDriverEarnedMoney(int driver_id, const std::string& start_date, const std::string& end_date) {
+double Controller::getDriverEarnedMoney(
+        int driver_id, const std::string& start_date, const std::string& end_date) const {
     if (user.getRole() != ADMIN && user.getRole() != DISPATCHER && driver_id != user.getId()) {
         throw PermissionDeniedException();
     }
@@ -825,7 +849,7 @@ double Controller::getDriverEarnedMoney(int driver_id, const std::string& start_
     if (user.getRole() == DISPATCHER) {
         Dispatcher dispatcher;
         dispatcher.getDataFromDb(db, user.getId());
-        if (dispatcher.getCity() != d.getCity()) {
+        if (User::toLower(dispatcher.getCity()) != User::toLower(d.getCity())) {
             throw PermissionDeniedException();
         }
     }

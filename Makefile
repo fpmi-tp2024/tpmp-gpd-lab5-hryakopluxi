@@ -1,7 +1,7 @@
 run: bin/program
 	./bin/program
 
-bin/program: obj/car.o obj/sql.o obj/config.o obj/controller.o obj/dispatcher.o obj/driver.o obj/order.o obj/user.o obj/validator.o obj/view.o obj/main.o
+bin/program: obj/car.o obj/menu.o obj/sql.o obj/config.o obj/controller.o obj/dispatcher.o obj/driver.o obj/order.o obj/user.o obj/validator.o obj/view.o obj/main.o
 	g++ -o bin/program \
 	obj/sql.o \
 	obj/config.o \
@@ -12,6 +12,7 @@ bin/program: obj/car.o obj/sql.o obj/config.o obj/controller.o obj/dispatcher.o 
  	obj/order.o \
  	obj/validator.o \
  	obj/controller.o \
+ 	obj/menu.o \
  	obj/view.o \
  	obj/main.o \
  	-lsqlite3 -lbcrypt
@@ -48,6 +49,9 @@ obj/view.o: src/view.cpp
 
 obj/sql.o: src/sql.cpp
 	g++ -o obj/sql.o -c src/sql.cpp
+
+obj/menu.o: src/menu.cpp
+	g++ -o obj/menu.o -c src/menu.cpp
 
 clean:
 	rm -rf obj/*.o bin/program

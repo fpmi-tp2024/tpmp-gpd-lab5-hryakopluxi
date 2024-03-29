@@ -24,6 +24,7 @@ private:;
     static const std::regex city_pattern;
     static const std::regex date_pattern;
     static const std::regex license_pattern;
+    static const std::regex login_pattern;
 public:
     static bool validDispatcher(const Dispatcher& dispatcher);
     static bool validOrder(const Order& order, sqlite3* db);
