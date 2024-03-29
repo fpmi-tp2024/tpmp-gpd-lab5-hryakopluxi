@@ -2,8 +2,9 @@
 // Created by Stanislau Senkevich on 21.3.24.
 //
 
-#include <iostream>
+#include "../include/view.h"
 
 int main() {
-    std::cout << "Autopark" << std::endl;
+    View view;
+    view.menu();
 }

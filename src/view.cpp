@@ -24,14 +24,10 @@ View::View() {
     controller = Controller(db_filename);
 }
 
-View::View(const std::string& login, const std::string& password) {
-    controller = Controller(db_filename);
-    controller.login(login, password);
-}
-
 void View::login() {
     std::string login, password;
     std::cout << "Enter login: ";
+    std::cin.ignore();
     std::getline(std::cin, login, '\n');
     std::cout << "Enter password: ";
     std::getline(std::cin, password, '\n');
@@ -50,24 +46,41 @@ void View::login() {
         return;
     }
 
-    std::cout << "Logged in successfully!\nYour ID: " << controller.getUserId() << "\n";
+    std::cout << "Logged in successfully!\n";
 }
 
 void View::logout() {
     controller.logout();
 }
 
-void View::getDriverOrders() const {
-    int id;
+void View::changeDb() {
+    std::string path;
+    std::cout << "Enter path to the db: ";
+    std::cin.ignore();
+    std::getline(std::cin, path, '\n');
+    try {
+        controller = Controller(path);
+    } catch (const std::exception& e) {
+        std::cout << "Cannot open database\n";
+        controller = Controller();
+    }
+    std::cout << "Database successfully changed\n";
+}
+
+void View::getDriverOrders(int driver_id) const {
     std::string start, end;
-    std::cout << "Enter Driver ID: ";
-    std::cin >> id;
     std::cout << "Enter start of the period (YYYY-MM-DD): ";
     std::cin >> start;
     std::cout << "Enter end of the period (YYYY-MM-DD): ";
     std::cin >> end;
+    std::vector <Order> orders;
 
-    std::vector <Order> orders = controller.getDriverOrders(id, start, end);
+    try {
+        orders = controller.getDriverOrders(driver_id, start, end);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
 
     if (orders.empty()) {
         std::cout << "\nNo orders found during this period\n";
@@ -97,13 +110,10 @@ void View::getCarSummaryMileageAndLoads() const {
     std::cout << "---------------------------------\n";
 }
 
-void View::getDriverStatistics() const {
-    int id;
-    std::cout << "Enter Driver ID: ";
-    std::cin >> id;
+void View::getDriverStatistics(int driver_id) const {
     std::string res;
     try {
-        res = controller.getDriverStatistics(id);
+        res = controller.getDriverStatistics(driver_id);
     } catch (const std::exception& e) {
         std::cout << e.what() << "\n";
         return;
@@ -111,6 +121,27 @@ void View::getDriverStatistics() const {
 
     std::cout << "---------------------------------\n";
     std::cout << res;
+    std::cout << "---------------------------------\n";
+}
+
+void View::getAllDriverStatistics() const {
+    std::vector<std::string> res;
+    try {
+        res = controller.getAllDriversStatistics();
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    if (res.empty()) {
+        std::cout << "No driver was found.\n";
+        return;
+    }
+
+    for (auto& s : res) {
+        std::cout << "---------------------------------\n";
+        std::cout << s;
+    }
     std::cout << "---------------------------------\n";
 }
 
@@ -165,19 +196,16 @@ void View::storeDriversEarnedMoney() {
     std::cout << "---------------------------------\n";
 }
 
-void View::getDriverEarnedMoney() const {
+void View::getDriverEarnedMoney(int driver_id) const {
     std::string start, end;
-    int id;
     double res;
-    std:: cout << "Driver ID: ";
-    std::cin >> id;
     std::cout << "Enter start of the period (YYYY-MM-DD): ";
     std::cin >> start;
     std::cout << "Enter end of the period (YYYY-MM-DD): ";
     std::cin >> end;
 
     try {
-        res = controller.getDriverEarnedMoney(id, start, end);
+        res = controller.getDriverEarnedMoney(driver_id, start, end);
     } catch (const std::exception& e) {
         std::cout << e.what() << "\n";
         return;
@@ -300,6 +328,24 @@ void View::updateOrder() {
     std::cout << "Order successfully updated.\n";
 }
 
+void View::updateOrderApproveStatus() {
+    int id, st;
+    st = -1;
+    std::cout << "Enter Order ID to update status: ";
+    std::cin >> id;
+    while (st != 0 && st != 1) {
+        std::cout << "Enter new status (1 - approved, 0 - disapproved): ";
+        std::cin >> st;
+    }
+
+    try {
+        controller.updateOrderApproveStatus(id, st);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+}
+
 void View::updateDispatcher() {
     int id;
     Dispatcher update;
@@ -316,6 +362,19 @@ void View::updateDispatcher() {
     }
 
     std::cout << "Dispatcher successfully updated.\n";
+}
+
+void View::updateUser(int user_id) {
+    User update;
+    update.getDataFromConsole();
+    try {
+        controller.updateUser(user_id, update);
+    } catch (const std::exception& e) {
+        std::cout << e.what() << "\n";
+        return;
+    }
+
+    std::cout << "User successfully updated.\n";
 }
 
 void View::deleteCar() {

@@ -12,6 +12,8 @@ Controller::Controller(const std::string &db_filename) {
         sqlite3_close(db);
         throw std::runtime_error("Cannot open database");
     }
+    user = User();
+    config = Config(db, "dev");
 }
 
 bool Controller::login(const std::string &login, const std::string &password) {
@@ -455,11 +457,9 @@ std::vector<Order> Controller::getDriverOrders(int driver_id, const std::string 
         throw PermissionDeniedException();
     }
 
-    Validator::validDate(date_start);
-    Validator::validDate(date_end);
+    Validator::validPeriod(date_start, date_end);
 
-
-    std::string sql = "SELECT *\n"
+    std::string sql = "SELECT id\n"
                       "FROM autopark_order\n"
                       "WHERE driver_id = ? \n"
                       "AND date >= DATE(?) AND date <= DATE(?);";
@@ -477,14 +477,7 @@ std::vector<Order> Controller::getDriverOrders(int driver_id, const std::string 
             break;
         }
         Order ord;
-        ord.setId(sqlite3_column_int(stmt, 0));
-        ord.setDriverId(sqlite3_column_int(stmt, 1));
-        ord.setCarId(sqlite3_column_int(stmt, 2));
-        ord.setDate(reinterpret_cast<const char *>(sqlite3_column_text(stmt, 3)));
-        ord.setMileage(sqlite3_column_double(stmt, 4));
-        ord.setLoad(sqlite3_column_double(stmt, 5));
-        ord.setCost(sqlite3_column_double(stmt, 6));
-        ord.setIsApproved(sqlite3_column_int(stmt, 7));
+        ord.getDataFromDb(db, sqlite3_column_int(stmt, 0));
         orders.push_back(ord);
     }
 
@@ -549,7 +542,7 @@ std::string Controller::getDriverStat(int driver_id) const {
                              "Failed to execute driver summary statement: ",
                              false, false);
 
-    char response[200];
+    char response[300];
     sprintf(response, "ID: %d\n"
                       "Login: %s\n"
                       "Name: %s\n"

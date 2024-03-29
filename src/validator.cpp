@@ -3,7 +3,6 @@
 //
 
 #include "../include/validator.h"
-#include <iostream>
 
 const std::regex Validator::name_pattern(R"(^[A-Za-z]+$)");
 const std::regex Validator::address_pattern(R"(^[a-zA-Z0-9\\s.,/]+$)");
