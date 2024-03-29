@@ -16,7 +16,7 @@ bool Validator::validLicense(const std::string &license) {
     return std::regex_match(license, license_pattern);
 }
 
-bool Validator::validPeriod(const std::string& date_start, const std::string& date_end) {
+bool Validator::validPeriod(const std::string &date_start, const std::string &date_end) {
     if (!std::regex_match(date_start, date_pattern) || !std::regex_match(date_end, date_pattern)) {
         throw std::invalid_argument("Date must be provided in format YYYY-MM-DD\n");
     }
@@ -41,14 +41,14 @@ bool Validator::validPeriod(const std::string& date_start, const std::string& da
     return start_time <= end_time;
 }
 
-bool Validator::validAge(const std::string& date_str) {
+bool Validator::validAge(const std::string &date_str) {
     std::tm date = {};
     std::istringstream ss(date_str);
-    ss >> date.tm_year;  // Year
-    ss.ignore();  // Ignore the dash '-'
-    ss >> date.tm_mon;   // Month
-    ss.ignore();  // Ignore the dash '-'
-    ss >> date.tm_mday; // Day
+    ss >> date.tm_year;
+    ss.ignore();
+    ss >> date.tm_mon;
+    ss.ignore();
+    ss >> date.tm_mday;
 
     auto now = std::chrono::system_clock::now();
     auto currentTime = std::chrono::system_clock::to_time_t(now);
@@ -58,21 +58,47 @@ bool Validator::validAge(const std::string& date_str) {
     return std::mktime(&date) <= std::mktime(&current);
 }
 
-bool Validator::validDate(const std::string& date_str) {
+bool Validator::validDate(const std::string &date_str) {
+    if (!std::regex_match(date_str, date_pattern)) {
+        return false;
+    }
+
     std::tm date = {};
     std::istringstream ss(date_str);
-    ss >> date.tm_year;  // Year
-    ss.ignore();  // Ignore the dash '-'
-    ss >> date.tm_mon;   // Month
-    ss.ignore();  // Ignore the dash '-'
-    ss >> date.tm_mday; // Day
+    ss >> date.tm_year;
+    ss.ignore();
+    ss >> date.tm_mon;
+    ss.ignore();
+    ss >> date.tm_mday;
 
-    auto now = std::chrono::system_clock::now();
-    auto currentTime = std::chrono::system_clock::to_time_t(now);
-    std::tm current = *std::localtime(&currentTime);
+    int maxDay;
+    switch (date.tm_mon) {
+        case 2:
+            maxDay = (date.tm_year % 4 == 0 && (date.tm_year % 100 != 0 || date.tm_year % 400 == 0)) ? 29 : 28;
+            break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+            maxDay = 30;
+            break;
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+            maxDay = 31;
+            break;
+        default:
+            return false;
+    }
+    if (date.tm_mday > maxDay || date.tm_mday < 1) {
+        return false;
+    }
 
-    current.tm_year += 1902;
-    return std::mktime(&date) <= std::mktime(&current);
+    return true;
 }
 
 bool Validator::validDriver(const Driver &driver) {
