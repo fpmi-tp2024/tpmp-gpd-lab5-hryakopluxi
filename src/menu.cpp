@@ -314,6 +314,7 @@ void View::menu() {
                 if (adminMenu()) {
                     return;
                 }
+                break;
             default:
                 return;
         }
