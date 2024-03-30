@@ -1,4 +1,4 @@
-LIB = -lsqlite3 -lbcrypt
+LIB = -lsqlite3 -lssl -lcrypto
 LIBTEST = -lgtest -lgtest_main
 FLAGS = -std=c++20
 CPPFLAGS = $(FLAGS)

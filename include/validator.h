@@ -11,11 +11,12 @@
 #include "dispatcher.h"
 #include "exceptions.h"
 #include "car.h"
-#include "bcrypt/BCrypt.hpp"
 #include <regex>
 #include <ctime>
 #include <chrono>
 #include <sstream>
+#include <openssl/evp.h>
+#include <iomanip>
 
 class Validator {
 private:;
@@ -40,6 +41,9 @@ public:
     static void validateUpdateDispatcher(Dispatcher& update, int dispatcher_id, sqlite3* db);
     static void validateUpdateOrder(Order& update, int order_id, sqlite3* db);
     static void validateUpdateUser(User& update, int user_id, sqlite3* db);
+
+    [[nodiscard]] static std::string hashPassword(const std::string& password) ;
+    static bool validatePassword(const std::string& hash_pass, const std::string& provided_pass);
 };
 
 #endif //LAB_5_PROJECT_VALIDATOR_H
