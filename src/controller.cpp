@@ -125,7 +125,7 @@ void Controller::deleteCar(int car_id) {
         Car c;
         c.getDataFromDb(db, car_id);
     } catch (const std::exception &e) {
-        throw std::invalid_argument("No car with provided id\n");
+        throw std::invalid_argument("No car with provided id");
     }
 
     std::string sql = "DELETE FROM autopark_car WHERE id = ?";
@@ -147,7 +147,7 @@ void Controller::deleteDriver(int user_id) {
         Driver d;
         d.getDataFromDb(db, user_id);
     } catch (const std::exception &e) {
-        throw std::invalid_argument("No driver with provided id\n");
+        throw std::invalid_argument("No driver with provided id");
     }
 
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
@@ -183,7 +183,7 @@ void Controller::deleteDispatcher(int user_id) {
         Dispatcher d;
         d.getDataFromDb(db, user_id);
     } catch (const std::exception &e) {
-        throw std::invalid_argument("No dispatcher with provided id\n");
+        throw std::invalid_argument("No dispatcher with provided id");
     }
 
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
@@ -216,7 +216,7 @@ void Controller::deleteOrder(int order_id) {
         Order ord;
         ord.getDataFromDb(db, order_id);
     } catch (const std::exception &e) {
-        throw std::invalid_argument("No order with provided id\n");
+        throw std::invalid_argument("No order with provided id");
     }
 
     std::string sql = "DELETE FROM autopark_order WHERE id = ?";
@@ -274,7 +274,7 @@ void Controller::updateDriver(int user_id, Driver &update) {
         try {
             old.getDataFromDb(db, user_id);
         } catch (const std::exception &e) {
-            throw std::invalid_argument("No driver found by provided id\n");
+            throw std::invalid_argument("No driver found by provided id");
         }
         if (User::toLower(old.getCity()) != User::toLower(dispatcher.getCity())) {
             throw PermissionDeniedException();
@@ -420,9 +420,9 @@ void Controller::updateOrderApproveStatus(int order_id, bool status) {
 
     if (ord.getIsApproved() == status) {
         if (status) {
-            throw std::invalid_argument("Order already approved\n");
+            throw std::invalid_argument("Order already approved");
         }
-        throw std::invalid_argument("Order already not approved\n");
+        throw std::invalid_argument("Order already not approved");
     }
 
 
@@ -482,7 +482,7 @@ std::vector<Order> Controller::getDriverOrders(int driver_id, const std::string 
     }
 
     if (rc != SQLITE_DONE) {
-        throw std::invalid_argument("No orders were found with such conditions.\n");
+        throw std::invalid_argument("No orders were found with such conditions.");
     }
 
     return orders;
@@ -749,7 +749,7 @@ std::vector<std::string> Controller::storeDriversEarnedMoney(
     }
 
     if (!Validator::validPeriod(start_date, end_date)) {
-        throw std::invalid_argument("Invalid period provided\n");
+        throw std::invalid_argument("Invalid period provided");
     }
 
     sqlite3_exec(db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
@@ -836,14 +836,14 @@ double Controller::getDriverEarnedMoney(
     }
 
     if (!Validator::validPeriod(start_date, end_date)) {
-        throw std::invalid_argument("Invalid period provided\n");
+        throw std::invalid_argument("Invalid period provided");
     }
 
     Driver d;
     try {
         d.getDataFromDb(db, driver_id);
     } catch (const std::exception& e) {
-        throw std::invalid_argument("No driver was found by provided id.\n");
+        throw std::invalid_argument("No driver was found by provided id.");
     }
 
     if (user.getRole() == DISPATCHER) {
