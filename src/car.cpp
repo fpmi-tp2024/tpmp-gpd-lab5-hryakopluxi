@@ -43,15 +43,20 @@ int Car::insertCarToDb(sqlite3 *db) {
 }
 
 void Car::getDataFromConsole() {
+    std::string dID, mile, load;
+
     std::cout << "Enter Driver ID: ";
-    std::cin >> driver_id;
+    std::getline(std::cin, dID, '\n');
     std::cout << "Enter license: ";
-    std::cin.ignore();
     std::getline(std::cin, license, '\n');
     std::cout << "Enter brand: ";
     std::getline(std::cin, brand, '\n');
     std::cout << "Enter mileage on purchase: ";
-    std::cin >> mileage_purchase;
+    std::getline(std::cin, mile, '\n');
     std::cout << "Enter load capacity: ";
-    std::cin >> load_capacity;
+    std::getline(std::cin, load, '\n');
+
+    driver_id = std::stoi(dID);
+    mileage_purchase = std::stod(mile);
+    load_capacity = std::stod(load);
 }

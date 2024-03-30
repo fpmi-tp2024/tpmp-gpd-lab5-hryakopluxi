@@ -53,5 +53,8 @@ obj/sql.o: src/sql.cpp
 obj/menu.o: src/menu.cpp
 	g++ -o obj/menu.o -c src/menu.cpp
 
+dirs:
+	mkdir -p obj bin
+
 clean:
 	rm -rf obj/*.o bin/program

@@ -30,7 +30,6 @@ void User::getDataFromDb(sqlite3 *db, int user_id) {
 }
 
 void User::getDataFromConsole() {
-    std::cin.ignore();
     std::cout << "Enter login: ";
     getline(std::cin, login, '\n');
 

@@ -17,7 +17,7 @@ bool Validator::validLicense(const std::string &license) {
 
 bool Validator::validPeriod(const std::string &date_start, const std::string &date_end) {
     if (!std::regex_match(date_start, date_pattern) || !std::regex_match(date_end, date_pattern)) {
-        throw std::invalid_argument("Date must be provided in format YYYY-MM-DD\n");
+        throw std::invalid_argument("Date must be provided in format YYYY-MM-DD");
     }
 
     struct std::tm start_tm = {}, end_tm = {};
@@ -102,35 +102,35 @@ bool Validator::validDate(const std::string &date_str) {
 
 bool Validator::validDriver(const Driver &driver) {
     if (!std::regex_match(driver.getLogin(), login_pattern)) {
-        throw std::invalid_argument("Login must contains only latin symbols, digits or _\n");
+        throw std::invalid_argument("Login must contains only latin symbols, digits or _");
     }
     if (driver.getPassHash().empty()) {
-        throw std::invalid_argument("Password must not be empty\n");
+        throw std::invalid_argument("Password must not be empty");
     }
     if (!std::regex_match(driver.getName(), name_pattern)) {
-        throw std::invalid_argument("Name must consist only of latin characters\n");
+        throw std::invalid_argument("Name must consist only of latin characters");
     }
     if (!std::regex_match(driver.getSurname(), name_pattern)) {
-        throw std::invalid_argument("Surname must consist only of latin characters\n");
+        throw std::invalid_argument("Surname must consist only of latin characters");
     }
     if (driver.getExperience() < 0) {
-        throw std::invalid_argument("Experience cannot be negative\n");
+        throw std::invalid_argument("Experience cannot be negative");
     }
 
     if (!std::regex_match(driver.getAddress(), address_pattern)) {
-        throw std::invalid_argument("Address must consist only of latin characters\n");
+        throw std::invalid_argument("Address must consist only of latin characters");
     }
 
     if (!std::regex_match(driver.getCity(), city_pattern)) {
-        throw std::invalid_argument("City must consist only of latin characters\n");
+        throw std::invalid_argument("City must consist only of latin characters");
     }
 
     if (!std::regex_match(driver.getBirthday(), date_pattern)) {
-        throw std::invalid_argument("Birthday must satisfy format YYYY-MM-DD\n");
+        throw std::invalid_argument("Birthday must satisfy format YYYY-MM-DD");
     }
 
     if (!validAge(driver.getBirthday())) {
-        throw std::invalid_argument("Age must be >= 18 years\n");
+        throw std::invalid_argument("Age must be >= 18 years");
     }
 
     return true;
@@ -152,31 +152,31 @@ bool Validator::validOrder(const Order &order, sqlite3 *db) {
     }
 
     if (c.getDriverId() != d.getId()) {
-        throw std::invalid_argument("Driver doesn't obtain the car\n");
+        throw std::invalid_argument("Driver doesn't obtain the car");
     }
 
     if (c.getLoadCapacity() < order.getLoad()) {
-        throw std::invalid_argument("Load of cargo > load capacity of the car\n");
+        throw std::invalid_argument("Load of cargo > load capacity of the car");
     }
 
     if (!std::regex_match(order.getDate(), date_pattern)) {
-        throw std::invalid_argument("Date does not satisfy pattern YYYY-MM-DD\n");
+        throw std::invalid_argument("Date does not satisfy pattern YYYY-MM-DD");
     }
 
     if (!validDate(order.getDate())) {
-        throw std::invalid_argument("Invalid date was provided\n");
+        throw std::invalid_argument("Invalid date was provided");
     }
 
     if (order.getMileage() < 0) {
-        throw std::invalid_argument("Mileage cannot be negative\n");
+        throw std::invalid_argument("Mileage cannot be negative");
     }
 
     if (order.getCost() < 0) {
-        throw std::invalid_argument("Cost cannot be negative\n");
+        throw std::invalid_argument("Cost cannot be negative");
     }
 
     if (order.getLoad() < 0) {
-        throw std::invalid_argument("Load cannot be negative\n");
+        throw std::invalid_argument("Load cannot be negative");
     }
 
     return true;
@@ -185,27 +185,27 @@ bool Validator::validOrder(const Order &order, sqlite3 *db) {
 bool Validator::validDispatcher(const Dispatcher &dispatcher) {
 
     if (dispatcher.getLogin().empty()) {
-        throw std::invalid_argument("Login must not be empty\n");
+        throw std::invalid_argument("Login must not be empty");
     }
 
     if (dispatcher.getPassHash().empty()) {
-        throw std::invalid_argument("Password must not be empty\n");
+        throw std::invalid_argument("Password must not be empty");
     }
 
     if (!std::regex_match(dispatcher.getName(), name_pattern)) {
-        throw std::invalid_argument("Name must consist only of latin characters\n");
+        throw std::invalid_argument("Name must consist only of latin characters");
     }
 
     if (!std::regex_match(dispatcher.getSurname(), name_pattern)) {
-        throw std::invalid_argument("Surname must consist only of latin characters\n");
+        throw std::invalid_argument("Surname must consist only of latin characters");
     }
 
     if (!std::regex_match(dispatcher.getAddress(), address_pattern)) {
-        throw std::invalid_argument("Address must consist only of latin characters\n");
+        throw std::invalid_argument("Address must consist only of latin characters");
     }
 
     if (!std::regex_match(dispatcher.getCity(), city_pattern)) {
-        throw std::invalid_argument("City must consist only of latin characters\n");
+        throw std::invalid_argument("City must consist only of latin characters");
     }
 
     return true;
@@ -216,7 +216,7 @@ bool Validator::validCar(const Car &car, sqlite3 *db) {
         Driver d;
         d.getDataFromDb(db, car.getDriverId());
     } catch (const std::exception &e) {
-        throw std::invalid_argument("There is no driver to own this car\n");
+        throw std::invalid_argument("There is no driver to own this car");
     }
 
     if (!Validator::validLicense(car.getLicense())) {

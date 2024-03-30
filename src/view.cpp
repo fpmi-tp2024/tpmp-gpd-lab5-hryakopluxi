@@ -27,7 +27,6 @@ View::View() {
 void View::login() {
     std::string login, password;
     std::cout << "Enter login: ";
-    std::cin.ignore();
     std::getline(std::cin, login, '\n');
     std::cout << "Enter password: ";
     std::getline(std::cin, password, '\n');
@@ -56,23 +55,24 @@ void View::logout() {
 void View::changeDb() {
     std::string path;
     std::cout << "Enter path to the db: ";
-    std::cin.ignore();
     std::getline(std::cin, path, '\n');
+    Controller newController;
     try {
-        controller = Controller(path);
+        newController = Controller(path);
     } catch (const std::exception& e) {
         std::cout << "Cannot open database\n";
-        controller = Controller();
+        return;
     }
+    controller = newController;
     std::cout << "Database successfully changed\n";
 }
 
 void View::getDriverOrders(int driver_id) const {
     std::string start, end;
     std::cout << "Enter start of the period (YYYY-MM-DD): ";
-    std::cin >> start;
+    std::getline(std::cin, start, '\n');
     std::cout << "Enter end of the period (YYYY-MM-DD): ";
-    std::cin >> end;
+    std::getline(std::cin, end, '\n');
     std::vector <Order> orders;
 
     try {
@@ -97,7 +97,7 @@ void View::getDriverOrders(int driver_id) const {
 void View::getCarSummaryMileageAndLoads() const {
     int id;
     std::cout << "Enter Car ID: ";
-    std::cin >> id;
+    id = inputInt();
     std::string res;
     try {
         res = controller.getCarSummaryMileageAndLoad(id);
@@ -176,9 +176,9 @@ void View::getInfoAboutCarWithMaxMileage() const {
 void View::storeDriversEarnedMoney() {
     std::string start, end;
     std::cout << "Enter start of the period (YYYY-MM-DD): ";
-    std::cin >> start;
+    std::getline(std::cin, start, '\n');
     std::cout << "Enter end of the period (YYYY-MM-DD): ";
-    std::cin >> end;
+    std::getline(std::cin, end, '\n');
 
     std::vector<std::string> res;
 
@@ -200,9 +200,9 @@ void View::getDriverEarnedMoney(int driver_id) const {
     std::string start, end;
     double res;
     std::cout << "Enter start of the period (YYYY-MM-DD): ";
-    std::cin >> start;
+    std::getline(std::cin, start, '\n');
     std::cout << "Enter end of the period (YYYY-MM-DD): ";
-    std::cin >> end;
+    std::getline(std::cin, start, '\n');
 
     try {
         res = controller.getDriverEarnedMoney(driver_id, start, end);
@@ -219,11 +219,16 @@ void View::getDriverEarnedMoney(int driver_id) const {
 
 void View::addCar() {
     int id;
-    Car c;
-    c.getDataFromConsole();
+    Car car;
+    try {
+        car.getDataFromConsole();
+    } catch (const std::exception& e) {
+        std::cout << "Invalid input data\n";
+        return;
+    }
 
     try {
-        id = controller.addCar(c);
+        id = controller.addCar(car);
     } catch (const std::exception& e) {
         std::cout << e.what() << "\n";
         return;
@@ -235,7 +240,12 @@ void View::addCar() {
 void View::addDriver() {
     int id;
     Driver driver;
-    driver.getDataFromConsole();
+    try {
+        driver.getDataFromConsole();
+    } catch (const std::exception& e) {
+        std::cout << "Invalid input data\n";
+        return;
+    }
 
     try {
         id = controller.addDriver(driver);
@@ -249,7 +259,12 @@ void View::addDriver() {
 void View::addOrder() {
     int id;
     Order order;
-    order.getDataFromConsole();
+    try {
+        order.getDataFromConsole();
+    } catch (const std::exception& e) {
+        std::cout << "Invalid input data\n";
+        return;
+    }
 
     try {
         id = controller.addOrder(order);
@@ -263,7 +278,12 @@ void View::addOrder() {
 void View::addDispatcher() {
     int id;
     Dispatcher dispatcher;
-    dispatcher.getDataFromConsole();
+    try {
+        dispatcher.getDataFromConsole();
+    } catch (const std::exception& e) {
+        std::cout << "Invalid input data\n";
+        return;
+    }
 
     try {
         id = controller.addDispatcher(dispatcher);
@@ -278,9 +298,13 @@ void View::updateCar() {
     int id;
     Car update;
     std::cout << "Enter Car ID to update: ";
-    std::cin >> id;
-    std::cin.ignore();
-    update.getDataFromConsole();
+    id = inputInt();
+    try {
+        update.getDataFromConsole();
+    } catch (const std::exception& e) {
+        std::cout << "Invalid input data\n";
+        return;
+    }
 
     try {
         controller.updateCar(id, update);
@@ -296,9 +320,13 @@ void View::updateDriver() {
     int id;
     Driver update;
     std::cout << "Enter Driver ID to update: ";
-    std::cin >> id;
-    std::cin.ignore();
-    update.getDataFromConsole();
+    id = inputInt();
+    try {
+        update.getDataFromConsole();
+    } catch (const std::exception& e) {
+        std::cout << "Invalid input data\n";
+        return;
+    }
 
     try {
         controller.updateDriver(id, update);
@@ -314,9 +342,13 @@ void View::updateOrder() {
     int id;
     Order update;
     std::cout << "Enter Order ID to update: ";
-    std::cin >> id;
-    std::cin.ignore();
-    update.getDataFromConsole();
+    id = inputInt();
+    try {
+        update.getDataFromConsole();
+    } catch (const std::exception& e) {
+        std::cout << "Invalid input data\n";
+        return;
+    }
 
     try {
         controller.updateOrder(id, update);
@@ -332,10 +364,10 @@ void View::updateOrderApproveStatus() {
     int id, st;
     st = -1;
     std::cout << "Enter Order ID to update status: ";
-    std::cin >> id;
+    id = inputInt();
     while (st != 0 && st != 1) {
         std::cout << "Enter new status (1 - approved, 0 - disapproved): ";
-        std::cin >> st;
+        st = inputInt();
     }
 
     try {
@@ -350,9 +382,13 @@ void View::updateDispatcher() {
     int id;
     Dispatcher update;
     std::cout << "Enter Dispatcher ID to update: ";
-    std::cin >> id;
-    std::cin.ignore();
-    update.getDataFromConsole();
+    id = inputInt();
+    try {
+        update.getDataFromConsole();
+    } catch (const std::exception& e) {
+        std::cout << "Invalid input data\n";
+        return;
+    }
 
     try {
         controller.updateDispatcher(id, update);
@@ -366,7 +402,12 @@ void View::updateDispatcher() {
 
 void View::updateUser(int user_id) {
     User update;
-    update.getDataFromConsole();
+    try {
+        update.getDataFromConsole();
+    } catch (const std::exception& e) {
+        std::cout << "Invalid input data\n";
+        return;
+    }
     try {
         controller.updateUser(user_id, update);
     } catch (const std::exception& e) {
@@ -380,7 +421,7 @@ void View::updateUser(int user_id) {
 void View::deleteCar() {
     int id;
     std::cout << "Enter Car ID to delete: ";
-    std::cin >> id;
+    id = inputInt();
 
     try {
         controller.deleteCar(id);
@@ -395,7 +436,7 @@ void View::deleteCar() {
 void View::deleteDriver() {
     int id;
     std::cout << "Enter Driver ID to delete: ";
-    std::cin >> id;
+    id = inputInt();
 
     try {
         controller.deleteDriver(id);
@@ -410,7 +451,7 @@ void View::deleteDriver() {
 void View::deleteDispatcher() {
     int id;
     std::cout << "Enter Dispatcher ID to delete: ";
-    std::cin >> id;
+    id = inputInt();
 
     try {
         controller.deleteDispatcher(id);
@@ -425,7 +466,7 @@ void View::deleteDispatcher() {
 void View::deleteOrder() {
     int id;
     std::cout << "Enter Order ID to delete: ";
-    std::cin >> id;
+    id = inputInt();
 
     try {
         controller.deleteOrder(id);
