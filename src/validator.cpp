@@ -449,7 +449,7 @@ const std::regex Validator::NAME_PATTERN(R"(^[A-Za-z]{1,}$)");
 const std::regex Validator::ADDRESS_PATTERN(R"(^[a-zA-Z0-9\\s.,/-]+$)");
 const std::regex Validator::CITY_PATTERN(R"(^[A-Za-z]+$)");
 const std::regex Validator::DATE_PATTERN(R"(^\d{4}-\d{2}-\d{2}$)");
-const std::regex Validator::LICENSE_PATTERN("^[0-9]{4}[ABEIKMHOPCTX]{2}-[1-7]$");
+const std::regex Validator::LICENSE_PATTERN("^(?!0000)[0-9]{4}[ABEIKMHOPCTX]{2}-[1-7]$");
 const std::regex Validator::LOGIN_PATTERN("^[A-Za-z0-9_]{1,}$");
 const std::regex Validator::PASSWORD_PATTERN("^[A-Za-z0-9_]{1,}$");
 
