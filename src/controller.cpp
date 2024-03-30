@@ -68,6 +68,7 @@ int Controller::addDriver(Driver &driver) {
 
     Validator::validDriver(driver);
     driver.setPassHash(BCrypt::generateHash(driver.getPassHash()));
+    driver.setRole(DRIVER);
 
     return driver.insertUserToDb(db);
 }
@@ -111,9 +112,9 @@ int Controller::addDispatcher(Dispatcher &dispatcher) {
 
     Validator::validDispatcher(dispatcher);
     dispatcher.setPassHash(BCrypt::generateHash(dispatcher.getPassHash()));
+    dispatcher.setRole(DISPATCHER);
 
     return dispatcher.insertUserToDb(db);
-
 }
 
 void Controller::deleteCar(int car_id) {
