@@ -446,7 +446,7 @@ bool Validator::validatePassword(const std::string& hash_pass, const std::string
 }
 
 const std::regex Validator::NAME_PATTERN(R"(^[A-Za-z]{1,}$)");
-const std::regex Validator::ADDRESS_PATTERN(R"(^[a-zA-Z0-9\\s.,/-]+$)");
+const std::regex Validator::ADDRESS_PATTERN(R"(^[a-zA-Z]+(?:\s+[a-zA-Z0-9]+)*$)");
 const std::regex Validator::CITY_PATTERN(R"(^[A-Za-z]+$)");
 const std::regex Validator::DATE_PATTERN(R"(^\d{4}-\d{2}-\d{2}$)");
 const std::regex Validator::LICENSE_PATTERN("^(?!0000)[0-9]{4}[ABEIKMHOPCTX]{2}-[1-7]$");
