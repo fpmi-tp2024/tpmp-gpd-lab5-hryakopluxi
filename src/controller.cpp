@@ -6,9 +6,9 @@
 
 Controller::Controller(const std::string &db_filename) {
     db = nullptr;
-    int rc = sqlite3_open(db_filename.c_str(), &db);
+    int rc = sqlite3_open_v2(db_filename.c_str(), &db, SQLITE_OPEN_READWRITE, nullptr);
     if (rc != SQLITE_OK) {
-        sqlite3_close(db);
+        sqlite3_close_v2(db);
         throw std::runtime_error("Cannot open database");
     }
     user = User();
