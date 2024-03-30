@@ -1,60 +1,40 @@
-run: bin/program
-	./bin/program
+LIB = -lsqlite3 -lssl -lcrypto
+LIBTEST = -lgtest -lgtest_main
+FLAGS = -std=c++20
+CPPFLAGS = $(FLAGS)
+TESTFLAGS = $(FLAGS)
+CXX = g++
+obj = obj/car.o obj/menu.o obj/sql.o obj/config.o obj/controller.o obj/dispatcher.o obj/driver.o obj/order.o obj/user.o obj/validator.o obj/view.o obj/main.o
+testobj = obj/test.o obj/tcar.o obj/tmenu.o obj/tsql.o obj/tconfig.o obj/tcontroller.o obj/tdispatcher.o obj/tdriver.o obj/torder.o obj/tuser.o obj/tvalidator.o obj/tview.o
+EXEC = bin/main
+TESTEXEC = bin/test_main
 
-bin/program: obj/car.o obj/menu.o obj/sql.o obj/config.o obj/controller.o obj/dispatcher.o obj/driver.o obj/order.o obj/user.o obj/validator.o obj/view.o obj/main.o
-	g++ -o bin/program \
-	obj/sql.o \
-	obj/config.o \
- 	obj/car.o \
- 	obj/user.o \
- 	obj/dispatcher.o \
- 	obj/driver.o \
- 	obj/order.o \
- 	obj/validator.o \
- 	obj/controller.o \
- 	obj/menu.o \
- 	obj/view.o \
- 	obj/main.o \
- 	-lsqlite3 -lbcrypt
 
-obj/main.o: src/main.cpp
-	g++ -o obj/main.o -c src/main.cpp
+run: dirs $(EXEC)
+	./$(EXEC)
 
-obj/car.o: src/car.cpp
-	g++ -o obj/car.o -c src/car.cpp
+build: dirs $(EXEC)
 
-obj/config.o: src/config.cpp
-	g++ -o obj/config.o -c src/config.cpp
+test: dirs $(TESTEXEC)
+	./$(TESTEXEC); git restore db
 
-obj/controller.o: src/controller.cpp
-	g++ -o obj/controller.o -c src/controller.cpp
+$(EXEC): $(obj)
+	$(CXX) -o $(EXEC) $(obj) $(LIB)
 
-obj/dispatcher.o: src/dispatcher.cpp
-	g++ -o obj/dispatcher.o -c src/dispatcher.cpp
+$(TESTEXEC): $(testobj)
+	$(CXX) -o $(TESTEXEC) $(testobj) $(LIBTEST) $(LIB)
 
-obj/driver.o: src/driver.cpp
-	g++ -o obj/driver.o -c src/driver.cpp
+obj/%.o: src/%.cpp
+	$(CXX) $(CPPFLAGS) -c $< -o $@
 
-obj/order.o: src/order.cpp
-	g++ -o obj/order.o -c src/order.cpp
+obj/t%.o: src/%.cpp
+	$(CXX) $(TESTFLAGS) -c $< -o $@
 
-obj/user.o: src/user.cpp
-	g++ -o obj/user.o -c src/user.cpp
-
-obj/validator.o: src/validator.cpp
-	g++ -o obj/validator.o -c src/validator.cpp
-
-obj/view.o: src/view.cpp
-	g++ -o obj/view.o -c src/view.cpp
-
-obj/sql.o: src/sql.cpp
-	g++ -o obj/sql.o -c src/sql.cpp
-
-obj/menu.o: src/menu.cpp
-	g++ -o obj/menu.o -c src/menu.cpp
+obj/%.o: test/%.cpp
+	$(CXX) $(TESTFLAGS) -c $< -o $@
 
 dirs:
-	mkdir -p obj bin
+	-mkdir -p obj bin
 
 clean:
-	rm -rf obj/*.o bin/program
+	rm -rf obj/* bin/*

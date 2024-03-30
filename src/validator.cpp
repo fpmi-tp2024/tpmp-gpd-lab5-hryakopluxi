@@ -389,6 +389,49 @@ void Validator::validateUpdateUser(User &update, int user_id, sqlite3 *db) {
     if (update.getPassHash().empty()) {
         update.setPassHash(old.getPassHash());
     } else {
-        update.setPassHash(BCrypt::generateHash(update.getPassHash()));
+        update.setPassHash(hashPassword(update.getPassHash()));
     }
+}
+
+std::string Validator::hashPassword(const std::string &password)
+{
+    /*
+        EVP is openssl high-level interface I use for digest(hash) a password
+        It requires EVP_DigestInit, EVP_DigestUpdate and EVP_DigestFinal
+        The result is put into hashed variable
+    */
+    EVP_MD_CTX *context = EVP_MD_CTX_new();
+
+    std::string hashed;
+
+    if (context != nullptr)
+    {
+        if (EVP_DigestInit_ex(context, EVP_sha256(), nullptr))
+        {
+            if (EVP_DigestUpdate(context, password.c_str(), password.length()))
+            {
+                unsigned char hash[EVP_MAX_MD_SIZE];
+                unsigned int lengthOfHash = 0;
+
+                if (EVP_DigestFinal_ex(context, hash, &lengthOfHash))
+                {
+                    std::stringstream ss;
+                    for (unsigned int i = 0; i < lengthOfHash; ++i)
+                    {
+                        ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
+                    }
+
+                    hashed = ss.str();
+                }
+            }
+        }
+
+        EVP_MD_CTX_free(context);
+    }
+    return hashed;
+}
+
+bool Validator::validatePassword(const std::string& hash_pass, const std::string& provided_pass) {
+    std::string provided_hash = hashPassword(provided_pass);
+    return hash_pass == provided_hash;
 }

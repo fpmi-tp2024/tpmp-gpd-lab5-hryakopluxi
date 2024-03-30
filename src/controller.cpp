@@ -27,8 +27,8 @@ bool Controller::login(const std::string &login, const std::string &password) {
         return false;
     }
 
-    std::string table_pass_hash = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
-    if (!BCrypt::validatePassword(password, table_pass_hash)) {
+    std::string pass_hash = reinterpret_cast<const char *>(sqlite3_column_text(stmt, 2));
+    if (!Validator::validatePassword(pass_hash, password)) {
         return false;
     }
 
@@ -41,6 +41,7 @@ bool Controller::login(const std::string &login, const std::string &password) {
 void Controller::logout() {
     user = User();
 }
+
 
 int Controller::addCar(Car &car) {
     if (user.getRole() != ADMIN && user.getRole() != DISPATCHER) {
@@ -66,7 +67,7 @@ int Controller::addDriver(Driver &driver) {
     }
 
     Validator::validDriver(driver);
-    driver.setPassHash(BCrypt::generateHash(driver.getPassHash()));
+    driver.setPassHash(Validator::hashPassword(driver.getPassHash()));
     driver.setRole(DRIVER);
 
     return driver.insertUserToDb(db);
@@ -110,7 +111,7 @@ int Controller::addDispatcher(Dispatcher &dispatcher) {
     }
 
     Validator::validDispatcher(dispatcher);
-    dispatcher.setPassHash(BCrypt::generateHash(dispatcher.getPassHash()));
+    dispatcher.setPassHash(Validator::hashPassword(dispatcher.getPassHash()));
     dispatcher.setRole(DISPATCHER);
 
     return dispatcher.insertUserToDb(db);
