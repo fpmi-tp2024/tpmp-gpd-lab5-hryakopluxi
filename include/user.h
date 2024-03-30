@@ -70,7 +70,7 @@ public:
     static std::string toLower(std::string str);
 
     virtual void getDataFromDb(sqlite3 *db, int user_id);
-    virtual int insertUserToDb(sqlite3 *db) {}
+    virtual int insertUserToDb(sqlite3 *db) {return 0;}
     virtual void getDataFromConsole();
 };
 

@@ -22,6 +22,7 @@ private:
     void logout();
     void changeDb();
 
+    static int inputInt();
     bool guestMenu();
     bool driverMenu();
     bool dispatcherMenu();
@@ -54,7 +55,7 @@ private:
     void deleteOrder();
     void deleteDispatcher();
 
-    void pressAnyKey() const;
+    static void pressAnyKey() ;
 
 public:
     View();

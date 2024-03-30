@@ -8,7 +8,6 @@ Controller::Controller(const std::string &db_filename) {
     db = nullptr;
     int rc = sqlite3_open(db_filename.c_str(), &db);
     if (rc != SQLITE_OK) {
-        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
         throw std::runtime_error("Cannot open database");
     }
@@ -519,7 +518,7 @@ std::string Controller::getCarSummaryMileageAndLoad(int car_id) const {
     double mileage = sqlite3_column_double(stmt, 1);
     sqlite3_finalize(stmt);
 
-    char buf[45];
+    char buf[100];
     sprintf(buf, "Summary load: %.3f\nSummary mileage: %.1f\n", load, mileage + car.getMileageBuy());
     return buf;
 }
@@ -543,7 +542,7 @@ std::string Controller::getDriverStat(int driver_id) const {
                              "Failed to execute driver summary statement: ",
                              false, false);
 
-    char response[300];
+    char response[1000];
     sprintf(response, "ID: %d\n"
                       "Login: %s\n"
                       "Name: %s\n"
@@ -623,7 +622,7 @@ std::vector<std::string> Controller::getAllDriversStatistics() const {
         if (rc != SQLITE_ROW) {
             break;
         }
-        char response[200];
+        char response[1000];
         sprintf(response, "ID: %d\n"
                           "Login: %s\n"
                           "Name: %s\n"
@@ -724,7 +723,7 @@ std::string Controller::getInfoAboutCarWithMaxMileage() const {
     SQL::executeSQLStatement(db, stmt, SQLITE_ROW,
                              "Failed to execute retrieving car id with max mileage: ",
                              false, false);
-    char response[250];
+    char response[1000];
 
     sprintf(response, "ID: %d\n"
                       "Driver info: %s %s, id: %d\n"
@@ -820,7 +819,7 @@ std::vector<std::string> Controller::storeDriversEarnedMoney(
         if (rc != SQLITE_ROW) {
             break;
         }
-        char buf[100];
+        char buf[1000];
         sprintf(buf,"Driver ID: %d\nSurname: %s\nMoney earned: %.2f\n",
                      sqlite3_column_int(stmt, 0), sqlite3_column_text(stmt, 1),
                      sqlite3_column_double(stmt, 2));

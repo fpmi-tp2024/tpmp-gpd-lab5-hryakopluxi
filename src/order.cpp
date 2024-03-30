@@ -49,22 +49,29 @@ int Order::insertOrderToDb(sqlite3 *db) {
 }
 
 void Order::getDataFromConsole() {
+    std::string dID, cID, mileStr, loadStr, costStr;
+
     std::cout << "Enter driver ID: ";
-    std::cin >> driver_id;
+    std::getline(std::cin, dID);
 
     std::cout << "Enter car ID: ";
-    std::cin >> car_id;
+    std::getline(std::cin, cID);
 
     std::cout << "Enter date (yyyy-mm-dd): ";
-    std::cin.ignore();
     std::getline(std::cin, date);
 
     std::cout << "Enter mileage: ";
-    std::cin >> mileage;
+    std::getline(std::cin, mileStr);
 
     std::cout << "Enter load: ";
-    std::cin >> load;
+    std::getline(std::cin, loadStr);
 
     std::cout << "Enter cost: ";
-    std::cin >> cost;
+    std::getline(std::cin, costStr);
+
+    driver_id = std::stoi(dID);
+    car_id = std::stoi(cID);
+    mileage = std::stod(mileStr);
+    load = std::stod(loadStr);
+    cost = std::stod(costStr);
 }

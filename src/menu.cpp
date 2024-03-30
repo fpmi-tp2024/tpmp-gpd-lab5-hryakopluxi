@@ -1,11 +1,12 @@
 //
-// Created by hakeyn on 29.3.24.
+// Created by Stanislau Senkevich on 29.3.24.
 //
 #include "../include/view.h"
 
 const std::string View::GUEST_MENU_MSG = "Menu:\n"
                                          "(0) Exit\n"
-                                         "(1) Login\n";
+                                         "(1) Login\n"
+                                         "(2) Change DB\n";
 
 const std::string View::DRIVER_MENU_MSG = "Menu:\n"
                                           "(1) Get orders\n"
@@ -65,18 +66,31 @@ const std::string View::ADMIN_MENU_MSG = "Menu:\n"
                                          "(23) Logout\n"
                                          "(0) Exit\n"
                                          "Your ID: ";
-void View::pressAnyKey() const {
-    std::cin.ignore();
-    std::string msg = "Press Enter to continue...\n";
+void View::pressAnyKey() {
+    std::string msg = "\nPress Enter to continue...";
     std::cout << msg;
-    std::getline(std::cin, msg);
+    std::getline(std::cin, msg, '\n');
+}
+
+int View::inputInt() {
+    std::string optStr;
+    int opt;
+    std::getline(std::cin, optStr, '\n');
+
+    try {
+        opt = std::stoi(optStr);
+    } catch (const std::exception& e) {
+        opt = -1;
+    }
+
+    return opt;
 }
 
 bool View::guestMenu() {
-    int opt = -1;
     std::cout << GUEST_MENU_MSG;
-    std::cout << "Command: ";
-    std::cin >> opt;
+    std:: cout << "Command: ";
+    int opt = inputInt();
+
     switch (opt) {
         case 0:
             return true;
@@ -84,18 +98,20 @@ bool View::guestMenu() {
             login();
             return false;
         case 2:
-
+            changeDb();
+            break;
         default:
             std::cout << "Unknown command\n";
     }
+    pressAnyKey();
+    return false;
 }
 
 bool View::driverMenu() {
-    int opt;
-    int user_id = controller.getUserId();
     std::cout << DRIVER_MENU_MSG << controller.getUserId() << "\n";
-    std::cout << "Command: ";
-    std::cin >> opt;
+    std:: cout << "Command: ";
+    int opt = inputInt();
+    int user_id = controller.getUserId();
     switch (opt) {
         case 0:
             return true;
@@ -128,18 +144,17 @@ bool View::driverMenu() {
 }
 
 bool View::dispatcherMenu() {
-    int opt, id;
-    opt = -1;
-    int user_id = controller.getUserId();
     std::cout << DISPATCHER_MENU_MSG << controller.getUserId() << "\n";
-    std::cout << "Command: ";
-    std::cin >> opt;
+    std:: cout << "Command: ";
+    int opt = inputInt();
+    int id, user_id;
+    user_id = controller.getUserId();
     switch (opt) {
         case 0:
             return true;
         case 1:
             std::cout << "Enter driver's ID: ";
-            std::cin >> id;
+            id = inputInt();
             getDriverOrders(id);
             break;
         case 2:
@@ -147,7 +162,7 @@ bool View::dispatcherMenu() {
             break;
         case 3:
             std::cout << "Enter driver's ID: ";
-            std::cin >> id;
+            id = inputInt();
             getDriverStatistics(id);
             break;
         case 4:
@@ -161,7 +176,7 @@ bool View::dispatcherMenu() {
             break;
         case 7:
             std::cout << "Enter driver's ID: ";
-            std::cin >> id;
+            id = inputInt();
             getDriverEarnedMoney(id);
             break;
         case 8:
@@ -202,18 +217,17 @@ bool View::dispatcherMenu() {
 }
 
 bool View::adminMenu() {
-    int opt, id;
-    opt = -1;
-    int user_id = controller.getUserId();
     std::cout << ADMIN_MENU_MSG << controller.getUserId() << "\n";
-    std::cout << "Command: ";
-    std::cin >> opt;
+    std:: cout << "Command: ";
+    int opt = inputInt();
+    int user_id = controller.getUserId();
+    int id;
     switch (opt) {
         case 0:
             return true;
         case 1:
             std::cout << "Enter driver's ID: ";
-            std::cin >> id;
+            id = inputInt();
             getDriverOrders(id);
             break;
         case 2:
@@ -221,7 +235,7 @@ bool View::adminMenu() {
             break;
         case 3:
             std::cout << "Enter driver's ID: ";
-            std::cin >> id;
+            id = inputInt();
             getDriverStatistics(id);
             break;
         case 4:
@@ -235,7 +249,7 @@ bool View::adminMenu() {
             break;
         case 7:
             std::cout << "Enter driver's ID: ";
-            std::cin >> id;
+            id = inputInt();
             getDriverEarnedMoney(id);
             break;
         case 8:

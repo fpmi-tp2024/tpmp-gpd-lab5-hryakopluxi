@@ -134,7 +134,8 @@ int Driver::insertUserToDb(sqlite3 *db) {
 }
 
 void Driver::getDataFromConsole() {
-    User::getDataFromConsole(); // Collect data for the base class User
+    std::string expStr;
+    User::getDataFromConsole();
 
     std::cout << "Enter name: ";
     std::getline(std::cin, name, '\n');
@@ -143,7 +144,6 @@ void Driver::getDataFromConsole() {
     std::getline(std::cin, surname, '\n');
 
     std::cout << "Enter categories (separated by space): ";
-    std::cin.ignore();
     std::string categoriesInput;
     std::getline(std::cin, categoriesInput, '\n');
     if (!categoriesInput.empty()) {
@@ -152,10 +152,9 @@ void Driver::getDataFromConsole() {
 
 
     std::cout << "Enter experience (years): ";
-    std::cin >> experience;
+    std::getline(std::cin, expStr, '\n');
 
     std::cout << "Enter address: ";
-    std::cin.ignore();
     std::getline(std::cin, address);
 
     std::cout << "Enter city: ";
@@ -163,4 +162,6 @@ void Driver::getDataFromConsole() {
 
     std::cout << "Enter birthday (yyyy-mm-dd): ";
     std::getline(std::cin, birthday, '\n');
+
+    experience = std::stoi(expStr);
 }
