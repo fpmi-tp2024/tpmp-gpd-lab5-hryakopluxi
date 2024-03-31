@@ -43,7 +43,7 @@ TEST(Validator_validSurname, TestNegative) {
 
     for (const auto& s : table) {
         EXPECT_FALSE(Validator::validSurname(s.first))
-        << "Test case: " << s.first << "\tTest surname: " << s.second;
+        << "Test case: " << s.first << "\tTest name: " << s.second;
     }
 }
 
@@ -62,7 +62,7 @@ TEST(Validator_validAddress, TestNegative) {
 
     for (const auto& s : table) {
         EXPECT_FALSE(Validator::validAddress(s.first))
-        << "Test case: " << s.first << "\tTest address: " << s.second;
+        << "Test case: " << s.first << "\tTest name: " << s.second;
     }
 }
 
@@ -81,7 +81,7 @@ TEST(Validator_validCity, TestNegative) {
 
     for (const auto& s : table) {
         EXPECT_FALSE(Validator::validCity(s.first))
-        << "Test case: " << s.first << "\tTest city: " << s.second;
+        << "Test case: " << s.first << "\tTest name: " << s.second;
     }
 }
 
@@ -104,7 +104,7 @@ TEST(Validator_validDate, TestNegative) {
 
     for (const auto& s : table) {
         EXPECT_FALSE(Validator::validDate(s.first))
-        << "Test case: " << s.first << "\tTest date: " << s.second;
+        << "Test case: " << s.first << "\tTest name: " << s.second;
     }
 }
 
@@ -125,7 +125,7 @@ TEST(Validator_validLicense, TestNegative) {
 
     for (const auto& s : table) {
         EXPECT_FALSE(Validator::validLicense(s.first))
-        << "Test case: " << s.first << "\tTest license: " << s.second;
+        << "Test case: " << s.first << "\tTest name: " << s.second;
     }
 }
 
@@ -138,7 +138,7 @@ TEST(Validator_validLogin, TestPositive) {
 
     for (const auto& s : table) {
         EXPECT_TRUE(Validator::validLogin(s.first))
-        << "Test case: " << s.first << "\tTest login: " << s.second;
+        << "Test case: " << s.first << "\tTest name: " << s.second;
     }
 }
 
@@ -160,7 +160,7 @@ TEST(Validator_validLogin, TestNegative) {
 
     for (const auto& s : table) {
         EXPECT_FALSE(Validator::validLogin(s.first))
-        << "Test case: " << s.first << "\tTest login: " << s.second;
+        << "Test case: " << s.first << "\tTest name: " << s.second;
     }
 }
 
@@ -173,7 +173,7 @@ TEST(Validator_validPassword, TestPositive) {
 
     for (const auto& s : table) {
         EXPECT_TRUE(Validator::validPassword(s.first))
-        << "Test case: " << s.first << "\tTest password: " << s.second;
+        << "Test case: " << s.first << "\tTest name: " << s.second;
     }
 }
 
@@ -195,7 +195,7 @@ TEST(Validator_validPassword, TestNegative) {
 
     for (const auto& s : table) {
         EXPECT_FALSE(Validator::validPassword(s.first))
-        << "Test case: " << s.first << "\tTest password: " << s.second;
+        << "Test case: " << s.first << "\tTest name: " << s.second;
     }
 }
 
@@ -221,7 +221,7 @@ TEST(Validator_validPeriod, TestNegative) {
 
     for (const auto& s : table) {
         EXPECT_FALSE(Validator::validPeriod(s.first.first, s.first.second))
-        << "Test case: " << s.first.first << " - " << s.first.second << "\tTest period: " << s.second;
+        << "Test case: " << s.first.first << " - " << s.first.second << "\tTest name: " << s.second;
     }
 }
 
@@ -245,14 +245,67 @@ TEST(Validator_validAge, TestNegative) {
 
     for (const auto& s : table) {
         EXPECT_FALSE(Validator::validAge(s.first))
-        << "Test case: " << s.first << "\tTest date: " << s.second;
+        << "Test case: " << s.first << "\tTest name: " << s.second;
     }
 }
 
 TEST(Validator_validDriver, TestPositive) {
+    Driver driver("driver123", "driver123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18");
+    EXPECT_NO_THROW(
+        EXPECT_TRUE(Validator::validDriver(driver));
+    );
 }
 
-TEST(Validator_validDriver, TestNegavite) {}
+TEST(Validator_validDriver, TestNegative) {
+    std::vector<std::pair<const Driver&, std::string>> table {
+        {Driver("", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Empty login"},
+        {Driver("driver123", "password123", "", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Empty name"},
+        {Driver("driver123", "", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Empty password"},
+        {Driver("driver123", "password123", "Stas", "", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Empty surname"},
+        {Driver("driver123", "password123", "Stas", "Senkevich", {Category::A}, 1, "", "Minsk", "2004-05-18"), "Empty address"},
+        {Driver("driver123", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "", "2004-05-18"), "Empty city"},
+        {Driver("driver123", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", ""), "Empty birthday"},
+
+        {Driver("driver 123", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Invalid login (spaces are impossible)"},
+        {Driver("driver@123", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Invalid login (@ character)"},
+        {Driver("driver!", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Invalid login(! character)"},
+
+        {Driver("driver123", "password 123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Invalid password (spaces are impossible)"},
+        {Driver("driver123", "password@123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Invalid password (@ character)"},
+        {Driver("driver123", "1234=", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Invalid password (= character)"},
+
+        {Driver("driver123", "password123", "Stas5", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Invalid name (contains digit)"},
+        {Driver("driver123", "password123", "Stas stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Invalid name (not a single word)"},
+
+        {Driver("driver123", "password123", "Stas", "Senkevich5", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Invalid surname (contains digit)"},
+        {Driver("driver123", "password123", "Stas", "Senkevich stas", {Category::A}, 1, "Ulica 5", "Minsk", "2004-05-18"), "Invalid surname (not a single word)"},
+
+        {Driver("driver123", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica5", "Minsk", "2004-05-18"), "Invalid address (not a single word)"},
+        {Driver("driver123", "password123", "Stas", "Senkevich", {Category::A}, 1, "   Ulica", "Minsk", "2004-05-18"), "Invalid address (odd spaces)"},
+        
+        {Driver("driver123", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk yuzhniy", "2004-05-18"), "Invalid city (not a single word)"},
+        {Driver("driver123", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk 10", "2004-05-18"), "Invalid city (digits are impossible)"},
+
+        {Driver("driver123", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk", "18-05-2004"), "Invalid birthday pattern"},
+        {Driver("driver123", "password123", "Stas", "Senkevich stas", {Category::A}, 1, "Ulica5", "Minsk", "05-2004-18"), "Invalid birthday pattern"},
+        {Driver("driver123", "password123", "Stas", "Senkevich stas", {Category::A}, 1, "Ulica5", "Minsk", "2004-05-32"), "Invalid birthday pattern"},
+        {Driver("driver123", "password123", "Stas", "Senkevich stas", {Category::A}, 1, "Ulica5", "Minsk", "2004-13-30"), "Invalid birthday pattern"},
+        {Driver("driver123", "password123", "Stas", "Senkevich stas", {Category::A}, 1, "Ulica5", "Minsk", "2023-02-29"), "Invalid birthday pattern"},
+    };
+
+    for (const auto& [driver, testName] : table) {
+        EXPECT_THROW(
+            {
+                try {
+                    Validator::validDriver(driver);
+                } catch (const std::invalid_argument& e) {
+                    throw;
+                }
+            }, 
+            std::invalid_argument)
+            << "Test case: " << testName << "\tDriver: " << driver.print();
+    }
+}
 
 TEST(Validator_validOrder, TestPositive) {}
 
