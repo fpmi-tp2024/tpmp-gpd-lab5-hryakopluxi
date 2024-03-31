@@ -103,6 +103,8 @@ public:
         birthday = newBirthday;
     }
 
+    std::string print() const;
+
     void getDataFromDb(sqlite3 *db, int user_id) override;
     int insertUserToDb(sqlite3 *db) override;
     void getDataFromConsole() override;
