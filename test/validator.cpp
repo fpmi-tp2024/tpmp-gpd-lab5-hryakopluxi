@@ -303,11 +303,65 @@ TEST(Validator_validDriver, TestNegative) {
                 }
             }, 
             std::invalid_argument)
-            << "Test case: " << testName << "\tDriver: " << driver.print();
+            << "Test case: " << testName << driver.print();
     }
 }
 
-TEST(Validator_validOrder, TestPositive) {}
+TEST(Validator_validDispatcher, TestPositive) {
+    Dispatcher dispatcher("disp123", "disp123", "Stas", "Senkevich", "Ulica 5", "Minsk");
+    EXPECT_NO_THROW(
+        EXPECT_TRUE(Validator::validDispatcher(dispatcher));
+    );
+}
+
+TEST(Validator_validDispatcher, TestNegative) {
+    std::vector<std::pair<const Dispatcher&, std::string>> table {
+        {Dispatcher("", "disp123", "Yulia", "Raitsyna", "Ulica 5", "Minsk"), "Empty login"},
+        {Dispatcher("disp123", "", "Yulia", "Raitsyna", "Ulica 5", "Minsk"), "Empty password"},
+        {Dispatcher("disp123", "disp123", "", "Raitsyna", "Ulica 5", "Minsk"), "Empty name"},
+        {Dispatcher("disp123", "disp123", "Yulia", "", "Ulica 5", "Minsk"), "Empty surname"},
+        {Dispatcher("disp123", "disp123", "Yulia", "Raitsyna", "", "Minsk"), "Empty address"},
+        {Dispatcher("disp123", "disp123", "Yulia", "Raitsyna", "Ulica 5", ""), "Empty city"},
+
+        {Dispatcher("disp 123", "disp123", "Yulia", "Raitsyna", "Ulica 5", "Minsk"), "Invalid login (spaces are impossible)"},
+        {Dispatcher("disp@123", "disp123", "Yulia", "Raitsyna", "Ulica 5", "Minsk"), "Invalid login (@ character)"},
+        {Dispatcher("123!", "disp123", "Yulia", "Raitsyna", "Ulica 5", "Minsk"), "Invalid login (! character)"},
+
+        {Dispatcher("disp123", "disp 123", "Yulia", "Raitsyna", "Ulica 5", "Minsk"), "Invalid lpassword (spaces are impossible)"},
+        {Dispatcher("disp123", "disp1@23", "Yulia", "Raitsyna", "Ulica 5", "Minsk"), "Invalid password (@ character)"},
+        {Dispatcher("disp123", "disp!", "Yulia", "Raitsyna", "Ulica 5", "Minsk"), "Invalid password (! character)"},
+
+        {Dispatcher("disp123", "disp123", "Yulia yulia", "Raitsyna", "Ulica 5", "Minsk"), "Invalid name (not a single word)"},
+        {Dispatcher("disp123", "disp123", "Yulia@", "Raitsyna", "Ulica 5", "Minsk"), "Invalid name (@ character)"},
+
+        {Dispatcher("disp123", "disp123", "Yulia", "Raitsyna yulia", "Ulica 5", "Minsk"), "Invalid surname (not a single word)"},
+        {Dispatcher("disp123", "disp123", "Yulia", "Raitsyna5", "Ulica 5", "Minsk"), "Invalid surname (digits are impossible)"},
+
+        {Dispatcher("disp123", "disp123", "Yulia", "Raitsyna", "Ulica5", "Minsk"), "Invalid address pattern"},
+        {Dispatcher("disp123", "disp123", "Yulia", "Raitsyna", "   Ulica ", "Minsk"), "Invalid addres (odd spaces)"},
+
+        {Dispatcher("disp123", "disp123", "Yulia", "Raitsyna", "Ulica 5", "Minsk moskovskiy"), "Invalid city (not a single word)"},
+        {Dispatcher("disp123", "disp123", "Yulia", "Raitsyna", "Ulica 5", "Minsk5"), "Invalid city (digits are impossible)"},
+
+    };
+
+    for (const auto& [dispatcher, testName] : table) {
+        EXPECT_THROW(
+            {
+                try {
+                    Validator::validDispatcher(dispatcher);
+                } catch (const std::invalid_argument& e) {
+                    throw;
+                }
+            }, 
+            std::invalid_argument)
+            << "Test case: " << testName << dispatcher.print();
+    }
+}
+
+TEST(Validator_validOrder, TestPositive) {
+
+}
 
 TEST(Validator_validOrder, TestNegative) {}
 
