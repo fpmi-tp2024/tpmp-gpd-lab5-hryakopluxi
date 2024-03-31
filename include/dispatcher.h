@@ -22,6 +22,13 @@ public:
     Dispatcher(std::string newName, std::string newSurname,
                std::string newAddress, std::string newCity)
             : name(std::move(newName)), surname(std::move(newSurname)), address(std::move(newAddress)), city(std::move(newCity)) {}
+        
+    Dispatcher(std::string newLogin, std::string newPassHash, std::string newName, std::string newSurname,
+               std::string newAddress, std::string newCity)
+            : name(std::move(newName)), surname(std::move(newSurname)), address(std::move(newAddress)), city(std::move(newCity)) {
+                this->setLogin(newLogin);
+                this->setPassHash(newPassHash);
+            }
 
     [[nodiscard]] std::string getName() const {
         return name;
