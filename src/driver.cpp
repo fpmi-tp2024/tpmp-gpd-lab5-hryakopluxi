@@ -168,7 +168,7 @@ void Driver::getDataFromConsole() {
 
 std::string Driver::print() const{
         std::ostringstream oss;
-        oss << "Driver: \n"
+        oss << "\nDriver: \n"
             << "\tLogin: " << getLogin() << "\n"
             << "\tPassword: " << getPassHash() << "\n"
             << "\tName: " << name << "\n"
@@ -179,4 +179,4 @@ std::string Driver::print() const{
             << "\tCity: " << city << "\n"
             << "\tBirthday: " << birthday << "\n";
         return oss.str();
-    }
+}
