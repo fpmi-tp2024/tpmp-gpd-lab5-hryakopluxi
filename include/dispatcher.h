@@ -6,6 +6,8 @@
 #define LAB_5_PROJECT_DISPATCHER_H
 
 #include <utility>
+#include <sstream>
+
 
 #include "user.h"
 
@@ -54,6 +56,9 @@ public:
     void setCity(const std::string &newCity) {
         city = newCity;
     }
+
+    std::string print() const;
+
     void getDataFromDb(sqlite3 *db, int user_id) override;
 
     int insertUserToDb(sqlite3 *db) override;
