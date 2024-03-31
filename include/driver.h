@@ -33,6 +33,16 @@ public:
             : name(std::move(newName)), surname(std::move(newSurname)), category(newCategories),
               experience(newExperience), address(std::move(newAddress)), city(std::move(newCity)), birthday(std::move(newBirthday)) {}
 
+    Driver(std::string newLogin, std::string newPassHash, std::string newName, std::string newSurname,
+           const std::vector<Category> &newCategories, int newExperience,
+           std::string newAddress, std::string newCity,
+           std::string newBirthday)
+            : name(std::move(newName)), surname(std::move(newSurname)), category(newCategories),
+              experience(newExperience), address(std::move(newAddress)), city(std::move(newCity)), birthday(std::move(newBirthday)) {
+                this->setLogin(newLogin);
+                this->setPassHash(newPassHash);
+              }
+
     [[nodiscard]] std::string getName() const {
         return name;
     }
