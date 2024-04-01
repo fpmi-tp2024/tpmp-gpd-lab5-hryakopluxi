@@ -4,11 +4,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: make build
+      - name: Checkout code
+        uses: actions/checkout@v3
+     
+      - name: Build
+        run: make build
+        continue-on-error: false
+     
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: sudo apt-get install libgtest-dev
-      - run: make test
+      - name: Checkout code
+        uses: actions/checkout@v3
+     
+      - name: Install dependencies
+        run: sudo apt-get install libgtest-dev
+        continue-on-error: false
+     
+      - name: Run tests
+        run: make test
+        continue-on-error: false
