@@ -389,7 +389,7 @@ TEST(Validator_validOrder, TestNegative) {
         {Order(1, 27, 7, "2024-13-01", 200, 1000, 120, true), "Invalid date (month)"},
         {Order(1, 27, 7, "2024-01-32", 200, 1000, 120, true), "Invalid date (day)"},
         {Order(1, 27, 7, "2023-02-29", 200, 1000, 120, true), "Invalid date"},
-        {Order(1, 27, 7, "2024-01-01", 200, 1000, 120, true), "Not a driver's car"},
+        {Order(1, 27, 1, "2024-01-01", 200, 1000, 120, true), "Not a driver's car"},
         {Order(1, 27, 7, "2024-01-01", -200, 1000, 120, true), "Negative mileage"},
         {Order(1, 27, 7, "2024-01-01", 200, -1000, 120, true), "Negative load"},
         {Order(1, 27, 7, "2024-01-01", 200, 1000, -120, true), "Negative cost"},
