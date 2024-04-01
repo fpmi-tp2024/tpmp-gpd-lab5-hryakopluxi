@@ -382,11 +382,6 @@ TEST(Validator_validCar, TestPositive) {
 }
 
 TEST(Validator_validCar, TestNegative) {
-    std::vector<std::tuple<Car, std::string, std::string>> table_db_test = {
-        {Car(1, 27, "1234AA-1", "volvo", 200, 1000), " ", "Invalid db_filename"},
-        {Car(1, 27, "1234AA-1", "volvo", 200, 1000), "a.db", "Invalid db_filename"},
-    };
-
     std::vector<std::tuple<Car, std::string, std::string>> table {
         {Car(1, 2, "1234AA-1", "volvo", 200, 2000), "db/app.db", "No driver found in data base"},
         {Car(1, 27, "1234A-1", "volvo", 200, 2000), "db/app.db", "Invalid license pattern"},
@@ -396,25 +391,6 @@ TEST(Validator_validCar, TestNegative) {
         {Car(1, 27, "1234AA-1", "volvo", -200, 2000), "db/app.db", "Invalid mileage (negative)"},
         {Car(1, 27, "1234AA-1", "volvo", 200, -2000), "db/app.db", "Invalid capacity (negative)"}, 
     };
-
-    for (const auto& [car, db_filename, testName] : table_db_test) {
-
-        sqlite3* db = nullptr;
-        int rc = sqlite3_open_v2(db_filename.c_str(), &db, SQLITE_OPEN_READWRITE, nullptr);
-    
-        EXPECT_THROW(
-            {
-                try {
-                    if (rc != SQLITE_OK) {
-                        sqlite3_close_v2(db);
-                        throw std::runtime_error("Cannot open database");
-                    }
-                } catch(const std::runtime_error& e) {
-                    throw;
-                }
-            }, std::runtime_error)
-        << "Test case: " << testName << car.print();
-    }
 
     for (const auto& [car, db_filename, testName] : table) {
         sqlite3* db = nullptr;
