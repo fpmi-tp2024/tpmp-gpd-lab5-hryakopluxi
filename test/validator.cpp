@@ -360,10 +360,54 @@ TEST(Validator_validDispatcher, TestNegative) {
 }
 
 TEST(Validator_validOrder, TestPositive) {
+    Order order(1, 27, 7, "2024-01-01", 200, 1000, 120, true);
+    const std::string db_filename = "db/app.db";
+    sqlite3* db;
+    int rc = sqlite3_open_v2(db_filename.c_str(), &db, SQLITE_OPEN_READWRITE, nullptr);
+    if (rc != SQLITE_OK) {
+        throw std::invalid_argument("Failed to open database");
+    }
 
+    EXPECT_NO_THROW({
+        EXPECT_TRUE(Validator::validOrder(order, db));
+    });
+    sqlite3_close(db);
 }
 
-TEST(Validator_validOrder, TestNegative) {}
+TEST(Validator_validOrder, TestNegative) {
+    const std::string db_filename = "db/app.db";
+    sqlite3* db = nullptr;
+        int rc = sqlite3_open_v2(db_filename.c_str(), &db, SQLITE_OPEN_READWRITE, nullptr);
+        if (rc != SQLITE_OK) {
+            sqlite3_close_v2(db);
+            throw std::runtime_error("Cannot open database");
+        }
+
+    std::vector<std::pair<Order, std::string>> table {
+        {Order(1, 27, 7, "", 200, 1000, 120, true), "Empty date"},
+        {Order(1, 27, 7, "01-01-2024", 200, 1000, 120, true), "Invalid date pattern"},
+        {Order(1, 27, 7, "2024-13-01", 200, 1000, 120, true), "Invalid date (month)"},
+        {Order(1, 27, 7, "2024-01-32", 200, 1000, 120, true), "Invalid date (day)"},
+        {Order(1, 27, 7, "2023-02-29", 200, 1000, 120, true), "Invalid date"},
+        {Order(1, 27, 7, "2024-01-01", 200, 1000, 120, true), "Not a driver's car"},
+        {Order(1, 27, 7, "2024-01-01", -200, 1000, 120, true), "Negative mileage"},
+        {Order(1, 27, 7, "2024-01-01", 200, -1000, 120, true), "Negative load"},
+        {Order(1, 27, 7, "2024-01-01", 200, 1000, -120, true), "Negative cost"},
+    };
+
+    for (const auto& [order, testName] : table) {
+
+        EXPECT_THROW({
+            try {
+                Validator::validOrder(order, db);
+            } catch (const std::invalid_argument& e) {
+                throw;
+            }
+        }, std::invalid_argument) << "Test case: " << testName << order.print();
+
+        sqlite3_close(db);
+    }
+}
 
 
 TEST(Validator_validCar, TestPositive) {
@@ -382,23 +426,26 @@ TEST(Validator_validCar, TestPositive) {
 }
 
 TEST(Validator_validCar, TestNegative) {
-    std::vector<std::tuple<Car, std::string, std::string>> table {
-        {Car(1, 2, "1234AA-1", "volvo", 200, 2000), "db/app.db", "No driver found in data base"},
-        {Car(1, 27, "1234A-1", "volvo", 200, 2000), "db/app.db", "Invalid license pattern"},
-        {Car(1, 27, "1234AW-1", "volvo", 200, 2000), "db/app.db", "Invalid license pattern"},
-        {Car(1, 27, "1234AA-9", "volvo", 200, 2000), "db/app.db", "Invalid license pattern"},
-        {Car(1, 27, "AA1234-1", "volvo", 200, 2000), "db/app.db", "Invalid license pattern"},
-        {Car(1, 27, "1234AA-1", "volvo", -200, 2000), "db/app.db", "Invalid mileage (negative)"},
-        {Car(1, 27, "1234AA-1", "volvo", 200, -2000), "db/app.db", "Invalid capacity (negative)"}, 
+
+    const std::string db_filename = "db/app.db";
+    sqlite3* db = nullptr;
+    int rc = sqlite3_open_v2(db_filename.c_str(), &db, SQLITE_OPEN_READWRITE, nullptr);
+    if (rc != SQLITE_OK) {
+        sqlite3_close_v2(db);
+        throw std::runtime_error("Cannot open database");
+    }
+
+    std::vector<std::pair<Car, std::string>> table {
+        {Car(1, 2, "1234AA-1", "volvo", 200, 2000), "No driver found in data base"},
+        {Car(1, 27, "1234A-1", "volvo", 200, 2000), "Invalid license pattern"},
+        {Car(1, 27, "1234AW-1", "volvo", 200, 2000),  "Invalid license pattern"},
+        {Car(1, 27, "1234AA-9", "volvo", 200, 2000), "Invalid license pattern"},
+        {Car(1, 27, "AA1234-1", "volvo", 200, 2000), "Invalid license pattern"},
+        {Car(1, 27, "1234AA-1", "volvo", -200, 2000), "Invalid mileage (negative)"},
+        {Car(1, 27, "1234AA-1", "volvo", 200, -2000), "Invalid capacity (negative)"}, 
     };
 
-    for (const auto& [car, db_filename, testName] : table) {
-        sqlite3* db = nullptr;
-        int rc = sqlite3_open_v2(db_filename.c_str(), &db, SQLITE_OPEN_READWRITE, nullptr);
-        if (rc != SQLITE_OK) {
-            sqlite3_close_v2(db);
-            throw std::runtime_error("Cannot open database");
-        }
+    for (const auto& [car, testName] : table) {        
 
         EXPECT_THROW({
             try {
