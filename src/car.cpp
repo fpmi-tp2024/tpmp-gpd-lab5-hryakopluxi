@@ -60,3 +60,14 @@ void Car::getDataFromConsole() {
     mileage_purchase = std::stod(mile);
     load_capacity = std::stod(load);
 }
+
+std::string Car::print() const {
+    std::ostringstream oss;
+        oss << "\nCar: \n"
+            << "\tId: " << id << "\n"
+            << "\tDriver id: " << driver_id << "\n"
+            << "\tLicense: " << license << "\n"
+            << "\tMileage: " << mileage_purchase << "\n"
+            << "\tLoad capacity: " << load_capacity << "\n";
+        return oss.str();
+}

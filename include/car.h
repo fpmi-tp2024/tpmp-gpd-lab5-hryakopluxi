@@ -9,6 +9,7 @@
 #include <utility>
 #include <sqlite3.h>
 #include <iostream>
+#include <sstream>
 #include "exceptions.h"
 #include "sql.h"
 
@@ -65,6 +66,8 @@ public:
     void setLoadCapacity(double newLoadCapacity) {
         load_capacity = newLoadCapacity;
     }
+
+    std::string print() const;
 
     void getDataFromDb(sqlite3 *db, int car_id);
     int insertCarToDb(sqlite3 *db);
