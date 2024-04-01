@@ -75,3 +75,17 @@ void Order::getDataFromConsole() {
     load = std::stod(loadStr);
     cost = std::stod(costStr);
 }
+
+std::string Order::print() const {
+    std::ostringstream oss;
+        oss << "\nOrder: \n"
+            << "\tId: " << id << "\n"
+            << "\tDriver id: " << driver_id << "\n"
+            << "\tCar id: " << car_id << "\n"
+            << "\tDate: " << date << "\n"
+            << "\tMileage: " << mileage << "\n"
+            << "\tLoad: " << load << "\n"
+            << "\tCost: " << cost << "\n"
+            << "\tStatus: " << is_approved << "\n";
+    return oss.str();
+}

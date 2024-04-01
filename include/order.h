@@ -9,6 +9,7 @@
 #include <utility>
 #include <sqlite3.h>
 #include <iostream>
+#include <sstream>
 #include "sql.h"
 
 class Order {
@@ -93,6 +94,8 @@ public:
     void setIsApproved(bool newIsApproved) {
         is_approved = newIsApproved;
     }
+
+    std::string print() const;
 
     void getDataFromDb(sqlite3 *db, int order_id);
     void getDataFromConsole();
