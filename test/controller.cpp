@@ -12,19 +12,31 @@ TEST(Controller_testConnection, TestNegative) {
 
 TEST(Controller_login, TestPositive) {
     Controller controller;
-    std::vector<std::vector<std::string>> table{
+    std::vector<std::tuple<std::string, std::string, std::string>> table{
             {"admin",     "admin",     "Admin sign-in"},
             {"driver123", "driver123", "Driver sign-in"},
             {"disp100",   "disp100",   "Dispatcher sign-in"},
     };
 
-    for (const auto& t: table) {
-        EXPECT_TRUE(controller.login(t[0], t[1]))
-                            << "Test case: " << t[0] << " " << t[1] << "\tTest name: " << t[2];
+    for (const auto& [login, password, testName]: table) {
+        EXPECT_TRUE(controller.login(login, password))
+                            << "Test case: " << login << " " << password << "\tTest name: " << testName;
     }
 }
 
-TEST(Controller_login, TestNegative) {}
+TEST(Controller_login, TestNegative) {
+    Controller controller;
+    std::vector<std::tuple<std::string, std::string, std::string>> table{
+            {"admin",     "admin123",     "Admin sign-in"},
+            {"driver", "driver123", "Driver sign-in"},
+            {"disp",   "disp100",   "Dispatcher sign-in"},
+    };
+
+    for (const auto& [login, password, testName]: table) {
+        EXPECT_FALSE(controller.login(login, password))
+                            << "Test case: " << login << " " << password << "\tTest name: " << testName;
+    }
+}
 
 TEST(Controller_getDriverOrders, TestPositive) {}
 
