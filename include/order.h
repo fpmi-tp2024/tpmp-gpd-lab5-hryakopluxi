@@ -96,6 +96,7 @@ public:
     }
 
     std::string print() const;
+    bool operator==(const Order &o) const;
 
     void getDataFromDb(sqlite3 *db, int order_id);
     void getDataFromConsole();

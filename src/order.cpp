@@ -89,3 +89,12 @@ std::string Order::print() const {
             << "\tStatus: " << is_approved << "\n";
     return oss.str();
 }
+
+bool Order::operator== (const Order &o) const{
+    if(id != o.getId() || driver_id != o.getDriverId() || car_id != o.getCarId() || date != o.getDate()
+    || mileage != o.getMileage() || load != o.getLoad() || cost != o.getCost() || is_approved != o.getIsApproved()){
+        return false;
+    }
+    return true;
+}
+
