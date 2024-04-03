@@ -92,9 +92,49 @@ TEST(Controller_getDriverOrders, TestNegative) {
     }
 }
 
-TEST(Controller_getCarSummaryMileageAndLoad, TestPositive) {}
+TEST(Controller_getCarSummaryMileageAndLoad, TestPositive) {
+    Controller controller;
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string, std::string>> table = {
+        {{"driver123", "driver123"}, 4, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "Driver login"},
+        {{"disp", "disp"}, 4, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "Dispatcher login"},
+        {{"admin", "admin"}, 4, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "Admin login"}
+    };
+    for (const auto& [user, car_id, summary, testName]: table) {
+        EXPECT_NO_THROW(
+            controller.login(user.first, user.second);
+            std::string controllerSummary = controller.getCarSummaryMileageAndLoad(car_id);
+            EXPECT_EQ(summary, controllerSummary) << "Test case: " << user.first << "\t" << user.second << "\tDriver: " << car_id << "\t" << "\tTest name: " << testName;
+        )<< "Test case: " << user.first << "\t" << user.second << "\tDriver: " << car_id << "\t" << "\tTest name: " << testName;
+    }  
+}
 
-TEST(Controller_getCarSummaryMileageAndLoad, TestNegative) {}
+TEST(Controller_getCarSummaryMileageAndLoad, TestNegative) {
+    Controller controller;
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string, std::string>> table = {
+        {{"driver123", "driver123"}, 100, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "No car found"},
+        {{"driver123", "driver123"}, 1, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "Not driver's car"},
+        {{"disp", "disp"}, 100, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "No car found"},
+        {{"admin", "admin"}, 100, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "No car found"},
+        {{"driver123", "driver123"}, 4, "Summary load: 4000.000\nSummary mileage: 1450.0\n", "No car found"},
+    };
+    for (const auto& [user, car_id, summary, testName]: table) {
+        EXPECT_ANY_THROW(
+            try {
+                controller.login(user.first, user.second);
+                std::string controllerSummary = controller.getCarSummaryMileageAndLoad(car_id);
+                if(summary != controllerSummary) {
+                    throw std::invalid_argument("Summaries are not equal");
+                }
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+        )<< "Test case: " << user.first << "\t" << user.second << "\tDriver: " << car_id << "\t" << "\tTest name: " << testName;
+    } 
+}
 
 TEST(Controller_getDriverStatistics, TestPositive) {}
 
