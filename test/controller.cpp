@@ -136,9 +136,117 @@ TEST(Controller_getCarSummaryMileageAndLoad, TestNegative) {
     } 
 }
 
-TEST(Controller_getDriverStatistics, TestPositive) {}
+TEST(Controller_getDriverStatistics, TestPositive) {
+    Controller controller;
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string, std::string>> table = {
+        {{"admin", "admin"}, 27,"ID: 27\n"
+                                "Login: driver1337\n"
+                                "Name: stanislau\n"
+                                "Surname: senkevich\n"
+                                "Category: A B C\n"
+                                "Experience: 1 years\n"
+                                "City: moscow\n"
+                                "Address: u\n"
+                                "Birthday: 2004-05-18\n"
+                                "Orders completed: 4\n"
+                                "Money earned: 134.00\n"
+                                "Summary mileage: 2530.00\n",
+                                                            "Admin login"},
+        {{"driver1337", "driver1337"}, 27,"ID: 27\n"
+                                "Login: driver1337\n"
+                                "Name: stanislau\n"
+                                "Surname: senkevich\n"
+                                "Category: A B C\n"
+                                "Experience: 1 years\n"
+                                "City: moscow\n"
+                                "Address: u\n"
+                                "Birthday: 2004-05-18\n"
+                                "Orders completed: 4\n"
+                                "Money earned: 134.00\n"
+                                "Summary mileage: 2530.00\n",
+                                                            "Driver login"},
+        {{"disp234", "disp234"}, 29,"ID: 29\n"
+                                "Login: driver100\n"
+                                "Name: alexandr\n"
+                                "Surname: shishkin\n"
+                                "Category: B C\n"
+                                "Experience: 3 years\n"
+                                "City: mogilev\n"
+                                "Address: turova\n"
+                                "Birthday: 1984-02-05\n"
+                                "Orders completed: 1\n"
+                                "Money earned: 21.00\n"
+                                "Summary mileage: 400.00\n",
+                                                            "Dispatcher login"},
+        
+    };
+    for (const auto& [user, driver_id, statistics, testName]: table) {
+        EXPECT_NO_THROW(
+            controller.login(user.first, user.second);
+            std::string controllerStatistics = controller.getDriverStatistics(driver_id);
+            EXPECT_EQ(statistics, controllerStatistics) << "Test case: " << user.first << "\t" << user.second << "\tDriver: " << driver_id << "\t" << "\tTest name: " << testName;
+        )<< "Test case: " << user.first << "\t" << user.second << "\tDriver: " << driver_id << "\t" << "\tTest name: " << testName;
+    }  
+}
 
-TEST(Controller_getDriverStatistics, TestNegative) {}
+TEST(Controller_getDriverStatistics, TestNegative) {
+    Controller controller;
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string, std::string>> table = {
+        {{"admin", "admin"}, 90,"ID: 27\n"
+                                "Login: driver1337\n"
+                                "Name: stanislau\n"
+                                "Surname: senkevich\n"
+                                "Category: A B C\n"
+                                "Experience: 1 years\n"
+                                "City: moscow\n"
+                                "Address: u\n"
+                                "Birthday: 2004-05-18\n"
+                                "Orders completed: 4\n"
+                                "Money earned: 134.00\n"
+                                "Summary mileage: 2530.00\n",
+                                                            "Driver is not found"},
+        {{"driver123", "driver123"}, 27,"ID: 27\n"
+                                "Login: driver1337\n"
+                                "Name: stanislau\n"
+                                "Surname: senkevich\n"
+                                "Category: A B C\n"
+                                "Experience: 1 years\n"
+                                "City: moscow\n"
+                                "Address: u\n"
+                                "Birthday: 2004-05-18\n"
+                                "Orders completed: 4\n"
+                                "Money earned: 134.00\n"
+                                "Summary mileage: 2530.00\n",
+                                                            "Driver login (permission denied)"},
+        {{"disp100", "disp100"}, 27,"ID: 27\n"
+                                "Login: driver1337\n"
+                                "Name: stanislau\n"
+                                "Surname: senkevich\n"
+                                "Category: A B C\n"
+                                "Experience: 1 years\n"
+                                "City: moscow\n"
+                                "Address: u\n"
+                                "Birthday: 2004-05-18\n"
+                                "Orders completed: 4\n"
+                                "Money earned: 134.00\n"
+                                "Summary mileage: 2530.00\n",
+                                                            "Dispatcher login (permission denied)"},
+    };
+    for (const auto& [user, driver_id, statistics, testName]: table) {
+        EXPECT_ANY_THROW( 
+            try {
+                controller.login(user.first, user.second);
+                std::string controllerStatistics = controller.getDriverStatistics(driver_id);
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+        )<< "Test case: " << user.first << "\t" << user.second << "\tDriver: " << driver_id << "\t" << "\tTest name: " << testName;
+    }  
+}
 
 TEST(Controller_getAllDriversStatistics, TestPositive) {}
 
