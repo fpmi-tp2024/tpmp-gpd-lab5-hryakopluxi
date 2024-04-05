@@ -513,7 +513,7 @@ TEST(Controller_getAllDriversStatistics, TestNegative) {
     }
 }
 
-TEST(Controller_getWorstDriverStatistics, TestPositive) {
+TEST(Controller_getWorstDriverStatistics, TestNegative) {
     Controller controller;
     std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
         {{"admin", "admin"},    "ID: 31\n"
@@ -563,7 +563,7 @@ TEST(Controller_getWorstDriverStatistics, TestPositive) {
     }  
 }
 
-TEST(Controller_getWorstDriverStatistics, TestNegative) {
+TEST(Controller_getWorstDriverStatistics, TestPositive) {
     Controller controller;
     std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
         {{"admin", "admin"},    "ID: 36\n"
@@ -603,9 +603,83 @@ TEST(Controller_getWorstDriverStatistics, TestNegative) {
     }  
 }
 
-TEST(Controller_getInfoAboutCarWithMaxMileage, TestPositive) {}
+TEST(Controller_getInfoAboutCarWithMaxMileage, TestPositive) {
+    Controller controller;
+    std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
+       {{"admin", "admin"}, "ID: 9\n"
+                            "Driver info: vadim borisov, id: 31\n"
+                            "License: 1111AE-3\n"
+                            "Brand: man\n"
+                            "Mileage on purchase: 400.00\n"
+                            "Load capacity: 6400.00\n"
+                            "Summary cost of completed orders: 590.00\n"
+                            "Summary load: 10200.00\n"
+                            "Summary mileage: 2850.00\n", 
+                                                                         "Admin login"},
+        {{"disp234", "disp234"},"ID: 9\n"
+                                "Driver info: vadim borisov, id: 31\n"
+                                "License: 1111AE-3\n"
+                                "Brand: man\n"
+                                "Mileage on purchase: 400.00\n"
+                                "Load capacity: 6400.00\n"
+                                "Summary cost of completed orders: 590.00\n"
+                                "Summary load: 10200.00\n"
+                                "Summary mileage: 2850.00\n", 
+                                                                         "Dispatcher login"}
+        
+    };
+    for (const auto& [user, statistics, testName]: table) {
+        EXPECT_NO_THROW(
+            controller.login(user.first, user.second);
+            std::string controllerStatistics = controller.getInfoAboutCarWithMaxMileage();
+            EXPECT_EQ(statistics, controllerStatistics)<< "Test case: " << user.first << "\t" << user.second << "\tData: " << statistics << "\t" << "\tTest name: " << testName;
+        )<< "Test case: " << user.first << "\t" << user.second << "\tData: " << statistics << "\t" << "\tTest name: " << testName;
+    }  
+}
 
-TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {}
+TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {
+        Controller controller;
+    std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
+       {{"admin", "admin"}, "ID: 10\n"
+                            "Driver info: vadim borisov, id: 31\n"
+                            "License: 1111AE-3\n"
+                            "Brand: man\n"
+                            "Mileage on purchase: 400.00\n"
+                            "Load capacity: 6400.00\n"
+                            "Summary cost of completed orders: 590.00\n"
+                            "Summary load: 10200.00\n"
+                            "Summary mileage: 2850.00\n", 
+                                                                         "Admin login(wrong data)"},
+        {{"driver123", "driver123"}, "ID: 9\n"
+                            "Driver info: vadim borisov, id: 31\n"
+                            "License: 1111AE-3\n"
+                            "Brand: man\n"
+                            "Mileage on purchase: 400.00\n"
+                            "Load capacity: 6400.00\n"
+                            "Summary cost of completed orders: 590.00\n"
+                            "Summary load: 10200.00\n"
+                            "Summary mileage: 2850.00\n", 
+                                                                         "Driver login (permission denied)"}
+        
+    };
+    for (const auto& [user, statistics, testName]: table) {
+        EXPECT_ANY_THROW(
+            try {
+                controller.login(user.first, user.second);
+                std::string controllerStatistics = controller.getWorstDriverStatistics();
+                if(statistics != controllerStatistics) {
+                    throw std::invalid_argument("Data is wrong");
+                }
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+        )<< "Test case: " << user.first << "\t" << user.second << "\tData: " << statistics << "\t" << "\tTest name: " << testName;
+    }  
+}
 
 TEST(Controller_storeDriversEarnedMoney, TestPositive) {}
 
