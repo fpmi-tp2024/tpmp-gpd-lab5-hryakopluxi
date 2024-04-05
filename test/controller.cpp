@@ -638,7 +638,7 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestPositive) {
 }
 
 TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {
-        Controller controller;
+    Controller controller;
     std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
        {{"admin", "admin"}, "ID: 10\n"
                             "Driver info: vadim borisov, id: 31\n"
@@ -666,7 +666,7 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {
         EXPECT_ANY_THROW(
             try {
                 controller.login(user.first, user.second);
-                std::string controllerStatistics = controller.getWorstDriverStatistics();
+                std::string controllerStatistics = controller.getInfoAboutCarWithMaxMileage();
                 if(statistics != controllerStatistics) {
                     throw std::invalid_argument("Data is wrong");
                 }
@@ -681,9 +681,94 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {
     }  
 }
 
-TEST(Controller_storeDriversEarnedMoney, TestPositive) {}
+/*TEST(Controller_storeDriversEarnedMoney, TestPositive) {
+    Controller controller;
 
-TEST(Controller_storeDriversEarnedMoney, TestNegative) {}
+    std::vector<std::tuple<std::pair<std::string, std::string>, std::pair<std::string, std::string>, std::vector<std::string>, std::string>> table = {
+        {{"admin", "admin"}, {"2020-01-01", "2025-01-01"}, {
+                                                                "Driver ID: 27\n"
+                                                                "Surname: senkevich\n"
+                                                                "Money earned: 134.00\n",
+                                                                "Driver ID: 28\n"
+                                                                "Surname: ivanov\n"
+                                                                "Money earned: 88.20\n",
+                                                                "Driver ID: 29\n"
+                                                                "Surname: shishkin\n"
+                                                                "Money earned: 21.00\n",
+                                                                "Driver ID: 30\n"
+                                                                "Surname: kalinin\n"
+                                                                "Money earned: 24.00\n",
+                                                                "Driver ID: 31\n"
+                                                                "Surname: borisov\n"
+                                                                "Money earned: 74.00\n",
+                                                                "Driver ID: 36\n"
+                                                                "Surname: romanov\n"
+                                                                "Money earned: 0.00\n"
+                                                                },                      "Admin login"},
+    };
+    for (const auto& [user, period, statistics, testName]: table) {
+        EXPECT_NO_THROW(
+            controller.login(user.first, user.second);
+            std::vector<std::string> controllerStatistics = controller.storeDriversEarnedMoney(period.first, period.second);
+            EXPECT_EQ(statistics.size(), controllerStatistics.size())<< "\tTest name: " << testName;
+            for(int i = 0; i < std::min(statistics.size(), controllerStatistics.size()); i++) {
+                EXPECT_EQ(statistics[i], controllerStatistics[i])<< "\tTest name: " << testName;
+            } 
+        )<< "\tTest name: " << testName;
+    }  
+}
+
+TEST(Controller_storeDriversEarnedMoney, TestNegative) {
+    Controller controller;
+
+    std::vector<std::tuple<std::pair<std::string, std::string>, std::pair<std::string, std::string>, std::vector<std::string>, std::string>> table = {
+        {{"admin", "admin"}, {"2025-01-01", "2020-01-01"}, {},"Admin login(wrong period)"},
+        {{"admin", "admin"}, {"2020-01-01", "2025-01-01"}, {
+                                                                "Driver ID: 2000\n"
+                                                                "Surname: senkevich\n"
+                                                                "Money earned: 134.00\n",
+                                                                "Driver ID: 28\n"
+                                                                "Surname: ivanov\n"
+                                                                "Money earned: 88.20\n",
+                                                                "Driver ID: 29\n"
+                                                                "Surname: shishkin\n"
+                                                                "Money earned: 21.00\n",
+                                                                "Driver ID: 30\n"
+                                                                "Surname: kalinin\n"
+                                                                "Money earned: 24.00\n",
+                                                                "Driver ID: 31\n"
+                                                                "Surname: borisov\n"
+                                                                "Money earned: 74.00\n",
+                                                                "Driver ID: 36\n"
+                                                                "Surname: romanov\n"
+                                                                "Money earned: 0.00\n"
+                                                                },                      "Admin login(wrong data)"},
+        {{"driver123", "driver123"}, {"2020-01-01", "2025-01-01"}, {}, "Driver login (permission denied)"},
+        {{"disp234", "disp234"}, {}, {}, "Dispatcher login (permission denied)"},
+    };
+    for (const auto& [user, period, statistics, testName]: table) {
+        EXPECT_ANY_THROW(
+            try {
+                controller.login(user.first, user.second);
+                std::vector<std::string> controllerStatistics = controller.storeDriversEarnedMoney(period.first, period.second);
+
+                if(statistics.size() != controllerStatistics.size()) {
+                    throw std::invalid_argument("Data is wrong");
+                }
+
+                for(int i = 0; i < std::min(statistics.size(), controllerStatistics.size()); i++) {
+                    if(statistics[i] != controllerStatistics[i]) throw std::invalid_argument("Not equal data");
+                }    
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+        )<< "\tTest name: " << testName;
+    }  
+}*/
 
 TEST(Controller_getDriverEarnedMoney, TestPositive) {}
 
