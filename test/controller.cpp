@@ -11,7 +11,7 @@ TEST(Controller_testConnection, TestNegative) {
 }
 
 TEST(Controller_login, TestPositive) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::string, std::string, std::string>> table{
             {"admin",     "admin",     "Admin sign-in"},
             {"driver123", "driver123", "Driver sign-in"},
@@ -25,7 +25,7 @@ TEST(Controller_login, TestPositive) {
 }
 
 TEST(Controller_login, TestNegative) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::string, std::string, std::string>> table{
             {"admin",     "admin123",     "Admin sign-in"},
             {"driver", "driver123", "Driver sign-in"},
@@ -39,7 +39,7 @@ TEST(Controller_login, TestNegative) {
 }
 
 TEST(Controller_getDriverOrders, TestPositive) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::pair<std::string, std::string>, std::vector<Order>, std::string>> table{
         {{"driver120", "driver120"}, 30, {"2020-01-01", "2029-05-05"}, {Order(8, 30, 10, "2024-09-08", 500, 2999, 120, 1), Order(17, 30, 10, "2025-06-03", 800, 2900, 138, 1)}, "Driver login"},
         {{"driver555", "driver555"}, 36, {"2020-01-01", "2029-05-05"}, {}, "Driver login with empty orders"},
@@ -61,7 +61,7 @@ TEST(Controller_getDriverOrders, TestPositive) {
 }
 
 TEST(Controller_getDriverOrders, TestNegative) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::pair<std::string, std::string>, std::vector<Order>, std::string>> table{
         {{"driver123", "driver123"}, 27, {"2020-01-01", "2024-05-05"}, {}, "Permission denied for driver"},
         {{"driver123", "driver123"}, 1, {"2020-01-01", "2024-05-05"}, {}, "Driver is not found"},
@@ -93,7 +93,7 @@ TEST(Controller_getDriverOrders, TestNegative) {
 }
 
 TEST(Controller_getCarSummaryMileageAndLoad, TestPositive) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string, std::string>> table = {
         {{"driver123", "driver123"}, 4, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "Driver login"},
         {{"disp", "disp"}, 4, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "Dispatcher login"},
@@ -109,7 +109,7 @@ TEST(Controller_getCarSummaryMileageAndLoad, TestPositive) {
 }
 
 TEST(Controller_getCarSummaryMileageAndLoad, TestNegative) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string, std::string>> table = {
         {{"driver123", "driver123"}, 100, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "No car found"},
         {{"driver123", "driver123"}, 1, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "Not driver's car"},
@@ -137,7 +137,7 @@ TEST(Controller_getCarSummaryMileageAndLoad, TestNegative) {
 }
 
 TEST(Controller_getDriverStatistics, TestPositive) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string, std::string>> table = {
         {{"admin", "admin"}, 27,"ID: 27\n"
                                 "Login: driver1337\n"
@@ -190,7 +190,7 @@ TEST(Controller_getDriverStatistics, TestPositive) {
 }
 
 TEST(Controller_getDriverStatistics, TestNegative) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string, std::string>> table = {
         {{"admin", "admin"}, 90,"ID: 27\n"
                                 "Login: driver1337\n"
@@ -249,7 +249,7 @@ TEST(Controller_getDriverStatistics, TestNegative) {
 }
 
 TEST(Controller_getAllDriversStatistics, TestPositive) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, std::vector<std::string>, std::string>> table = {
         {{"admin", "admin"}, {
                           "ID: 27\n"
@@ -353,7 +353,7 @@ TEST(Controller_getAllDriversStatistics, TestPositive) {
 }
 
 TEST(Controller_getAllDriversStatistics, TestNegative) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, std::vector<std::string>, std::string>> table = {
         {{"driver123", "driver123"}, {}, "Permission denied for driver"},
         {{"admin", "admin"}, {
@@ -514,7 +514,7 @@ TEST(Controller_getAllDriversStatistics, TestNegative) {
 }
 
 TEST(Controller_getWorstDriverStatistics, TestNegative) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
         {{"admin", "admin"},    "ID: 31\n"
                                 "Login: driver456\n"
@@ -564,7 +564,7 @@ TEST(Controller_getWorstDriverStatistics, TestNegative) {
 }
 
 TEST(Controller_getWorstDriverStatistics, TestPositive) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
         {{"admin", "admin"},    "ID: 36\n"
                                 "Login: driver555\n"
@@ -604,7 +604,7 @@ TEST(Controller_getWorstDriverStatistics, TestPositive) {
 }
 
 TEST(Controller_getInfoAboutCarWithMaxMileage, TestPositive) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
        {{"admin", "admin"}, "ID: 9\n"
                             "Driver info: vadim borisov, id: 31\n"
@@ -638,7 +638,7 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestPositive) {
 }
 
 TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
        {{"admin", "admin"}, "ID: 10\n"
                             "Driver info: vadim borisov, id: 31\n"
@@ -682,7 +682,7 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {
 }
 
 /*TEST(Controller_storeDriversEarnedMoney, TestPositive) {
-    Controller controller;
+    Controller controller("db/app.db");
 
     std::vector<std::tuple<std::pair<std::string, std::string>, std::pair<std::string, std::string>, std::vector<std::string>, std::string>> table = {
         {{"admin", "admin"}, {"2020-01-01", "2025-01-01"}, {
@@ -719,7 +719,7 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {
 }
 
 TEST(Controller_storeDriversEarnedMoney, TestNegative) {
-    Controller controller;
+    Controller controller("db/app.db");
 
     std::vector<std::tuple<std::pair<std::string, std::string>, std::pair<std::string, std::string>, std::vector<std::string>, std::string>> table = {
         {{"admin", "admin"}, {"2025-01-01", "2020-01-01"}, {},"Admin login(wrong period)"},
@@ -771,7 +771,7 @@ TEST(Controller_storeDriversEarnedMoney, TestNegative) {
 }*/
 
 TEST(Controller_getDriverEarnedMoney, TestPositive) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::pair<std::string, std::string>, double, std::string>> table{
         {{"driver123", "driver123"}, 28, {"2020-01-01", "2025-01-01"}, 341.2, "Driver login"},
         {{"admin", "admin"}, 28, {"2020-01-01", "2025-01-01"}, 341.2, "Admin login"},
@@ -787,7 +787,7 @@ TEST(Controller_getDriverEarnedMoney, TestPositive) {
 }
 
 TEST(Controller_getDriverEarnedMoney, TestNegative) {
-    Controller controller;
+    Controller controller("db/app.db");
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::pair<std::string, std::string>, double, std::string>> table{
         {{"driver123", "driver123"}, 20, {"2020-01-01", "2025-01-01"}, 341.2, "Driver login (permission denied)"},
         {{"admin", "admin"}, 2000, {"2020-01-01", "2025-01-01"}, 341.2, "Admin login (no driver found)"},

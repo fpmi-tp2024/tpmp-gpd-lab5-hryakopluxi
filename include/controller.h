@@ -19,7 +19,8 @@ private:
 
     [[nodiscard]] std::string getDriverStat(int driver_id) const;
 public:
-    explicit Controller(const std::string& db_filename = "db/app.db");
+    Controller() = default;
+    explicit Controller(const std::string& db_filename);
 
     bool login(const std::string& login, const std::string& password);
     void logout();
