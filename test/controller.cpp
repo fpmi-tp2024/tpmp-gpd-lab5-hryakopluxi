@@ -770,9 +770,47 @@ TEST(Controller_storeDriversEarnedMoney, TestNegative) {
     }  
 }*/
 
-TEST(Controller_getDriverEarnedMoney, TestPositive) {}
+TEST(Controller_getDriverEarnedMoney, TestPositive) {
+    Controller controller;
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::pair<std::string, std::string>, double, std::string>> table{
+        {{"driver123", "driver123"}, 28, {"2020-01-01", "2025-01-01"}, 341.2, "Driver login"},
+        {{"admin", "admin"}, 28, {"2020-01-01", "2025-01-01"}, 341.2, "Admin login"},
+        {{"disp234", "disp234"}, 29, {"2020-01-01", "2025-01-01"}, 341.2, "Dispatcher login"}
+    };
+    for (const auto& [user, driver_id, period, money, testName]: table) {
+        EXPECT_NO_THROW({
+            controller.login(user.first, user.second);
+            double controllerMoney = controller.getDriverEarnedMoney(driver_id, period.first, period.second);
+            EXPECT_NEAR(money, controllerMoney, 0.01) << "Money values are not close enough";
+        }) << "Test case: " << user.first << "\t" << user.second << "\tDriver: " << driver_id << "\t" << period.first << " - " << period.second << "\tMoney: " << money << "\tTest name: " << testName;
+    }
+}
 
-TEST(Controller_getDriverEarnedMoney, TestNegative) {}
+TEST(Controller_getDriverEarnedMoney, TestNegative) {
+    Controller controller;
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::pair<std::string, std::string>, double, std::string>> table{
+        {{"driver123", "driver123"}, 20, {"2020-01-01", "2025-01-01"}, 341.2, "Driver login (permission denied)"},
+        {{"admin", "admin"}, 2000, {"2020-01-01", "2025-01-01"}, 341.2, "Admin login (no driver found)"},
+        {{"admin", "admin"}, 28, {"2020-01-01", "2025-01-01"}, 0, "Admin login (wrong amount)"},
+        {{"admin", "admin"}, 28, {"2025-01-01", "2020-01-01"}, 341.2, "Admin login (invalid period)"},
+        {{"disp234", "disp234"}, 28, {"2020-01-01", "2025-01-01"}, 341.2, "Dispatcher login (permission denied)"}
+    };
+    for (const auto& [user, driver_id, period, money, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                double controllerMoney = controller.getDriverEarnedMoney(driver_id, period.first, period.second);
+                if(money != controllerMoney) throw std::invalid_argument("Wrong amount");
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+        }) << "Test case: " << user.first << "\t" << user.second << "\tDriver: " << driver_id << "\t" << period.first << " - " << period.second << "\tMoney: " << money << "\tTest name: " << testName;
+    }
+}
 
 TEST(Controller_addCar, TestPositive) {}
 
