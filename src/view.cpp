@@ -202,7 +202,7 @@ void View::getDriverEarnedMoney(int driver_id) const {
     std::cout << "Enter start of the period (YYYY-MM-DD): ";
     std::getline(std::cin, start, '\n');
     std::cout << "Enter end of the period (YYYY-MM-DD): ";
-    std::getline(std::cin, start, '\n');
+    std::getline(std::cin, end, '\n');
 
     try {
         res = controller.getDriverEarnedMoney(driver_id, start, end);
