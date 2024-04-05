@@ -248,9 +248,270 @@ TEST(Controller_getDriverStatistics, TestNegative) {
     }  
 }
 
-TEST(Controller_getAllDriversStatistics, TestPositive) {}
+TEST(Controller_getAllDriversStatistics, TestPositive) {
+    Controller controller;
+    std::vector<std::tuple<std::pair<std::string, std::string>, std::vector<std::string>, std::string>> table = {
+        {{"admin", "admin"}, {
+                          "ID: 27\n"
+                          "Login: driver1337\n"
+                          "Name: stanislau\n"
+                          "Surname: senkevich\n"
+                          "Category: A B C\n"
+                          "Experience: 1 years\n"
+                          "City: moscow\n"
+                          "Address: u\n"
+                          "Birthday: 2004-05-18\n"
+                          "Orders completed: 4\n"
+                          "Money earned: 670.00\n"
+                          "Summary mileage: 2530.00\n",
+                          "ID: 28\n"
+                          "Login: driver123\n"
+                          "Name: ivan\n"
+                          "Surname: ivanov\n"
+                          "Category: \n"
+                          "Experience: 1 years\n"
+                          "City: minsk\n"
+                          "Address: nezavisimosty\n"
+                          "Birthday: 2000-09-09\n"
+                          "Orders completed: 5\n"
+                          "Money earned: 691.00\n"
+                          "Summary mileage: 2300.00\n",
+                          "ID: 29\n"
+                          "Login: driver100\n"
+                          "Name: alexandr\n"
+                          "Surname: shishkin\n"
+                          "Category: B C\n"
+                          "Experience: 3 years\n"
+                          "City: mogilev\n"
+                          "Address: turova\n"
+                          "Birthday: 1984-02-05\n"
+                          "Orders completed: 1\n"
+                          "Money earned: 105.00\n"
+                          "Summary mileage: 400.00\n",
+                          "ID: 30\n"
+                          "Login: driver120\n"
+                          "Name: igor\n"
+                          "Surname: kalinin\n"
+                          "Category: B C\n"
+                          "Experience: 6 years\n"
+                          "City: borisov\n"
+                          "Address: simonova\n"
+                          "Birthday: 1987-06-23\n"
+                          "Orders completed: 2\n"
+                          "Money earned: 258.00\n"
+                          "Summary mileage: 1300.00\n",
+                          "ID: 31\n"
+                          "Login: driver456\n"
+                          "Name: vadim\n"
+                          "Surname: borisov\n"
+                          "Category: B C D\n"
+                          "Experience: 10 years\n"
+                          "City: orsha\n"
+                          "Address: ponomorenko\n"
+                          "Birthday: 1992-04-23\n"
+                          "Orders completed: 3\n"
+                          "Money earned: 590.00\n"
+                          "Summary mileage: 2450.00\n",
+                          "ID: 36\n"
+                          "Login: driver555\n"
+                          "Name: roman\n"
+                          "Surname: romanov\n"
+                          "Category: B\n"
+                          "Experience: 2 years\n"
+                          "City: moscow\n"
+                          "Address: frunzenskaya\n"
+                          "Birthday: 1994-03-17\n"
+                          "Orders completed: 0\n"
+                          "Money earned: 0.00\n"
+                          "Summary mileage: 0.00\n"
+                          },                            "Admin login"},
+        {{"disp234", "disp234"}, {
+                          "ID: 29\n"
+                          "Login: driver100\n"
+                          "Name: alexandr\n"
+                          "Surname: shishkin\n"
+                          "Category: B C\n"
+                          "Experience: 3 years\n"
+                          "City: mogilev\n"
+                          "Address: turova\n"
+                          "Birthday: 1984-02-05\n"
+                          "Orders completed: 1\n"
+                          "Money earned: 105.00\n"
+                          "Summary mileage: 400.00\n",
+                          },                            "Dispatcher login"},
+    };
+    for (const auto& [user, statistics, testName]: table) {
+        EXPECT_NO_THROW( 
+            controller.login(user.first, user.second);
+            std::vector<std::string> controllerStatistics = controller.getAllDriversStatistics();
+            EXPECT_EQ(statistics.size(), controllerStatistics.size()) << "Test name: " << testName;
+            for(int i = 0; i < std::min(statistics.size(), controllerStatistics.size()); i++) {
+                EXPECT_EQ(statistics[i], controllerStatistics[i])<< "Test case: " << user.first << "\t" << user.second << "Statistics: "<< statistics[i] << "\t" << "\tTest name: " << testName;
+            }
+        )<< "Test case: " << user.first << "\t" << user.second << "\t" << "\tTest name: " << testName;
+    }  
+}
 
-TEST(Controller_getAllDriversStatistics, TestNegative) {}
+TEST(Controller_getAllDriversStatistics, TestNegative) {
+    Controller controller;
+    std::vector<std::tuple<std::pair<std::string, std::string>, std::vector<std::string>, std::string>> table = {
+        {{"driver123", "driver123"}, {}, "Permission denied for driver"},
+        {{"admin", "admin"}, {
+                          "ID: 28\n"
+                          "Login: driver123\n"
+                          "Name: ivan\n"
+                          "Surname: ivanov\n"
+                          "Category: \n"
+                          "Experience: 1 years\n"
+                          "City: minsk\n"
+                          "Address: nezavisimosty\n"
+                          "Birthday: 2000-09-09\n"
+                          "Orders completed: 5\n"
+                          "Money earned: 691.00\n"
+                          "Summary mileage: 2300.00\n",
+                          "ID: 29\n"
+                          "Login: driver100\n"
+                          "Name: alexandr\n"
+                          "Surname: shishkin\n"
+                          "Category: B C\n"
+                          "Experience: 3 years\n"
+                          "City: mogilev\n"
+                          "Address: turova\n"
+                          "Birthday: 1984-02-05\n"
+                          "Orders completed: 1\n"
+                          "Money earned: 105.00\n"
+                          "Summary mileage: 400.00\n",
+                          "ID: 30\n"
+                          "Login: driver120\n"
+                          "Name: igor\n"
+                          "Surname: kalinin\n"
+                          "Category: B C\n"
+                          "Experience: 6 years\n"
+                          "City: borisov\n"
+                          "Address: simonova\n"
+                          "Birthday: 1987-06-23\n"
+                          "Orders completed: 2\n"
+                          "Money earned: 258.00\n"
+                          "Summary mileage: 1300.00\n",
+                          "ID: 31\n"
+                          "Login: driver456\n"
+                          "Name: vadim\n"
+                          "Surname: borisov\n"
+                          "Category: B C D\n"
+                          "Experience: 10 years\n"
+                          "City: orsha\n"
+                          "Address: ponomorenko\n"
+                          "Birthday: 1992-04-23\n"
+                          "Orders completed: 3\n"
+                          "Money earned: 590.00\n"
+                          "Summary mileage: 2450.00\n",
+                          "ID: 36\n"
+                          "Login: driver555\n"
+                          "Name: roman\n"
+                          "Surname: romanov\n"
+                          "Category: B\n"
+                          "Experience: 2 years\n"
+                          "City: moscow\n"
+                          "Address: frunzenskaya\n"
+                          "Birthday: 1994-03-17\n"
+                          "Orders completed: 0\n"
+                          "Money earned: 0.00\n"
+                          "Summary mileage: 0.00\n"
+                          },                            "Admin login(not same number of orders)"},
+        {{"admin", "admin"}, {
+                          "ID: 27\n"
+                          "Login: driver1337\n"
+                          "Name: stanislau\n"
+                          "Surname: senkevich\n"
+                          "Category: A B C\n"
+                          "Experience: 1 years\n"
+                          "City: moscow\n"
+                          "Address: u\n"
+                          "Birthday: 2004-05-18\n"
+                          "Orders completed: 4\n"
+                          "Money earned: 670.00\n"
+                          "Summary mileage: 2530.00\n",
+                          "ID: 200000\n"
+                          "Login: driver123\n"
+                          "Name: ivan\n"
+                          "Surname: ivanov\n"
+                          "Category: \n"
+                          "Experience: 1 years\n"
+                          "City: minsk\n"
+                          "Address: nezavisimosty\n"
+                          "Birthday: 2000-09-09\n"
+                          "Orders completed: 5\n"
+                          "Money earned: 691.00\n"
+                          "Summary mileage: 2300.00\n",
+                          "ID: 29\n"
+                          "Login: driver100\n"
+                          "Name: alexandr\n"
+                          "Surname: shishkin\n"
+                          "Category: B C\n"
+                          "Experience: 3 years\n"
+                          "City: mogilev\n"
+                          "Address: turova\n"
+                          "Birthday: 1984-02-05\n"
+                          "Orders completed: 1\n"
+                          "Money earned: 105.00\n"
+                          "Summary mileage: 400.00\n",
+                          "ID: 30\n"
+                          "Login: driver120\n"
+                          "Name: igor\n"
+                          "Surname: kalinin\n"
+                          "Category: B C\n"
+                          "Experience: 6 years\n"
+                          "City: borisov\n"
+                          "Address: simonova\n"
+                          "Birthday: 1987-06-23\n"
+                          "Orders completed: 2\n"
+                          "Money earned: 258.00\n"
+                          "Summary mileage: 1300.00\n",
+                          "ID: 31\n"
+                          "Login: driver456\n"
+                          "Name: vadim\n"
+                          "Surname: borisov\n"
+                          "Category: B C D\n"
+                          "Experience: 10 years\n"
+                          "City: orsha\n"
+                          "Address: ponomorenko\n"
+                          "Birthday: 1992-04-23\n"
+                          "Orders completed: 3\n"
+                          "Money earned: 590.00\n"
+                          "Summary mileage: 2450.00\n",
+                          "ID: 36\n"
+                          "Login: driver555\n"
+                          "Name: roman\n"
+                          "Surname: romanov\n"
+                          "Category: B\n"
+                          "Experience: 2 years\n"
+                          "City: moscow\n"
+                          "Address: frunzenskaya\n"
+                          "Birthday: 1994-03-17\n"
+                          "Orders completed: 0\n"
+                          "Money earned: 0.00\n"
+                          "Summary mileage: 0.00\n"
+                          },                            "Admin login(wrong data)"},
+    };
+    for (const auto& [user, statistics, testName]: table) {
+        EXPECT_ANY_THROW( 
+            try {
+                controller.login(user.first, user.second);
+                std::vector<std::string> controllerStatistics = controller.getAllDriversStatistics();
+                for(int i = 0; i < std::min(statistics.size(), controllerStatistics.size()); i++) {
+                    if(statistics[i] != controllerStatistics[i]) throw std::invalid_argument("Not equal data");
+                }       
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+            catch(std::invalid_argument& e){
+                throw;
+            }
+            
+        )<< "Test case: " << user.first << "\t" << user.second << "\t" << "\tTest name: " << testName;
+    }
+}
 
 TEST(Controller_getWorstDriverStatistics, TestPositive) {}
 
