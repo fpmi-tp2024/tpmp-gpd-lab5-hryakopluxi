@@ -513,9 +513,95 @@ TEST(Controller_getAllDriversStatistics, TestNegative) {
     }
 }
 
-TEST(Controller_getWorstDriverStatistics, TestPositive) {}
+TEST(Controller_getWorstDriverStatistics, TestPositive) {
+    Controller controller;
+    std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
+        {{"admin", "admin"},    "ID: 31\n"
+                                "Login: driver456\n"
+                                "Name: vadim\n"
+                                "Surname: borisov\n"
+                                "Category: B C D\n"
+                                "Experience: 10 years\n"
+                                "City: orsha\n"
+                                "Address: ponomorenko\n"
+                                "Birthday: 1992-04-23\n"
+                                "Orders completed: 3\n"
+                                "Money earned: 590.00\n"
+                                "Summary mileage: 2450.00\n",
+                                                              "Admin login (wrong driver)"},
+        {{"driver123", "driver123"},"ID: 36\n"
+                                "Login: driver555\n"
+                                "Name: roman\n"
+                                "Surname: romanov\n"
+                                "Category: B\n"
+                                "Experience: 2 years\n"
+                                "City: moscow\n"
+                                "Address: frunzenskaya\n"
+                                "Birthday: 1994-03-17\n"
+                                "Orders completed: 0\n"
+                                "Money earned: 0.00\n"
+                                "Summary mileage: 0.00\n",
+                                                            "Driver login(permission denied)"},
+        
+    };
+    for (const auto& [user, statistics, testName]: table) {
+        EXPECT_ANY_THROW(
+            try {
+                controller.login(user.first, user.second);
+                std::string controllerStatistics = controller.getWorstDriverStatistics();
+                if(statistics != controllerStatistics) {
+                    throw std::invalid_argument("Data is wrong");
+                }
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+        )<< "Test case: " << user.first << "\t" << user.second << "\tData: " << statistics << "\t" << "\tTest name: " << testName;
+    }  
+}
 
-TEST(Controller_getWorstDriverStatistics, TestNegative) {}
+TEST(Controller_getWorstDriverStatistics, TestNegative) {
+    Controller controller;
+    std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
+        {{"admin", "admin"},    "ID: 36\n"
+                                "Login: driver555\n"
+                                "Name: roman\n"
+                                "Surname: romanov\n"
+                                "Category: B\n"
+                                "Experience: 2 years\n"
+                                "City: moscow\n"
+                                "Address: frunzenskaya\n"
+                                "Birthday: 1994-03-17\n"
+                                "Orders completed: 0\n"
+                                "Money earned: 0.00\n"
+                                "Summary mileage: 0.00\n",
+                                                            "Admin login"},
+        {{"disp234", "disp234"},"ID: 36\n"
+                                "Login: driver555\n"
+                                "Name: roman\n"
+                                "Surname: romanov\n"
+                                "Category: B\n"
+                                "Experience: 2 years\n"
+                                "City: moscow\n"
+                                "Address: frunzenskaya\n"
+                                "Birthday: 1994-03-17\n"
+                                "Orders completed: 0\n"
+                                "Money earned: 0.00\n"
+                                "Summary mileage: 0.00\n",
+                                                            "Dispatcher login"},
+        
+    };
+    for (const auto& [user, statistics, testName]: table) {
+        EXPECT_NO_THROW(
+            controller.login(user.first, user.second);
+            std::string controllerStatistics = controller.getWorstDriverStatistics();
+            EXPECT_EQ(statistics, controllerStatistics) << "Test case: " << user.first << "\t" << user.second << "\tData: " << statistics << "\t" << "\tTest name: " << testName;
+        )<< "Test case: " << user.first << "\t" << user.second << "\tData: " << statistics << "\t" << "\tTest name: " << testName;
+    }  
+}
 
 TEST(Controller_getInfoAboutCarWithMaxMileage, TestPositive) {}
 
