@@ -216,7 +216,7 @@ TEST(Validator_validPeriod, TestNegative) {
         {{"2024 02 01", "2024-01-02"}, "Invalid date pattern"},
         {{"2024-02-01", "2024 march 2"}, "Invalid date pattern"},
         {{"", ""}, "Empty input"},
-        {{"2026-02-21", "2024-01-02"}, "Invalid period"}, 
+        {{"2026-02-21", "2024-01-02"}, "Invalid period"},
     };
 
     for (const auto& s : table) {
@@ -282,7 +282,7 @@ TEST(Validator_validDriver, TestNegative) {
 
         {Driver("driver123", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica5", "Minsk", "2004-05-18"), "Invalid address (not a single word)"},
         {Driver("driver123", "password123", "Stas", "Senkevich", {Category::A}, 1, "   Ulica", "Minsk", "2004-05-18"), "Invalid address (odd spaces)"},
-        
+
         {Driver("driver123", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk yuzhniy", "2004-05-18"), "Invalid city (not a single word)"},
         {Driver("driver123", "password123", "Stas", "Senkevich", {Category::A}, 1, "Ulica 5", "Minsk 10", "2004-05-18"), "Invalid city (digits are impossible)"},
 
@@ -301,7 +301,7 @@ TEST(Validator_validDriver, TestNegative) {
                 } catch (const std::invalid_argument& e) {
                     throw;
                 }
-            }, 
+            },
             std::invalid_argument)
             << "Test case: " << testName << driver.print();
     }
@@ -353,7 +353,7 @@ TEST(Validator_validDispatcher, TestNegative) {
                 } catch (const std::invalid_argument& e) {
                     throw;
                 }
-            }, 
+            },
             std::invalid_argument)
             << "Test case: " << testName << dispatcher.print();
     }
@@ -442,10 +442,10 @@ TEST(Validator_validCar, TestNegative) {
         {Car(1, 27, "1234AA-9", "volvo", 200, 2000), "Invalid license pattern"},
         {Car(1, 27, "AA1234-1", "volvo", 200, 2000), "Invalid license pattern"},
         {Car(1, 27, "1234AA-1", "volvo", -200, 2000), "Invalid mileage (negative)"},
-        {Car(1, 27, "1234AA-1", "volvo", 200, -2000), "Invalid capacity (negative)"}, 
+        {Car(1, 27, "1234AA-1", "volvo", 200, -2000), "Invalid capacity (negative)"},
     };
 
-    for (const auto& [car, testName] : table) {        
+    for (const auto& [car, testName] : table) {
 
         EXPECT_THROW({
             try {

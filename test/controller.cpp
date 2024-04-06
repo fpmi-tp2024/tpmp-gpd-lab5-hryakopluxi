@@ -1,17 +1,10 @@
 #include <gtest/gtest.h>
 #include "../include/controller.h"
 
-TEST(Controller_testConnection, TestPositive) {
-    EXPECT_NO_THROW(Controller controller("db/app.db"));
-    EXPECT_NO_THROW(Controller controller);
-}
-
-TEST(Controller_testConnection, TestNegative) {
-    EXPECT_ANY_THROW(Controller controller("db/notapp.db"));
-}
+Controller controller("db/app.db");
 
 TEST(Controller_login, TestPositive) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::string, std::string, std::string>> table{
             {"admin",     "admin",     "Admin sign-in"},
             {"driver123", "driver123", "Driver sign-in"},
@@ -25,7 +18,7 @@ TEST(Controller_login, TestPositive) {
 }
 
 TEST(Controller_login, TestNegative) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::string, std::string, std::string>> table{
             {"admin",     "admin123",     "Admin sign-in"},
             {"driver", "driver123", "Driver sign-in"},
@@ -39,7 +32,7 @@ TEST(Controller_login, TestNegative) {
 }
 
 TEST(Controller_getDriverOrders, TestPositive) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::pair<std::string, std::string>, std::vector<Order>, std::string>> table{
         {{"driver120", "driver120"}, 30, {"2020-01-01", "2029-05-05"}, {Order(8, 30, 10, "2024-09-08", 500, 2999, 120, 1), Order(17, 30, 10, "2025-06-03", 800, 2900, 138, 1)}, "Driver login"},
         {{"driver555", "driver555"}, 36, {"2020-01-01", "2029-05-05"}, {}, "Driver login with empty orders"},
@@ -61,7 +54,7 @@ TEST(Controller_getDriverOrders, TestPositive) {
 }
 
 TEST(Controller_getDriverOrders, TestNegative) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::pair<std::string, std::string>, std::vector<Order>, std::string>> table{
         {{"driver123", "driver123"}, 27, {"2020-01-01", "2024-05-05"}, {}, "Permission denied for driver"},
         {{"driver123", "driver123"}, 1, {"2020-01-01", "2024-05-05"}, {}, "Driver is not found"},
@@ -78,7 +71,7 @@ TEST(Controller_getDriverOrders, TestNegative) {
                 for (int i = 0; i < std::min(orders.size(), controllerOrders.size()); i++) {
                     if(!(orders[i] == controllerOrders[i])) {
                         throw std::invalid_argument("Orders are different");
-                    }   
+                    }
                 }
             }
             catch(const PermissionDeniedException& e) {
@@ -93,7 +86,7 @@ TEST(Controller_getDriverOrders, TestNegative) {
 }
 
 TEST(Controller_getCarSummaryMileageAndLoad, TestPositive) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string, std::string>> table = {
         {{"driver123", "driver123"}, 4, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "Driver login"},
         {{"disp", "disp"}, 4, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "Dispatcher login"},
@@ -105,11 +98,11 @@ TEST(Controller_getCarSummaryMileageAndLoad, TestPositive) {
             std::string controllerSummary = controller.getCarSummaryMileageAndLoad(car_id);
             EXPECT_EQ(summary, controllerSummary) << "Test case: " << user.first << "\t" << user.second << "\tDriver: " << car_id << "\t" << "\tTest name: " << testName;
         )<< "Test case: " << user.first << "\t" << user.second << "\tDriver: " << car_id << "\t" << "\tTest name: " << testName;
-    }  
+    }
 }
 
 TEST(Controller_getCarSummaryMileageAndLoad, TestNegative) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string, std::string>> table = {
         {{"driver123", "driver123"}, 100, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "No car found"},
         {{"driver123", "driver123"}, 1, "Summary load: 4850.000\nSummary mileage: 1450.0\n", "Not driver's car"},
@@ -133,11 +126,11 @@ TEST(Controller_getCarSummaryMileageAndLoad, TestNegative) {
                 throw;
             }
         )<< "Test case: " << user.first << "\t" << user.second << "\tDriver: " << car_id << "\t" << "\tTest name: " << testName;
-    } 
+    }
 }
 
 TEST(Controller_getDriverStatistics, TestPositive) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string, std::string>> table = {
         {{"admin", "admin"}, 27,"ID: 27\n"
                                 "Login: driver1337\n"
@@ -178,7 +171,7 @@ TEST(Controller_getDriverStatistics, TestPositive) {
                                 "Money earned: 21.00\n"
                                 "Summary mileage: 400.00\n",
                                                             "Dispatcher login"},
-        
+
     };
     for (const auto& [user, driver_id, statistics, testName]: table) {
         EXPECT_NO_THROW(
@@ -186,11 +179,11 @@ TEST(Controller_getDriverStatistics, TestPositive) {
             std::string controllerStatistics = controller.getDriverStatistics(driver_id);
             EXPECT_EQ(statistics, controllerStatistics) << "Test case: " << user.first << "\t" << user.second << "\tDriver: " << driver_id << "\t" << "\tTest name: " << testName;
         )<< "Test case: " << user.first << "\t" << user.second << "\tDriver: " << driver_id << "\t" << "\tTest name: " << testName;
-    }  
+    }
 }
 
 TEST(Controller_getDriverStatistics, TestNegative) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string, std::string>> table = {
         {{"admin", "admin"}, 90,"ID: 27\n"
                                 "Login: driver1337\n"
@@ -233,7 +226,7 @@ TEST(Controller_getDriverStatistics, TestNegative) {
                                                             "Dispatcher login (permission denied)"},
     };
     for (const auto& [user, driver_id, statistics, testName]: table) {
-        EXPECT_ANY_THROW( 
+        EXPECT_ANY_THROW(
             try {
                 controller.login(user.first, user.second);
                 std::string controllerStatistics = controller.getDriverStatistics(driver_id);
@@ -245,11 +238,11 @@ TEST(Controller_getDriverStatistics, TestNegative) {
                 throw;
             }
         )<< "Test case: " << user.first << "\t" << user.second << "\tDriver: " << driver_id << "\t" << "\tTest name: " << testName;
-    }  
+    }
 }
 
 TEST(Controller_getAllDriversStatistics, TestPositive) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, std::vector<std::string>, std::string>> table = {
         {{"admin", "admin"}, {
                           "ID: 27\n"
@@ -341,7 +334,7 @@ TEST(Controller_getAllDriversStatistics, TestPositive) {
                           },                            "Dispatcher login"},
     };
     for (const auto& [user, statistics, testName]: table) {
-        EXPECT_NO_THROW( 
+        EXPECT_NO_THROW(
             controller.login(user.first, user.second);
             std::vector<std::string> controllerStatistics = controller.getAllDriversStatistics();
             EXPECT_EQ(statistics.size(), controllerStatistics.size()) << "Test name: " << testName;
@@ -349,11 +342,11 @@ TEST(Controller_getAllDriversStatistics, TestPositive) {
                 EXPECT_EQ(statistics[i], controllerStatistics[i])<< "Test case: " << user.first << "\t" << user.second << "Statistics: "<< statistics[i] << "\t" << "\tTest name: " << testName;
             }
         )<< "Test case: " << user.first << "\t" << user.second << "\t" << "\tTest name: " << testName;
-    }  
+    }
 }
 
 TEST(Controller_getAllDriversStatistics, TestNegative) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, std::vector<std::string>, std::string>> table = {
         {{"driver123", "driver123"}, {}, "Permission denied for driver"},
         {{"admin", "admin"}, {
@@ -494,13 +487,13 @@ TEST(Controller_getAllDriversStatistics, TestNegative) {
                           },                            "Admin login(wrong data)"},
     };
     for (const auto& [user, statistics, testName]: table) {
-        EXPECT_ANY_THROW( 
+        EXPECT_ANY_THROW(
             try {
                 controller.login(user.first, user.second);
                 std::vector<std::string> controllerStatistics = controller.getAllDriversStatistics();
                 for(int i = 0; i < std::min(statistics.size(), controllerStatistics.size()); i++) {
                     if(statistics[i] != controllerStatistics[i]) throw std::invalid_argument("Not equal data");
-                }       
+                }
             }
             catch(PermissionDeniedException& e) {
                 throw;
@@ -508,13 +501,13 @@ TEST(Controller_getAllDriversStatistics, TestNegative) {
             catch(std::invalid_argument& e){
                 throw;
             }
-            
+
         )<< "Test case: " << user.first << "\t" << user.second << "\t" << "\tTest name: " << testName;
     }
 }
 
 TEST(Controller_getWorstDriverStatistics, TestNegative) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
         {{"admin", "admin"},    "ID: 31\n"
                                 "Login: driver456\n"
@@ -542,7 +535,7 @@ TEST(Controller_getWorstDriverStatistics, TestNegative) {
                                 "Money earned: 0.00\n"
                                 "Summary mileage: 0.00\n",
                                                             "Driver login(permission denied)"},
-        
+
     };
     for (const auto& [user, statistics, testName]: table) {
         EXPECT_ANY_THROW(
@@ -560,11 +553,11 @@ TEST(Controller_getWorstDriverStatistics, TestNegative) {
                 throw;
             }
         )<< "Test case: " << user.first << "\t" << user.second << "\tData: " << statistics << "\t" << "\tTest name: " << testName;
-    }  
+    }
 }
 
 TEST(Controller_getWorstDriverStatistics, TestPositive) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
         {{"admin", "admin"},    "ID: 36\n"
                                 "Login: driver555\n"
@@ -592,7 +585,7 @@ TEST(Controller_getWorstDriverStatistics, TestPositive) {
                                 "Money earned: 0.00\n"
                                 "Summary mileage: 0.00\n",
                                                             "Dispatcher login"},
-        
+
     };
     for (const auto& [user, statistics, testName]: table) {
         EXPECT_NO_THROW(
@@ -600,11 +593,11 @@ TEST(Controller_getWorstDriverStatistics, TestPositive) {
             std::string controllerStatistics = controller.getWorstDriverStatistics();
             EXPECT_EQ(statistics, controllerStatistics) << "Test case: " << user.first << "\t" << user.second << "\tData: " << statistics << "\t" << "\tTest name: " << testName;
         )<< "Test case: " << user.first << "\t" << user.second << "\tData: " << statistics << "\t" << "\tTest name: " << testName;
-    }  
+    }
 }
 
 TEST(Controller_getInfoAboutCarWithMaxMileage, TestPositive) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
        {{"admin", "admin"}, "ID: 9\n"
                             "Driver info: vadim borisov, id: 31\n"
@@ -614,7 +607,7 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestPositive) {
                             "Load capacity: 6400.00\n"
                             "Summary cost of completed orders: 590.00\n"
                             "Summary load: 10200.00\n"
-                            "Summary mileage: 2850.00\n", 
+                            "Summary mileage: 2850.00\n",
                                                                          "Admin login"},
         {{"disp234", "disp234"},"ID: 9\n"
                                 "Driver info: vadim borisov, id: 31\n"
@@ -624,9 +617,9 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestPositive) {
                                 "Load capacity: 6400.00\n"
                                 "Summary cost of completed orders: 590.00\n"
                                 "Summary load: 10200.00\n"
-                                "Summary mileage: 2850.00\n", 
+                                "Summary mileage: 2850.00\n",
                                                                          "Dispatcher login"}
-        
+
     };
     for (const auto& [user, statistics, testName]: table) {
         EXPECT_NO_THROW(
@@ -634,11 +627,11 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestPositive) {
             std::string controllerStatistics = controller.getInfoAboutCarWithMaxMileage();
             EXPECT_EQ(statistics, controllerStatistics)<< "Test case: " << user.first << "\t" << user.second << "\tData: " << statistics << "\t" << "\tTest name: " << testName;
         )<< "Test case: " << user.first << "\t" << user.second << "\tData: " << statistics << "\t" << "\tTest name: " << testName;
-    }  
+    }
 }
 
 TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, std::string, std::string>> table = {
        {{"admin", "admin"}, "ID: 10\n"
                             "Driver info: vadim borisov, id: 31\n"
@@ -648,7 +641,7 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {
                             "Load capacity: 6400.00\n"
                             "Summary cost of completed orders: 590.00\n"
                             "Summary load: 10200.00\n"
-                            "Summary mileage: 2850.00\n", 
+                            "Summary mileage: 2850.00\n",
                                                                          "Admin login(wrong data)"},
         {{"driver123", "driver123"}, "ID: 9\n"
                             "Driver info: vadim borisov, id: 31\n"
@@ -658,9 +651,9 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {
                             "Load capacity: 6400.00\n"
                             "Summary cost of completed orders: 590.00\n"
                             "Summary load: 10200.00\n"
-                            "Summary mileage: 2850.00\n", 
+                            "Summary mileage: 2850.00\n",
                                                                          "Driver login (permission denied)"}
-        
+
     };
     for (const auto& [user, statistics, testName]: table) {
         EXPECT_ANY_THROW(
@@ -678,11 +671,10 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {
                 throw;
             }
         )<< "Test case: " << user.first << "\t" << user.second << "\tData: " << statistics << "\t" << "\tTest name: " << testName;
-    }  
+    }
 }
 
-/*TEST(Controller_storeDriversEarnedMoney, TestPositive) {
-    Controller controller("db/app.db");
+TEST(Controller_storeDriversEarnedMoney, TestPositive) {
 
     std::vector<std::tuple<std::pair<std::string, std::string>, std::pair<std::string, std::string>, std::vector<std::string>, std::string>> table = {
         {{"admin", "admin"}, {"2020-01-01", "2025-01-01"}, {
@@ -713,13 +705,13 @@ TEST(Controller_getInfoAboutCarWithMaxMileage, TestNegative) {
             EXPECT_EQ(statistics.size(), controllerStatistics.size())<< "\tTest name: " << testName;
             for(int i = 0; i < std::min(statistics.size(), controllerStatistics.size()); i++) {
                 EXPECT_EQ(statistics[i], controllerStatistics[i])<< "\tTest name: " << testName;
-            } 
+            }
         )<< "\tTest name: " << testName;
-    }  
+    }
 }
 
 TEST(Controller_storeDriversEarnedMoney, TestNegative) {
-    Controller controller("db/app.db");
+
 
     std::vector<std::tuple<std::pair<std::string, std::string>, std::pair<std::string, std::string>, std::vector<std::string>, std::string>> table = {
         {{"admin", "admin"}, {"2025-01-01", "2020-01-01"}, {},"Admin login(wrong period)"},
@@ -758,7 +750,7 @@ TEST(Controller_storeDriversEarnedMoney, TestNegative) {
 
                 for(int i = 0; i < std::min(statistics.size(), controllerStatistics.size()); i++) {
                     if(statistics[i] != controllerStatistics[i]) throw std::invalid_argument("Not equal data");
-                }    
+                }
             }
             catch(PermissionDeniedException& e) {
                 throw;
@@ -767,11 +759,11 @@ TEST(Controller_storeDriversEarnedMoney, TestNegative) {
                 throw;
             }
         )<< "\tTest name: " << testName;
-    }  
-}*/
+    }
+}
 
 TEST(Controller_getDriverEarnedMoney, TestPositive) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::pair<std::string, std::string>, double, std::string>> table{
         {{"driver123", "driver123"}, 28, {"2020-01-01", "2025-01-01"}, 341.2, "Driver login"},
         {{"admin", "admin"}, 28, {"2020-01-01", "2025-01-01"}, 341.2, "Admin login"},
@@ -787,7 +779,7 @@ TEST(Controller_getDriverEarnedMoney, TestPositive) {
 }
 
 TEST(Controller_getDriverEarnedMoney, TestNegative) {
-    Controller controller("db/app.db");
+
     std::vector<std::tuple<std::pair<std::string, std::string>, int, std::pair<std::string, std::string>, double, std::string>> table{
         {{"driver123", "driver123"}, 20, {"2020-01-01", "2025-01-01"}, 341.2, "Driver login (permission denied)"},
         {{"admin", "admin"}, 2000, {"2020-01-01", "2025-01-01"}, 341.2, "Admin login (no driver found)"},
@@ -813,7 +805,7 @@ TEST(Controller_getDriverEarnedMoney, TestNegative) {
 }
 
 TEST(Controller_addCar, TestPositive) {
-    Controller controller("db/app.db");
+
     controller.login("admin", "admin");
     Car car(12, 29, "1234BB-7", "man", 800, 2000);
 
