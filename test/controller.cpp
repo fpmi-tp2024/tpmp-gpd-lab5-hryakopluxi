@@ -985,9 +985,43 @@ TEST(Controller_addDispatcher, TestNegative) {
     }
 }
 
-TEST(Controller_updateCar, TestPositive) {}
+TEST(Controller_updateCar, TestPositive) {
+    Car car(10, 30, "1234AA-4", "ford", 200, 1000);
+    std::vector<std::tuple<std::pair<std::string, std::string>, Car&, int, std::string>> table = {
+        {{"admin", "admin"}, car, 10, "Admin login"},
+        {{"disp234", "disp234"}, car, 10, "Dispatcher login"}
+    };
 
-TEST(Controller_updateCar, TestNegative) {}
+    for (const auto& [user, updated_car, car_id, testName]: table) {
+        EXPECT_NO_THROW({
+            controller.login(user.first, user.second);
+            controller.updateCar(car_id, updated_car);
+        })<< "Test case: " << car.print()  << "\tTest name: " << testName;
+    }
+}
+
+TEST(Controller_updateCar, TestNegative) {
+    Car car(10, 30, "1234AA-4", "ford", 200, 1000);
+    std::vector<std::tuple<std::pair<std::string, std::string>, Car&, int, std::string>> table = {
+        {{"admin", "admin"}, car, 100, "Car is not found"},
+        {{"driver123", "driver123"}, car, 10, "Driver login (permission denied)"}
+    };
+
+    for (const auto& [user, updated_car, car_id, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                controller.updateCar(car_id, updated_car);
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+        })<< "Test case: " << car.print()  << "\tTest name: " << testName;
+    }
+}
 
 TEST(Controller_updateDriver, TestPositive) {}
 
