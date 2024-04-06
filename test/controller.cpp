@@ -846,9 +846,54 @@ TEST(Controller_addCar, TestNegative) {
 }
 
 
-TEST(Controller_addDriver, TestPositive) {}
+TEST(Controller_addDriver, TestPositive) {
+    Driver driver("driver345", "driver345", "alex", "ivanov", {A}, 2, "ulica 5", "mogilev", "2000-01-01");
+    Driver driver2("driver145", "driver145", "alex", "ivanov", {A}, 2, "ulica 5", "mogilev", "2000-01-01");
 
-TEST(Controller_addDriver, TestNegative) {}
+    std::vector<std::tuple<std::pair<std::string, std::string>, Driver&, int, std::string>> table = {
+        {{"admin", "admin"}, driver, 38, "Admin login"},
+        {{"disp234", "disp234"}, driver2, 39, "Dispatcher login"}
+    };
+
+    
+    for (const auto& [user, driver, expected_row, testName]: table) {
+        EXPECT_NO_THROW({
+            controller.login(user.first, user.second);
+            int row = controller.addDriver(driver);
+            EXPECT_EQ(row, expected_row) << "Test case: " << driver.print()  << "\tTest name: " << testName;
+        })<< "Test case: " << driver.print()  << "\tTest name: " << testName;
+    }
+}
+
+TEST(Controller_addDriver, TestNegative) {
+    Driver driver("driver345", "driver345", "alex", "ivanov", {A}, 2, "ulica 5", "minsk", "2000-01-01");
+    Driver driver_inv("driver345", "", "alex", "ivanov", {A}, 2, "ulica 5", "minsk", "2000-01-01");
+
+    std::vector<std::tuple<std::pair<std::string, std::string>, Driver&, int, std::string>> table = {
+        {{"admin", "admin"}, driver, 38, "Invalid car (empty license)"},
+        {{"driver123", "driver123"}, driver, 38, "Driver login (permission denied)"},
+        {{"admin", "admin"}, driver_inv, 38, "Failed insertion (invalid data)"},
+        {{"admin", "admin"}, driver, 39, "Failed insertion (invalid row)"},
+        {{"disp100", "disp100"}, driver, 38, "Dispatcher login (permission denied)"}
+    };
+
+    for (const auto& [user, driver, expected_row, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                int row = controller.addDriver(driver);
+                EXPECT_NE(row, expected_row)<< "Test case: " << user.first << "\t" << user.second << driver.print() << "\tTest name: " << testName;
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+            
+        }) << "Test case: " << user.first << "\t" << user.second << driver.print() << "\tTest name: " << testName;
+    }
+}
 
 TEST(Controller_addOrder, TestPositive) {}
 
