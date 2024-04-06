@@ -1023,9 +1023,46 @@ TEST(Controller_updateCar, TestNegative) {
     }
 }
 
-TEST(Controller_updateDriver, TestPositive) {}
+TEST(Controller_updateDriver, TestPositive) {
+    Driver driver("alex", "ivanov", {A}, 2, "ulica 5", "minsk", "2000-01-01");
+    std::vector<std::tuple<std::pair<std::string, std::string>, Driver&, int, std::string>> table = {
+        {{"admin", "admin"}, driver, 30, "Admin login"},
+        {{"disp234", "disp234"}, driver, 29, "Dispatcher login"}
+    };
 
-TEST(Controller_updateDriver, TestNegative) {}
+    for (const auto& [user, updated_driver, driver_id, testName]: table) {
+        EXPECT_NO_THROW({
+            controller.login(user.first, user.second);
+            controller.updateDriver(driver_id, updated_driver);
+        })<< "Test case: " << driver.print()  << "\tTest name: " << testName;
+    }
+}
+
+TEST(Controller_updateDriver, TestNegative) {
+    Driver driver("alex", "ivanov", {A}, 2, "ulica 5", "minsk", "2000-01-01");
+    Driver driver_inv("", "", {A}, 2, "ulica5", "minsk", "01-01-2001");
+
+    std::vector<std::tuple<std::pair<std::string, std::string>, Driver&, int, std::string>> table = {
+        {{"admin", "admin"}, driver, 300, "Driver is not found"},
+        {{"disp234", "disp234"}, driver, 30, "Dispatcher login (permission denied)"},
+        {{"admin", "admin"}, driver_inv, 30, "Invalid driver"}
+    };
+
+    for (const auto& [user, updated_driver, driver_id, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                controller.updateDriver(driver_id, updated_driver);
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+        })<< "Test case: " << driver.print()  << "\tTest name: " << testName;
+    }
+}
 
 TEST(Controller_updateDispatcher, TestPositive) {}
 
