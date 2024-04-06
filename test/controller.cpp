@@ -941,9 +941,49 @@ TEST(Controller_addOrder, TestNegative) {
     }
 }
 
-TEST(Controller_addDispatcher, TestPositive) {}
+TEST(Controller_addDispatcher, TestPositive) {
+    Dispatcher dispatcher("disp001", "disp001", "alex", "ivanov", "ulica 5", "minsk");
 
-TEST(Controller_addDispatcher, TestNegative) {}
+    std::vector<std::tuple<std::pair<std::string, std::string>, Dispatcher&, int, std::string>> table = {
+        {{"admin", "admin"}, dispatcher, 40, "Admin login"},
+    };
+
+    for (const auto& [user, dispatcher, expected_row, testName]: table) {
+        EXPECT_NO_THROW({
+            controller.login(user.first, user.second);
+            int row = controller.addDispatcher(dispatcher);
+            EXPECT_EQ(row, expected_row) << "Test case: " << dispatcher.print()  << "\tTest name: " << testName;
+        })<< "Test case: " << dispatcher.print() << "\tTest name: " << testName;
+    }
+}
+
+TEST(Controller_addDispatcher, TestNegative) {
+    Dispatcher dispatcher("disp001", "disp001", "alex", "ivanov", "ulica 5", "minsk");
+    Dispatcher dispatcher_inv("disp001", "", "alex", "ivanov", "ulica 5", "minsk");
+
+    std::vector<std::tuple<std::pair<std::string, std::string>, Dispatcher&, int, std::string>> table = {
+        {{"admin", "admin"}, dispatcher, 41, "Admin login (wromg row)"},
+        {{"driver123", "driver123"}, dispatcher, 41, "Driver login (permission denied)"},
+        {{"disp100", "disp100"}, dispatcher, 41, "Driver login (permission denied)"},
+        {{"admin", "admin"}, dispatcher_inv, 40, "Admin login (invalid dispatcher)"},
+    };
+
+    for (const auto& [user, dispatcher, expected_row, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                int row = controller.addDispatcher(dispatcher);
+                if(row != expected_row) throw std::invalid_argument("Failed insertion");
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+        })<< "Test case: " << dispatcher.print() << "\tTest name: " << testName;
+    }
+}
 
 TEST(Controller_updateCar, TestPositive) {}
 
