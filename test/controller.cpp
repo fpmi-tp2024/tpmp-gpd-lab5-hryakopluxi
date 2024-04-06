@@ -1180,10 +1180,39 @@ TEST(Controller_updateUser, TestNegative) {
 }
 
 TEST(Controller_updateOrderApproveStatus, TestPositive) {
-    
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, bool, std::string>> table = {
+        {{"admin", "admin"}, 6, false, "Admin login"},
+        {{"disp234", "disp234"}, 7, false, "Dispatcher login"},
+        {{"driver123", "driver123"}, 8, false, "Driver login"}
+    };
+
+    for (const auto& [user, order_id, status, testName]: table) {
+        EXPECT_NO_THROW({
+            controller.login(user.first, user.second);
+            controller.updateOrderApproveStatus(order_id, status);
+        })<< "Test case: " << order_id  << "Status: " << status << "\tTest name: " << testName;
+    }
 }
 
-TEST(Controller_updateOrderApproveStatus, TestNegative) {}
+TEST(Controller_updateOrderApproveStatus, TestNegative) {
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, bool, std::string>> table = {
+        {{"admin", "admin"}, 10, true, "Status is already updated"},
+        {{"disp234", "disp234"}, 100, false, "Order is not found"}
+    };
+
+    for (const auto& [user, order_id, status, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                controller.updateOrderApproveStatus(order_id, status);
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+            
+        })<< "Test case: " << order_id  << "Status: " << status << "\tTest name: " << testName;
+    }
+}
 
 TEST(Controller_deleteCar, TestPositive) {}
 
