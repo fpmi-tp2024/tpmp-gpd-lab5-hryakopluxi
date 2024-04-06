@@ -812,7 +812,17 @@ TEST(Controller_getDriverEarnedMoney, TestNegative) {
     }
 }
 
-TEST(Controller_addCar, TestPositive) {}
+TEST(Controller_addCar, TestPositive) {
+    Controller controller("db/app.db");
+    controller.login("admin", "admin");
+    Car car(12, 29, "1234BB-7", "man", 800, 2000);
+
+    EXPECT_NO_THROW({
+        int row = controller.addCar(car);
+        EXPECT_EQ(row, 12) << "Test case: " << car.print()  << "\tTest name: " << "Add car";
+    })<< "Test case: " << car.print()  << "\tTest name: " << "Add car";
+}
+
 
 TEST(Controller_addCar, TestNegative) {}
 
