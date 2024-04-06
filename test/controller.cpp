@@ -895,9 +895,51 @@ TEST(Controller_addDriver, TestNegative) {
     }
 }
 
-TEST(Controller_addOrder, TestPositive) {}
+TEST(Controller_addOrder, TestPositive) {
+    Order order1(10, 29, 8, "2024-01-01", 300, 1000, 120, false);
 
-TEST(Controller_addOrder, TestNegative) {}
+    std::vector<std::tuple<std::pair<std::string, std::string>, Order&, int, std::string>> table = {
+        {{"admin", "admin"}, order1, 22, "Admin login"},
+        {{"disp234", "disp234"}, order1, 23, "Dispatcher login"}
+    };
+
+    for (const auto& [user, order, expected_row, testName]: table) {
+        EXPECT_NO_THROW({
+            controller.login(user.first, user.second);
+            int row = controller.addOrder(order);
+            EXPECT_EQ(row, expected_row) << "Test case: " << order.print()  << "\tTest name: " << testName;
+        })<< "Test case: " << order.print()  << "\tTest name: " << testName;
+    }
+}
+
+TEST(Controller_addOrder, TestNegative) {
+    Order order1(10, 29, 8, "2024-01-01", 300, 1000, 120, false);
+    Order order2(10, 290, 8, "", -300, -1000, 120, false);
+    Order order3(10, 31, 9, "2024-01-01", 300, 1000, 120, false);
+
+    std::vector<std::tuple<std::pair<std::string, std::string>, Order&, int, std::string>> table = {
+        {{"admin", "admin"}, order1, 23, "Admin login (failed insertion)"},
+        {{"admin", "admin"}, order2, 24, "Invalid order"},
+        {{"disp234", "disp234"}, order3, 23, "Dispatcher login(driver's city is different)"}
+    };
+
+    for (const auto& [user, order, expected_row, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                int row = controller.addOrder(order);
+                if(row != expected_row) throw std::invalid_argument("Isertion failed");
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+            
+        }) << "Test case: " << user.first << "\t" << user.second << order.print() << "\tTest name: " << testName;
+    }
+}
 
 TEST(Controller_addDispatcher, TestPositive) {}
 
