@@ -1214,21 +1214,149 @@ TEST(Controller_updateOrderApproveStatus, TestNegative) {
     }
 }
 
-TEST(Controller_deleteCar, TestPositive) {}
+TEST(Controller_deleteCar, TestPositive) {
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string>> table = {
+        {{"admin", "admin"}, 10, "Admin login"},
+    };
 
-TEST(Controller_deleteCar, TestNegative) {}
+    for (const auto& [user, car_id, testName]: table) {
+        EXPECT_NO_THROW({
+            controller.login(user.first, user.second);
+            controller.deleteCar(car_id);
+        })<< "Test case: " << car_id  << "\tTest name: " << testName;
+    }
+}
 
-TEST(Controller_deleteDriver, TestPositive) {}
+TEST(Controller_deleteCar, TestNegative) {
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string>> table = {
+        {{"admin", "admin"}, 100, "Car is not found"},
+        {{"driver123", "driver123"}, 11, "Driver login (permission denied)"},
+        {{"disp100", "disp100"}, 12, "Dispatcher login (permission denied)"},
+    };
 
-TEST(Controller_deleteDriver, TestNegative) {}
+    for (const auto& [user, car_id, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                controller.deleteCar(car_id);
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+        })<< "Test case: " << car_id  << "\tTest name: " << testName;
+    }
+}
 
-TEST(Controller_deleteOrder, TestPositive) {}
+TEST(Controller_deleteDriver, TestPositive) {
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string>> table = {
+        {{"admin", "admin"}, 36, "Admin login"},
+    };
 
-TEST(Controller_deleteOrder, TestNegative) {}
+    for (const auto& [user, driver_id, testName]: table) {
+        EXPECT_NO_THROW({
+            controller.login(user.first, user.second);
+            controller.deleteDriver(driver_id);
+        })<< "Test case: " << driver_id  << "\tTest name: " << testName;
+    }
+}
 
-TEST(Controller_deleteDispatcher, TestPositive) {}
+TEST(Controller_deleteDriver, TestNegative) {
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string>> table = {
+        {{"admin", "admin"}, 100, "Driver is not found"},
+        {{"driver123", "driver123"}, 11, "Driver login (permission denied)"},
+        {{"disp100", "disp100"}, 12, "Dispatcher login (permission denied)"},
+    };
 
-TEST(Controller_deleteDispatcher, TestNegative) {}
+    for (const auto& [user, driver_id, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                controller.deleteDriver(driver_id);
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+        })<< "Test case: " << driver_id  << "\tTest name: " << testName;
+    }
+}
+
+TEST(Controller_deleteOrder, TestPositive) {
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string>> table = {
+        {{"admin", "admin"}, 10, "Admin login"},
+    };
+
+    for (const auto& [user, order_id, testName]: table) {
+        EXPECT_NO_THROW({
+            controller.login(user.first, user.second);
+            controller.deleteOrder(order_id);
+        })<< "Test case: " << order_id  << "\tTest name: " << testName;
+    }
+}
+
+TEST(Controller_deleteOrder, TestNegative) {
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string>> table = {
+        {{"admin", "admin"}, 100, "Order is not found"},
+        {{"driver123", "driver123"}, 11, "Driver login (permission denied)"},
+        {{"disp100", "disp100"}, 12, "Dispatcher login (permission denied)"},
+    };
+
+    for (const auto& [user, order_id, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                controller.deleteDriver(order_id);
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+        })<< "Test case: " << order_id  << "\tTest name: " << testName;
+    }
+}
+
+TEST(Controller_deleteDispatcher, TestPositive) {
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string>> table = {
+        {{"admin", "admin"}, 32, "Admin login"},
+    };
+
+    for (const auto& [user, dispatcher_id, testName]: table) {
+        EXPECT_NO_THROW({
+            controller.login(user.first, user.second);
+            controller.deleteDispatcher(dispatcher_id);
+        })<< "Test case: " << dispatcher_id  << "\tTest name: " << testName;
+    }
+}
+
+TEST(Controller_deleteDispatcher, TestNegative) {
+    std::vector<std::tuple<std::pair<std::string, std::string>, int, std::string>> table = {
+        {{"admin", "admin"}, 100, "Dispatcher is not found"},
+        {{"driver123", "driver123"}, 11, "Driver login (permission denied)"},
+        {{"disp100", "disp100"}, 12, "Dispatcher login (permission denied)"},
+    };
+
+    for (const auto& [user, dispatcher_id, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                controller.deleteDispatcher(dispatcher_id);
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+        })<< "Test case: " << dispatcher_id  << "\tTest name: " << testName;
+    }
+}
 
 
 
