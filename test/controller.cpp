@@ -816,7 +816,35 @@ TEST(Controller_addCar, TestPositive) {
 }
 
 
-TEST(Controller_addCar, TestNegative) {}
+TEST(Controller_addCar, TestNegative) {
+
+    Car car1(12, 29, "", "man", 800, 2000);
+    Car car2(12, 29, "1234BB-7", "man", 800, 2000);
+    Car car3(11, 29, "1234BB-7", "man", 800, 2000);
+    std::vector<std::tuple<std::pair<std::string, std::string>, Car&, int, std::string>> table = {
+        {{"admin", "admin"}, car1, 12, "Invalid car (empty license)"},
+        {{"driver123", "driver123"}, car2, 12, "Driver login (permission denied)"},
+        {{"admin", "admin"}, car3, 12, "Failed insertion"}
+    };
+
+    for (const auto& [user, car, expected_row, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                int row = controller.addCar(car);
+                EXPECT_NE(row, expected_row)<< "Test case: " << user.first << "\t" << user.second << car.print() << "\tTest name: " << testName;
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+            
+        }) << "Test case: " << user.first << "\t" << user.second << car.print() << "\tTest name: " << testName;
+    }
+}
+
 
 TEST(Controller_addDriver, TestPositive) {}
 
