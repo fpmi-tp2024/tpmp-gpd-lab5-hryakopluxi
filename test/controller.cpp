@@ -1064,9 +1064,43 @@ TEST(Controller_updateDriver, TestNegative) {
     }
 }
 
-TEST(Controller_updateDispatcher, TestPositive) {}
+TEST(Controller_updateDispatcher, TestPositive) {
+    Dispatcher dispatcher ("alex", "ivanov", "ulica 5", "minsk");
+    std::vector<std::tuple<std::pair<std::string, std::string>, Dispatcher&, int, std::string>> table = {
+        {{"admin", "admin"}, dispatcher, 32, "Admin login"},
+    };
 
-TEST(Controller_updateDispatcher, TestNegative) {}
+    for (const auto& [user, updated_dispatcher, dispatcher_id, testName]: table) {
+        EXPECT_NO_THROW({
+            controller.login(user.first, user.second);
+            controller.updateDispatcher(dispatcher_id, updated_dispatcher);
+        })<< "Test case: " << dispatcher.print()  << "\tTest name: " << testName;
+    }
+}
+
+TEST(Controller_updateDispatcher, TestNegative) {
+    Dispatcher dispatcher ("alex", "ivanov", "ulica 5", "minsk");
+    Dispatcher dispatcher_inv ("alex", "ivanov", "ulica5", "minsk");
+    std::vector<std::tuple<std::pair<std::string, std::string>, Dispatcher&, int, std::string>> table = {
+        {{"admin", "admin"}, dispatcher, 300, "Dispatcher is not found"},
+        {{"admin", "admin"}, dispatcher_inv, 32, "Invalid dispatcher"},
+    };
+
+    for (const auto& [user, updated_dispatcher, dispatcher_id, testName]: table) {
+        EXPECT_ANY_THROW({
+            try {
+                controller.login(user.first, user.second);
+                controller.updateDispatcher(dispatcher_id, updated_dispatcher);
+            }
+            catch(std::invalid_argument& e) {
+                throw;
+            }
+            catch(PermissionDeniedException& e) {
+                throw;
+            }
+        })<< "Test case: " << dispatcher.print()  << "\tTest name: " << testName;
+    }
+}
 
 TEST(Controller_updateOrder, TestPositive) {}
 
