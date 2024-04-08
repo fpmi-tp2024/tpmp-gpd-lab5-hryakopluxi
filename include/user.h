@@ -7,6 +7,7 @@
 
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <utility>
 #include <vector>
 #include <sqlite3.h>
@@ -68,6 +69,7 @@ public:
         role = newRole;
     }
     static std::string toLower(std::string str);
+    std::string print() const;
 
     virtual void getDataFromDb(sqlite3 *db, int user_id);
     virtual int insertUserToDb(sqlite3 *db) {return 0;}

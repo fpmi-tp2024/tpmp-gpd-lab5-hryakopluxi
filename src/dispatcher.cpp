@@ -91,3 +91,15 @@ void Dispatcher::getDataFromConsole() {
     std::cout << "Enter city: ";
     std::getline(std::cin, city, '\n');
 }
+
+std::string Dispatcher::print() const{
+        std::ostringstream oss;
+        oss << "\nDispatcher: \n"
+            << "\tLogin: " << getLogin() << "\n"
+            << "\tPassword: " << getPassHash() << "\n"
+            << "\tName: " << name << "\n"
+            << "\tSurname: " << surname << "\n"
+            << "\tAddress: " << address << "\n"
+            << "\tCity: " << city << "\n";
+        return oss.str();
+}

@@ -165,3 +165,18 @@ void Driver::getDataFromConsole() {
 
     experience = std::stoi(expStr);
 }
+
+std::string Driver::print() const{
+        std::ostringstream oss;
+        oss << "\nDriver: \n"
+            << "\tLogin: " << getLogin() << "\n"
+            << "\tPassword: " << getPassHash() << "\n"
+            << "\tName: " << name << "\n"
+            << "\tSurname: " << surname << "\n"
+            << "\tCategories: " << getCategoryString() << "\n"
+            << "\tExperience: " << experience << " years\n"
+            << "\tAddress: " << address << "\n"
+            << "\tCity: " << city << "\n"
+            << "\tBirthday: " << birthday << "\n";
+        return oss.str();
+}

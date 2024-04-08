@@ -458,7 +458,9 @@ std::vector<Order> Controller::getDriverOrders(int driver_id, const std::string 
         throw PermissionDeniedException();
     }
 
-    Validator::validPeriod(date_start, date_end);
+    if(!Validator::validPeriod(date_start, date_end)) {
+        throw std::invalid_argument("Invalid period provided");
+    }
 
     std::string sql = "SELECT id\n"
                       "FROM autopark_order\n"
@@ -480,10 +482,6 @@ std::vector<Order> Controller::getDriverOrders(int driver_id, const std::string 
         Order ord;
         ord.getDataFromDb(db, sqlite3_column_int(stmt, 0));
         orders.push_back(ord);
-    }
-
-    if (rc != SQLITE_DONE) {
-        throw std::invalid_argument("No orders were found with such conditions.");
     }
 
     return orders;

@@ -36,3 +36,12 @@ void User::getDataFromConsole() {
     std::cout << "Enter password: ";
     getline(std::cin, pass_hash, '\n');
 }
+
+std::string User::print() const{
+        std::ostringstream oss;
+        oss << "\nUser: \n"
+            << "\tLogin: " << getLogin() << "\n"
+            << "\tPassword: " << getPassHash() << "\n"
+            << "\tRole: " << role << "\n";
+        return oss.str();
+}
