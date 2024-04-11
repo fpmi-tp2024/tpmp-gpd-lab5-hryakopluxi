@@ -7,9 +7,6 @@
 
 ## Description
 The project "Car Park Management System" is an application for managing orders related to cargo transportation in a car park. It facilitates the efficient coordination of transportation tasks and ensures timely delivery of goods to their destinations. The application is designed to streamline order processing, optimize vehicle usage, and provide real-time insights into transportation operations. Key features include order tracking, driver management, vehicle monitoring, and financial analytics.
-## Menu
-* [Contributors](contributors.md)
-* [Assignment](assignment.md)
 
 
 
@@ -18,9 +15,11 @@ The project "Car Park Management System" is an application for managing orders r
 
 <div class="sidebar">
     <ul>
-        <li><a href="#index.md">Home</a></li>
-        <li><a href="#diagrams.md">Diagrams</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/index.html">Home</a></li>
         <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/assignment.html">Assignment</a></li>
-        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/contributors.html">Contributors</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/glossary.html">Glossary</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/presentation.html">Project presentation</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/diagrams.html">Diagrams</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/requirements.html">Other requirements</a></li>
     </ul>
 </div>
