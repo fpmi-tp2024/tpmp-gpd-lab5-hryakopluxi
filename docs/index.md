@@ -7,6 +7,11 @@
 
 ## Description
 The project "Car Park Management System" is an application for managing orders related to cargo transportation in a car park. It facilitates the efficient coordination of transportation tasks and ensures timely delivery of goods to their destinations. The application is designed to streamline order processing, optimize vehicle usage, and provide real-time insights into transportation operations. Key features include order tracking, driver management, vehicle monitoring, and financial analytics.
+## Menu
+* [Глоссарий](glossary.md)
+* [Assignment](assignment.md)
+
+
 
 
 <link rel="stylesheet" href="/assets/css/style.scss">
