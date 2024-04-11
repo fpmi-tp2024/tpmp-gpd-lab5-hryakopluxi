@@ -2,9 +2,6 @@
 ---
 
 @import "{{ site.theme }}";
-.wrapper {
-    margin-left:20px;
-}
 .sidebar {
     height: 100%;
     width: 200px;
@@ -14,7 +11,7 @@
     background-color: #f4f4f4;
     overflow-x: hidden;
     padding-top: 20px;
-    margin-right: 20px;
+    margin-right: 50px;
 
 }
 
