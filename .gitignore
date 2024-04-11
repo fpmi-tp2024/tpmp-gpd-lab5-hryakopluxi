@@ -2,4 +2,4 @@
 cmake*
 CMakeLists.txt
 obj
-bin
+bin/test_main
