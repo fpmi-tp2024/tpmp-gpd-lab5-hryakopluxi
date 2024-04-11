@@ -18,8 +18,8 @@ The project "Car Park Management System" is an application for managing orders r
 <div class="sidebar">
     <ul>
         <li><a href="#home">Home</a></li>
-        <li><a href="#diagrams">Diagrams</a></li>
-        <li><a href="#assignment">Assignment</a></li>
-        <li><a href="#contributors">Contributors</a></li>
+        <li><a href="Diagrams.md">Diagrams</a></li>
+        <li><a href="Assignment.md">Assignment</a></li>
+        <li><a href="Contributors.md">Contributors</a></li>
     </ul>
 </div>
