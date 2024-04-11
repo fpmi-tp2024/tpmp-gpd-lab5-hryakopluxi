@@ -1,3 +1,4 @@
+## Glossary
 | Term                      | Description|
 |---------------------------|------------|
 | Car                       | A motorized conveyance used for transporting cargo, characterized by attributes such as vehicle number, make, mileage at acquisition, and payload capacity.|
