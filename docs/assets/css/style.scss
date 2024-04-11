@@ -2,3 +2,14 @@
 ---
 
 @import "{{ site.theme }}";
+body {
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: #333;
+}
+
+p {
+  line-height: 1.6;
+}
