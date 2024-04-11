@@ -8,7 +8,7 @@
 | Administrator             | A user with full access rights to administrative functions of the application, such as user and data management. |
 | Order                     | A request for cargo transportation service, comprising details such as date, driver's last name, vehicle number, distance traveled, cargo weight, etc.|
 | Authorization             | The process of getting access to the system based on user roles, determining the level of functionality available to the user.|
-| Unit Testing        | The process of verifying that each function of the system operates correctly according to specified requirements.|
+| Unit Testing              | The process of verifying that each function of the system operates correctly according to specified requirements.|
 | Compatibility             | The ability of the system to operate seamlessly with different operating systems, ensuring broad accessibility.|
 | Reliability               | The degree to which the system performs consistently and predictably under various conditions, ensuring continuous availability.|
 | Non-functional Requirements| Specifications related to system attributes such as security, performance, reliability, usability, and maintainability.|
