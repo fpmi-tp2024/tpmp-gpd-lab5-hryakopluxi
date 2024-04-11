@@ -8,7 +8,38 @@
 ## Description
 The project "Car Park Management System" is an application for managing orders related to cargo transportation in a car park. It facilitates the efficient coordination of transportation tasks and ensures timely delivery of goods to their destinations. The application is designed to streamline order processing, optimize vehicle usage, and provide real-time insights into transportation operations. Key features include order tracking, driver management, vehicle monitoring, and financial analytics.
 
+## Installation
+To install the application locally, follow these steps:
 
+1. Download the archive for Ubuntu Linux or MacOS.
+2. Open the terminal and navigate to the root folder.
+3. Run the following command:
+    ```bash
+    ./bin/main
+    ```
+## Usage
+
+After installing the application, follow these instructions to use it:
+
+1. Execute the application by running the `./bin/main` command in the terminal.
+2. Follow the on-screen prompts to interact with the application.
+
+## Contributing
+ 
+* [Stanislau Senkevich](https://github.com/Stanislau-Senkevich) - Lead C++ Developer, Database Architect, Team Lead
+   - Led the development of C++ code
+   - Designed the database architecture
+   - Led the team and allocated tasks
+
+* [Yulia Raitsyna](https://github.com/yuliaraitsyna) - Database Data Entry Specialist, Test Engineer, Task Manager
+   - Entered data into the database
+   - Wrote and executed all tests
+   - Managed task distribution within the team
+
+* [Yulia Kanoplich](https://github.com/Juliet165) - Technical Writer, Business Analyst, GitHub Wiki & Pages Contributor
+   - Wrote technical documentation for the project
+   - Designed and created diagrams for the project
+   - Contributed to GitHub wiki and Pages
 
 
 <link rel="stylesheet" href="/assets/css/style.scss">
