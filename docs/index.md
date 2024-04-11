@@ -17,6 +17,8 @@ To install the application locally, follow these steps:
     ```bash
     ./bin/main
     ```
+
+
 ## Usage
 
 After installing the application, follow these instructions to use it:
@@ -39,7 +41,7 @@ After installing the application, follow these instructions to use it:
 * [Yulia Kanoplich](https://github.com/Juliet165) - Technical Writer, Business Analyst, GitHub Wiki & Pages Contributor
    - Wrote technical documentation for the project
    - Designed and created diagrams for the project
-   - Contributed to GitHub wiki and Pages
+   - Contributed to GitHub Wiki and Pages
 
 
 <link rel="stylesheet" href="/assets/css/style.scss">
