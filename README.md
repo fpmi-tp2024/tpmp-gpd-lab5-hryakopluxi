@@ -7,9 +7,21 @@
 ## Description
 The project "Car Park Management System" is an application for managing orders related to cargo transportation in a car park. It facilitates the efficient coordination of transportation tasks and ensures timely delivery of goods to their destinations. The application is designed to streamline order processing, optimize vehicle usage, and provide real-time insights into transportation operations. Key features include order tracking, driver management, vehicle monitoring, and financial analytics.
 
-## Installation 
+## Installation
+To install the application locally, follow these steps:
 
-## Usage 
+1. Download the archive for Ubuntu Linux or MacOS.
+2. Open the terminal and navigate to the root folder.
+3. Run the following command:
+    ```bash
+    ./bin/main
+    ```
+## Usage
+
+After installing the application, follow these instructions to use it:
+
+1. Execute the application by running the `./bin/main` command in the terminal.
+2. Follow the on-screen prompts to interact with the application.
 
 ## Contributing
  
