@@ -15,6 +15,9 @@
 | User Interface            | The visual and functional element of the application that enables user interaction with the system.           |
 | Log in                    | The process of authenticating a user using a username and password to gain access to the application.        |
 
+
+
+
 <link rel="stylesheet" href="/assets/css/style.scss">
 
 <div class="sidebar">
