@@ -1,7 +1,4 @@
----
-layout: default
-title: Assignment
----
+
 # Assignment
 ### Laboratory work 5
 The car park provides services for transporting goods, using its own fleet of cars and drivers for this purpose. A driver who completes an order receives 20% of the transportation cost.
