@@ -1,6 +1,6 @@
 title: Auto Park
 description: Console Application for Car Park Management
-theme: hyde
+theme: jekyll-theme-minimal
 
 url: https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/
 
@@ -10,6 +10,8 @@ nav:
   - title: Diagrams
     url: /diagrams/  
   - title: Assignment
+    url: /assignment/
+  - title: Glossary
     url: /assignment/
   - title: Contributors
     url: /contributors/
