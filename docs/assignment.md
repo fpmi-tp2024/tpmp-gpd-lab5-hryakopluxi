@@ -1,8 +1,6 @@
 ---
 layout: default
 title: Assignment
-nav_order: 7
-permalink: /assignment/
 ---
 # Assignment
 ### Laboratory work 5
