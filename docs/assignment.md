@@ -1,5 +1,11 @@
+---
+layout: default
+title: Assignment
+nav_order: 7
+permalink: /assignment/
+---
 # Assignment
-
+### Laboratory work 5
 The car park provides services for transporting goods, using its own fleet of cars and drivers for this purpose. A driver who completes an order receives 20% of the transportation cost.
 
 Car park management possesses information about:
@@ -9,7 +15,7 @@ Car park management possesses information about:
 
 A car park driver can access information about their own car, only their data - see the section marked with an asterisk (*).
 
-The following tasks need to be accomplished:
+### The following tasks need to be accomplished:
 1. Create database tables considering data integrity constraints.
 2. Use the Select operator to retrieve the following information:
    - For a specified driver: a list of completed orders for a specified period (*).
