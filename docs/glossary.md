@@ -18,3 +18,15 @@
 | Log in                    | The process of authenticating a user using a username and password to gain access to the application.        |
 
 
+<link rel="stylesheet" href="/assets/css/style.scss">
+
+<div class="sidebar">
+    <ul>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/index.html">Home</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/assignment.html">Assignment</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/glossary.html">Glossary</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/presentation.html">Project presentation</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/diagrams.html">Diagrams</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/requirements.html">Other requirements</a></li>
+    </ul>
+</div>
