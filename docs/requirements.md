@@ -1,4 +1,6 @@
 ## Functional requirements
+
+
 |Function                                           | Behavior                                                                                          |
 |----------------------------------------------------|------------------------------------------------------------------------------------------------|
 | View Completed Orders by Driver and Time Period   | Users can view a list of completed orders for a specific driver within a specified time period. |
@@ -19,6 +21,8 @@
 | Update Login or Password                        | Users can update their login credentials, including the username and password, for enhanced security measures. |
 
 ### User Stories
+
+
 | As a | I want to | So that | To do |
 |------|-----------|---------|-------|
 | Driver | View a list of completed and assigned orders within a specified time period |  Efficiently plan deliveries | Implement a function to retrieve and display a list of orders assigned to the driver. |
@@ -49,6 +53,8 @@
 | Exit | The program terminates |
 
 ## Non-functional requirements
+
+
 | Category       | Description                                                                                                   |
 |----------------|---------------------------------------------------------------------------------------------------------------|
 | Security       | Ensures a high level of security for personal accounts by protecting users' personal data through hashing their passcodes. |
