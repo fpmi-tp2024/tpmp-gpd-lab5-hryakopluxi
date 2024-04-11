@@ -61,6 +61,9 @@
 | Error Handling | The system handles errors gracefully, providing informative error messages and fallback mechanisms to recover from failures. |
 | Resource Efficiency | The application utilizes system resources efficiently, minimizing resource consumption and optimizing resource utilization for cost-effectiveness. |
 
+
+
+
 <link rel="stylesheet" href="/assets/css/style.scss">
 
 <div class="sidebar">
