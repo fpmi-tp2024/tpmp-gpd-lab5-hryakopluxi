@@ -1,3 +1,9 @@
+---
+layout: default
+title: Contributors
+nav_order: 5
+permalink: /contributors/
+---
 # Contributors
 
 * [Stanislau Senkevich](https://github.com/Stanislau-Senkevich) - Lead C++ Developer, Database Architect, Team Lead
