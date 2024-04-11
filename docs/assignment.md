@@ -22,3 +22,17 @@ A car park driver can access information about their own car, only their data - 
 4. Create a function that, when adding information to the orders table, checks if the cargo weight exceeds the car's carrying capacity, and if so, prevents inserting information into the table (*).
 5. Create a function that determines the amount of money earned by each driver for transportation over a specified period. Pass the initial date and end date of the period as parameters. Store the results in a special table (*).
 6. Create a function that determines the amount of money earned by a specified driver for transportation over a specified period. Pass the initial date, end date, and driver's last name as parameters (*).
+
+
+<link rel="stylesheet" href="/assets/css/style.scss">
+
+<div class="sidebar">
+    <ul>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/index.html">Home</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/assignment.html">Assignment</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/glossary.html">Glossary</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/presentation.html">Project presentation</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/diagrams.html">Diagrams</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/requirements.html">Other requirements</a></li>
+    </ul>
+</div>
