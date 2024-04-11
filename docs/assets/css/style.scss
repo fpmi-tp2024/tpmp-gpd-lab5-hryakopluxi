@@ -4,15 +4,14 @@
 @import "{{ site.theme }}";
 .sidebar {
     height: 100%;
-    width: 200px;
+    width: 150px;
     position: fixed;
     top: 0;
     left: 0;
     background-color: #f4f4f4;
     overflow-x: hidden;
     padding-top: 20px;
-    margin-right: 20px; 
-    padding-right: -100px; 
+    margin-right: 50px; 
 }
 
 .sidebar ul {
