@@ -13,7 +13,7 @@ The project "Car Park Management System" is an application for managing orders r
 
 ## Contributing
  
-* [Stanislav Senkevich](https://github.com/Stanislau-Senkevich) - Lead C++ Developer, Database Architect, Team Lead
+* [Stanislau Senkevich](https://github.com/Stanislau-Senkevich) - Lead C++ Developer, Database Architect, Team Lead
    - Led the development of C++ code
    - Designed the database architecture
    - Led the team and allocated tasks
@@ -26,5 +26,5 @@ The project "Car Park Management System" is an application for managing orders r
 * [Yulia Kanoplich](https://github.com/Juliet165) - Technical Writer, Business Analyst, GitHub Wiki & Pages Contributor
    - Wrote technical documentation for the project
    - Designed and created diagrams for the project
-   - Contributed to GitHub wiki and pages
+   - Contributed to GitHub wiki and Pages
 
