@@ -1,3 +1,4 @@
+
 # Сar Park
 [![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)](https://github.com/fpmi-tp2024/tpmp-gpd-lab5-hryakopluxi/tree/main/src)
 [![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)](https://github.com/fpmi-tp2024/tpmp-gpd-lab5-hryakopluxi/tree/main/db)
@@ -16,6 +17,8 @@ To install the application locally, follow these steps:
     ```bash
     ./bin/main
     ```
+
+
 ## Usage
 
 After installing the application, follow these instructions to use it:
@@ -38,5 +41,18 @@ After installing the application, follow these instructions to use it:
 * [Yulia Kanoplich](https://github.com/Juliet165) - Technical Writer, Business Analyst, GitHub Wiki & Pages Contributor
    - Wrote technical documentation for the project
    - Designed and created diagrams for the project
-   - Contributed to GitHub wiki and Pages
+   - Contributed to GitHub Wiki and Pages
 
+
+<link rel="stylesheet" href="/assets/css/style.scss">
+
+<div class="sidebar">
+    <ul>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/index.html">Home</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/assignment.html">Assignment</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/glossary.html">Glossary</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/presentation.html">Project presentation</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/diagrams.html">Diagrams</a></li>
+        <li><a href="https://fpmi-tp2024.github.io/tpmp-gpd-lab5-hryakopluxi/requirements.html">Other requirements</a></li>
+    </ul>
+</div>
